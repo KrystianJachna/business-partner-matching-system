@@ -1,4 +1,4 @@
-package pl.krystian.matching.config;
+package pl.krystian.businesspartnermatching.config;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
