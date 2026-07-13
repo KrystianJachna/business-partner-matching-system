@@ -2,12 +2,15 @@ services:
   postgres:
     image: postgres:16
     container_name: business_matching_postgres
+
     environment:
-      POSTGRES_DB: business_matching_db
-      POSTGRES_USER: matching_user
-      POSTGRES_PASSWORD: matching_password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
