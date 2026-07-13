@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.catalog;
+package pl.krystian.businesspartnermatching.catalog.industry;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

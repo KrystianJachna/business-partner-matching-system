@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.catalog;
+package pl.krystian.businesspartnermatching.catalog.industry;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
