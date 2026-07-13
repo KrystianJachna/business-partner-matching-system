@@ -6,7 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "industries")
+@Table(
+        name = "industries",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_industries_code",
+                        columnNames = "code"
+                ),
+                @UniqueConstraint(
+                        name = "uk_industries_name",
+                        columnNames = "name"
+                )
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Industry {
@@ -15,10 +27,10 @@ public class Industry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, length = 50)
     private String code;
 
-    @Column(nullable = false, unique = true, length = 150)
+    @Column(nullable = false, length = 150)
     private String name;
 
     @Column(nullable = false)
