@@ -1,0 +1,35 @@
+
+   System informatyczny do kojarzenia partnerów biznesowych
+
+   An IT system for matching business partners
+
+  1. Wprowadzenie
+     Treść pracy
+     Cel pracy
+     studium wykonalności pracy
+
+  2. Problem stabilnego dopasowania
+     2.1. Sformułowanie problemu stabilnego dopasowania
+     2.2. Algorytmiczne rozwiązanie problemu stabilnego dopasowania
+          2.2.1. Algorytm Gale'a-Shapley'a
+          2.2.2. Metoda węgierska problemu dopasowania
+          2.2.3. Metoda ontologiczna
+
+  3. Zagadnienie kojarzenia partnerów biznesowych
+     3.1. Koncepcja efektywnego dopasowania partnerów biznesowych
+     3.2. Identyfikacja formatów dopasowania partnerów biznesów
+     3.3. Identyfikacja mocy i ograniczeń kojarzenia partnerów biznesowych
+
+  4. Autorska koncepcja kojarzenia partnerów biznesowych
+     4.1. Opis algorytmu kojarzenia partnerów biznesowych
+     4.2. Algorytm kojarzenia partnerów biznesowych
+     2.3. Poprawność algorytmu kojarzenia partnerów biznesowych
+
+  5. Aplikacja implementująca kojarzenie partnerów biznesowych
+     5.1. Opis aplikacji implementującej kojarzenie partnerów biznesowych
+     5.2. Zastosowane narzędzia programowe
+     3.3. Przykładowe formatki aplikacji implementującej kojarzenie partnerów biznesowych
+     3.4. Przykładowe scenariusze działania aplikacji i wyniki kojarzenia partnerów biznesowych
+
+  6. Wnioski
+     Literatura
