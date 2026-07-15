@@ -10,6 +10,8 @@ import pl.krystian.businesspartnermatching.catalog.industry.IndustryRepository;
 import pl.krystian.businesspartnermatching.catalog.industry.exception.IndustryNotFoundException;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
 import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationRepository;
+import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationIndustryMismatchException;
+import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -100,6 +102,75 @@ class CompanyServiceTest {
         assertThatThrownBy(() -> companyService.createCompany(request))
                 .isInstanceOf(IndustryNotFoundException.class)
                 .hasMessage("Industry with id 999 does not exist");
+
+        verify(companyRepository, never()).save(any(Company.class));
+    }
+
+    @Test
+    void createCompany_shouldThrowSpecializationNotFoundException() {
+        CreateCompanyRequest request = new CreateCompanyRequest(
+                "SoftCraft",
+                "Firma tworząca systemy informatyczne",
+                1L,
+                Set.of(1L, 2L),
+                "Poland",
+                "Kraków",
+                LocalDate.of(2018, 4, 10),
+                "Zespół programistów Java i Spring"
+        );
+
+        Industry industry = mock(Industry.class);
+
+        Specialization specialization = mock(Specialization.class);
+        when(specialization.getId()).thenReturn(1L);
+
+        when(industryRepository.findByIdAndActiveTrue(1L))
+                .thenReturn(Optional.of(industry));
+
+        when(specializationRepository.findAllByIdInAndActiveTrue(Set.of(1L, 2L)))
+                .thenReturn(Set.of(specialization));
+
+        assertThatThrownBy(() -> companyService.createCompany(request))
+                .isInstanceOf(SpecializationNotFoundException.class)
+                .hasMessageContaining("2");
+
+        verify(companyRepository, never()).save(any(Company.class));
+    }
+
+    @Test
+    void createCompany_shouldThrowSpecializationIndustryMismatchException() {
+        CreateCompanyRequest request = new CreateCompanyRequest(
+                "SoftCraft",
+                "Firma tworząca systemy informatyczne",
+                1L,
+                Set.of(1L),
+                "Poland",
+                "Kraków",
+                LocalDate.of(2018, 4, 10),
+                "Zespół programistów Java i Spring"
+        );
+
+        Industry selectedIndustry = mock(Industry.class);
+        when(selectedIndustry.getId()).thenReturn(1L);
+
+        Industry differentIndustry = mock(Industry.class);
+        when(differentIndustry.getId()).thenReturn(2L);
+
+        Specialization specialization = mock(Specialization.class);
+        when(specialization.getId()).thenReturn(1L);
+        when(specialization.getIndustry()).thenReturn(differentIndustry);
+
+        when(industryRepository.findByIdAndActiveTrue(1L))
+                .thenReturn(Optional.of(selectedIndustry));
+
+        when(specializationRepository.findAllByIdInAndActiveTrue(Set.of(1L)))
+                .thenReturn(Set.of(specialization));
+
+        assertThatThrownBy(() -> companyService.createCompany(request))
+                .isInstanceOf(SpecializationIndustryMismatchException.class)
+                .hasMessage(
+                        "Specialization with id 1 does not belong to industry with id 1"
+                );
 
         verify(companyRepository, never()).save(any(Company.class));
     }
