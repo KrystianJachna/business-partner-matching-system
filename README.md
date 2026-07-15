@@ -6,3 +6,4 @@ http://localhost:8080/swagger-ui/index.html
 
 # todo:
 - dto mappers
+- tests
