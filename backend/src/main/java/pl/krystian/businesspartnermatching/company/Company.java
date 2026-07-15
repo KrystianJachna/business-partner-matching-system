@@ -17,6 +17,26 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Company {
 
+    public Company(
+            String name,
+            String description,
+            Industry industry,
+            Set<Specialization> specializations,
+            String country,
+            String city,
+            LocalDate establishedAt,
+            String capabilities
+    ) {
+        this.name = name;
+        this.description = description;
+        this.industry = industry;
+        this.specializations = new HashSet<>(specializations);
+        this.country = country;
+        this.city = city;
+        this.establishedAt = establishedAt;
+        this.capabilities = capabilities;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
