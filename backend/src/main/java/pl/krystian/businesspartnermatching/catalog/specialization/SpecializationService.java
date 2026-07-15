@@ -1,10 +1,9 @@
 package pl.krystian.businesspartnermatching.catalog.specialization;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import pl.krystian.businesspartnermatching.catalog.industry.IndustryRepository;
+import pl.krystian.businesspartnermatching.catalog.industry.exception.IndustryNotFoundException;
 
 import java.util.List;
 
@@ -17,10 +16,7 @@ public class SpecializationService {
 
     public List<SpecializationResponse> getActiveSpecializationsByIndustry(Long industryId) {
         if (!industryRepository.existsById(industryId)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Industry with id " + industryId + " does not exist"
-            );
+            throw new IndustryNotFoundException(industryId);
         }
 
         return specializationRepository
