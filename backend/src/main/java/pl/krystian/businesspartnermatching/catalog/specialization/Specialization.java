@@ -28,10 +28,4 @@ public class Specialization {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "industry_id", nullable = false)
     private Industry industry;
-
-    public Specialization(String code, String name, Industry industry) {
-        this.code = code;
-        this.name = name;
-        this.industry = industry;
-    }
 }
