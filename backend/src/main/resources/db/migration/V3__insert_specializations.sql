@@ -90,4 +90,4 @@ FROM (VALUES
            'PROFESSIONAL_SERVICES')) AS specialization(code, name, industry_code)
          JOIN industries industry
               ON industry.code = specialization.industry_code
-ON CONFLICT (code) DO NOTHING;
+    ON CONFLICT (code) DO NOTHING;

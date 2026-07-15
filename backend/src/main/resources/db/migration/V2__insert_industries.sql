@@ -11,4 +11,4 @@ VALUES ('INFORMATION_TECHNOLOGY', 'Technologie informatyczne', true),
        ('EDUCATION', 'Edukacja', true),
        ('AGRICULTURE', 'Rolnictwo', true),
        ('PROFESSIONAL_SERVICES', 'Usługi profesjonalne', true)
-ON CONFLICT (code) DO NOTHING;
+    ON CONFLICT (code) DO NOTHING;
