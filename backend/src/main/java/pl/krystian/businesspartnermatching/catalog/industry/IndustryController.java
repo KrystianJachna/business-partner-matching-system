@@ -16,9 +16,6 @@ public class IndustryController {
 
     @GetMapping
     public List<IndustryResponse> getActiveIndustries() {
-        return industryService.getAllActiveIndustries()
-                .stream()
-                .map(IndustryResponse::from)
-                .toList();
+        return industryService.getAllActiveIndustries();
     }
 }

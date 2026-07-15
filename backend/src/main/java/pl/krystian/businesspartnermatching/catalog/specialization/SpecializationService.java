@@ -15,13 +15,18 @@ public class SpecializationService {
     private final SpecializationRepository specializationRepository;
     private final IndustryRepository industryRepository;
 
-    public List<Specialization> getActiveSpecializationsByIndustry(Long industryId) {
+    public List<SpecializationResponse> getActiveSpecializationsByIndustry(Long industryId) {
         if (!industryRepository.existsById(industryId)) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "Industry with id " + industryId + " does not exist"
             );
         }
-        return specializationRepository.findAllByIndustryIdAndActiveTrueOrderByNameAsc(industryId);
+
+        return specializationRepository
+                .findAllByIndustryIdAndActiveTrueOrderByNameAsc(industryId)
+                .stream()
+                .map(SpecializationResponse::from)
+                .toList();
     }
 }

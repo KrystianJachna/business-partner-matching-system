@@ -18,10 +18,6 @@ public class SpecializationController {
 
     @GetMapping
     public List<SpecializationResponse> getActiveSpecializationsByIndustry(@PathVariable Long industryId) {
-        return specializationService
-                .getActiveSpecializationsByIndustry(industryId)
-                .stream()
-                .map(SpecializationResponse::from)
-                .toList();
+        return specializationService.getActiveSpecializationsByIndustry(industryId);
     }
 }

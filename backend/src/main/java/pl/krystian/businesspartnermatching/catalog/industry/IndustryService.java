@@ -11,7 +11,11 @@ public class IndustryService {
 
     private final IndustryRepository industryRepository;
 
-    public List<Industry> getAllActiveIndustries() {
-        return industryRepository.findAllByActiveTrueOrderByNameAsc();
+    public List<IndustryResponse> getAllActiveIndustries() {
+        return industryRepository
+                .findAllByActiveTrueOrderByNameAsc()
+                .stream()
+                .map(IndustryResponse::from)
+                .toList();
     }
 }
