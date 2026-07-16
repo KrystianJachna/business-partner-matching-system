@@ -9,7 +9,6 @@ http://localhost:8080/swagger-ui/index.html
 - tests
 
 # next:
-1. skonfigurowac zeby mvn install dzialal
 1. Wydzielić pierwszy mapper (CompanyMapper). 
 2. Przenieść mapowanie z CompanyService do mappera.
 3. Dopiero potem zaprojektować CompanyNeed.
