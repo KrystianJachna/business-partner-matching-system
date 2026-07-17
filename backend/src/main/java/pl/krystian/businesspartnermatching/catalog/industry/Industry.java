@@ -35,4 +35,12 @@ public class Industry {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    public Industry(
+            String code,
+            String name
+    ) {
+        this.code = code;
+        this.name = name;
+    }
 }
