@@ -3,6 +3,8 @@ package pl.krystian.businesspartnermatching.company;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import pl.krystian.businesspartnermatching.company.dto.CompanyResponse;
+import pl.krystian.businesspartnermatching.company.dto.CreateCompanyRequest;
 
 @RestController
 @RequestMapping("/api/companies")

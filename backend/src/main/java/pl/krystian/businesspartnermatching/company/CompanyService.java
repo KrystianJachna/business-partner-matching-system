@@ -10,6 +10,8 @@ import pl.krystian.businesspartnermatching.catalog.specialization.Specialization
 import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationRepository;
 import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationIndustryMismatchException;
 import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
+import pl.krystian.businesspartnermatching.company.dto.CompanyResponse;
+import pl.krystian.businesspartnermatching.company.dto.CreateCompanyRequest;
 import pl.krystian.businesspartnermatching.company.exception.CompanyNotFoundException;
 
 import java.util.HashSet;

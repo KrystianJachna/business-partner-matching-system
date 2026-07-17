@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.krystian.businesspartnermatching.catalog.industry.IndustryRepository;
 import pl.krystian.businesspartnermatching.catalog.industry.exception.IndustryNotFoundException;
+import pl.krystian.businesspartnermatching.catalog.specialization.dto.SpecializationResponse;
 
 import java.util.List;
 

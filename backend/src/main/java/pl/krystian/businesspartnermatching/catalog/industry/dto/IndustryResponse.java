@@ -1,4 +1,6 @@
-package pl.krystian.businesspartnermatching.catalog.industry;
+package pl.krystian.businesspartnermatching.catalog.industry.dto;
+
+import pl.krystian.businesspartnermatching.catalog.industry.Industry;
 
 public record IndustryResponse(Long id, String code, String name) {
 

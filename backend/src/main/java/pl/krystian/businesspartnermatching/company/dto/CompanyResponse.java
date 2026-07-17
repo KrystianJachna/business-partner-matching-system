@@ -1,7 +1,8 @@
-package pl.krystian.businesspartnermatching.company;
+package pl.krystian.businesspartnermatching.company.dto;
 
-import pl.krystian.businesspartnermatching.catalog.industry.IndustryResponse;
-import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationResponse;
+import pl.krystian.businesspartnermatching.catalog.industry.dto.IndustryResponse;
+import pl.krystian.businesspartnermatching.catalog.specialization.dto.SpecializationResponse;
+import pl.krystian.businesspartnermatching.company.Company;
 
 import java.time.LocalDate;
 import java.util.Set;

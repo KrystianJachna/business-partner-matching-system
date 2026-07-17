@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.company;
+package pl.krystian.businesspartnermatching.company.dto;
 
 import jakarta.validation.constraints.*;
 
