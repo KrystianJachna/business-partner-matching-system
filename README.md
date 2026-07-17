@@ -8,4 +8,4 @@ http://localhost:8080/swagger-ui/index.html
 - tests
 
 # next:
-3. Dopiero potem zaprojektować CompanyNeed.
+3. zrobic kontener w pozostalych testach?

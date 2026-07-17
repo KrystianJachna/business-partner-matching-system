@@ -1,0 +1,146 @@
+package pl.krystian.businesspartnermatching.need;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
+import pl.krystian.businesspartnermatching.catalog.industry.Industry;
+import pl.krystian.businesspartnermatching.catalog.industry.IndustryRepository;
+import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
+import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationRepository;
+import pl.krystian.businesspartnermatching.company.Company;
+import pl.krystian.businesspartnermatching.company.CompanyRepository;
+
+import java.time.LocalDate;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@Testcontainers
+@Transactional
+class BusinessNeedControllerIntegrationTest {
+
+    @Container
+    @ServiceConnection
+    static PostgreSQLContainer postgres =
+            new PostgreSQLContainer("postgres:16-alpine");
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private IndustryRepository industryRepository;
+
+    @Autowired
+    private SpecializationRepository specializationRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
+    private BusinessNeedRepository businessNeedRepository;
+
+    @Test
+    void shouldCreateBusinessNeed() throws Exception {
+        Industry industry = industryRepository.save(
+                new Industry(
+                        "TEST_IT",
+                        "Test Information Technology"
+                )
+        );
+
+        Specialization specialization = specializationRepository.save(
+                new Specialization(
+                        industry,
+                        "TEST_JAVA",
+                        "Test Java Development"
+                )
+        );
+
+        Company company = companyRepository.save(
+                new Company(
+                        "Integration Test Company",
+                        "Company created for an integration test",
+                        industry,
+                        Set.of(specialization),
+                        "Poland",
+                        "Krakow",
+                        LocalDate.of(2020, 1, 1),
+                        "Software development"
+                )
+        );
+
+        String requestBody = """
+                {
+                  "title": "Partner do wykonania aplikacji mobilnej",
+                  "description": "Poszukujemy firmy do realizacji aplikacji.",
+                  "cooperationType": "OUTSOURCING",
+                  "requiredSpecializationIds": [%d],
+                  "budget": {
+                    "min": 20000,
+                    "max": 40000,
+                    "currency": "PLN"
+                  },
+                  "requiredPeriod": {
+                    "from": "2026-08-01",
+                    "until": "2026-12-31"
+                  },
+                  "maxDistanceKm": 200,
+                  "minPartnerExperienceYears": 3,
+                  "maxPartners": 2
+                }
+                """.formatted(specialization.getId());
+
+        mockMvc.perform(
+                        post(
+                                "/api/companies/{companyId}/needs",
+                                company.getId()
+                        )
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBody)
+                )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.companyId")
+                        .value(company.getId()))
+                .andExpect(jsonPath("$.title")
+                        .value("Partner do wykonania aplikacji mobilnej"))
+                .andExpect(jsonPath("$.cooperationType")
+                        .value("OUTSOURCING"))
+                .andExpect(jsonPath("$.requiredSpecializations[0].id")
+                        .value(specialization.getId()))
+                .andExpect(jsonPath("$.budgetMin")
+                        .value(20000))
+                .andExpect(jsonPath("$.budgetMax")
+                        .value(40000))
+                .andExpect(jsonPath("$.budgetCurrency")
+                        .value("PLN"))
+                .andExpect(jsonPath("$.requiredFrom")
+                        .value("2026-08-01"))
+                .andExpect(jsonPath("$.requiredUntil")
+                        .value("2026-12-31"))
+                .andExpect(jsonPath("$.maxDistanceKm")
+                        .value(200))
+                .andExpect(jsonPath("$.minPartnerExperienceYears")
+                        .value(3))
+                .andExpect(jsonPath("$.maxPartners")
+                        .value(2))
+                .andExpect(jsonPath("$.active")
+                        .value(true));
+
+        assertThat(businessNeedRepository.count())
+                .isEqualTo(1);
+    }
+}
