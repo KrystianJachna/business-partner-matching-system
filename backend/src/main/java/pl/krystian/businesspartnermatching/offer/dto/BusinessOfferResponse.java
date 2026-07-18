@@ -2,11 +2,10 @@ package pl.krystian.businesspartnermatching.offer.dto;
 
 import pl.krystian.businesspartnermatching.catalog.specialization.dto.SpecializationResponse;
 import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
-import pl.krystian.businesspartnermatching.common.money.CurrencyCode;
+import pl.krystian.businesspartnermatching.common.money.dto.MoneyRangeResponse;
+import pl.krystian.businesspartnermatching.common.time.dto.DateRangeResponse;
 import pl.krystian.businesspartnermatching.offer.BusinessOffer;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,11 +17,8 @@ public record BusinessOfferResponse(
         String description,
         CooperationType cooperationType,
         Set<SpecializationResponse> offeredSpecializations,
-        BigDecimal priceMin,
-        BigDecimal priceMax,
-        CurrencyCode priceCurrency,
-        LocalDate availableFrom,
-        LocalDate availableUntil,
+        MoneyRangeResponse priceRange,
+        DateRangeResponse availabilityPeriod,
         Integer serviceRadiusKm,
         Integer maxPartners,
         boolean active,
@@ -43,25 +39,12 @@ public record BusinessOfferResponse(
                         .stream()
                         .map(SpecializationResponse::from)
                         .collect(Collectors.toSet()),
-                businessOffer.getPriceRange() == null
-                        ? null
-                        : businessOffer.getPriceRange().getMin(),
-                businessOffer.getPriceRange() == null
-                        ? null
-                        : businessOffer.getPriceRange().getMax(),
-                businessOffer.getPriceRange() == null
-                        ? null
-                        : businessOffer.getPriceRange().getCurrency(),
-                businessOffer.getAvailabilityPeriod() == null
-                        ? null
-                        : businessOffer
-                        .getAvailabilityPeriod()
-                        .getFrom(),
-                businessOffer.getAvailabilityPeriod() == null
-                        ? null
-                        : businessOffer
-                        .getAvailabilityPeriod()
-                        .getUntil(),
+                MoneyRangeResponse.from(
+                        businessOffer.getPriceRange()
+                ),
+                DateRangeResponse.from(
+                        businessOffer.getAvailabilityPeriod()
+                ),
                 businessOffer.getServiceRadiusKm(),
                 businessOffer.getMaxPartners(),
                 businessOffer.isActive(),

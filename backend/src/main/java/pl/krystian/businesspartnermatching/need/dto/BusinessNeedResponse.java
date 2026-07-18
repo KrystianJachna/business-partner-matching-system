@@ -1,12 +1,11 @@
 package pl.krystian.businesspartnermatching.need.dto;
 
 import pl.krystian.businesspartnermatching.catalog.specialization.dto.SpecializationResponse;
-import pl.krystian.businesspartnermatching.common.money.CurrencyCode;
-import pl.krystian.businesspartnermatching.need.BusinessNeed;
 import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
+import pl.krystian.businesspartnermatching.common.money.dto.MoneyRangeResponse;
+import pl.krystian.businesspartnermatching.common.time.dto.DateRangeResponse;
+import pl.krystian.businesspartnermatching.need.BusinessNeed;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,11 +17,8 @@ public record BusinessNeedResponse(
         String description,
         CooperationType cooperationType,
         Set<SpecializationResponse> requiredSpecializations,
-        BigDecimal budgetMin,
-        BigDecimal budgetMax,
-        CurrencyCode budgetCurrency,
-        LocalDate requiredFrom,
-        LocalDate requiredUntil,
+        MoneyRangeResponse budget,
+        DateRangeResponse requiredPeriod,
         Integer maxDistanceKm,
         Integer minPartnerExperienceYears,
         Integer maxPartners,
@@ -31,7 +27,9 @@ public record BusinessNeedResponse(
         LocalDateTime updatedAt
 ) {
 
-    public static BusinessNeedResponse from(BusinessNeed businessNeed) {
+    public static BusinessNeedResponse from(
+            BusinessNeed businessNeed
+    ) {
         return new BusinessNeedResponse(
                 businessNeed.getId(),
                 businessNeed.getCompany().getId(),
@@ -42,21 +40,12 @@ public record BusinessNeedResponse(
                         .stream()
                         .map(SpecializationResponse::from)
                         .collect(Collectors.toSet()),
-                businessNeed.getBudget() == null
-                        ? null
-                        : businessNeed.getBudget().getMin(),
-                businessNeed.getBudget() == null
-                        ? null
-                        : businessNeed.getBudget().getMax(),
-                businessNeed.getBudget() == null
-                        ? null
-                        : businessNeed.getBudget().getCurrency(),
-                businessNeed.getRequiredPeriod() == null
-                        ? null
-                        : businessNeed.getRequiredPeriod().getFrom(),
-                businessNeed.getRequiredPeriod() == null
-                        ? null
-                        : businessNeed.getRequiredPeriod().getUntil(),
+                MoneyRangeResponse.from(
+                        businessNeed.getBudget()
+                ),
+                DateRangeResponse.from(
+                        businessNeed.getRequiredPeriod()
+                ),
                 businessNeed.getMaxDistanceKm(),
                 businessNeed.getMinPartnerExperienceYears(),
                 businessNeed.getMaxPartners(),

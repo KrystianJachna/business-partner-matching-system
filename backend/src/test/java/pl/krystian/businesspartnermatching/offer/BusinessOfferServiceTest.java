@@ -106,15 +106,11 @@ class BusinessOfferServiceTest {
         when(companyRepository.findById(1L))
                 .thenReturn(Optional.of(company));
 
-        when(
-                specializationResolver.resolveActive(Set.of(10L))
-        ).thenReturn(Set.of(specialization));
+        when(specializationResolver.resolveActive(Set.of(10L)))
+                .thenReturn(Set.of(specialization));
 
-        when(
-                businessOfferRepository.save(
-                        any(BusinessOffer.class)
-                )
-        ).thenAnswer(invocation -> invocation.getArgument(0));
+        when(businessOfferRepository.save(any(BusinessOffer.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         BusinessOfferResponse response =
                 businessOfferService.createBusinessOffer(
@@ -147,13 +143,11 @@ class BusinessOfferServiceTest {
         assertThat(savedOffer.getPriceRange().getCurrency())
                 .isEqualTo(CurrencyCode.PLN);
 
-        assertThat(
-                savedOffer.getAvailabilityPeriod().getFrom()
-        ).isEqualTo(LocalDate.of(2026, 8, 1));
+        assertThat(savedOffer.getAvailabilityPeriod().getFrom())
+                .isEqualTo(LocalDate.of(2026, 8, 1));
 
-        assertThat(
-                savedOffer.getAvailabilityPeriod().getUntil()
-        ).isEqualTo(LocalDate.of(2027, 3, 31));
+        assertThat(savedOffer.getAvailabilityPeriod().getUntil())
+                .isEqualTo(LocalDate.of(2027, 3, 31));
 
         assertThat(savedOffer.getServiceRadiusKm())
                 .isEqualTo(300);
@@ -167,8 +161,20 @@ class BusinessOfferServiceTest {
         assertThat(response.title())
                 .isEqualTo("Tworzenie aplikacji mobilnych");
 
-        assertThat(response.priceCurrency())
+        assertThat(response.priceRange().min())
+                .isEqualByComparingTo("25000.00");
+
+        assertThat(response.priceRange().max())
+                .isEqualByComparingTo("50000.00");
+
+        assertThat(response.priceRange().currency())
                 .isEqualTo(CurrencyCode.PLN);
+
+        assertThat(response.availabilityPeriod().from())
+                .isEqualTo(LocalDate.of(2026, 8, 1));
+
+        assertThat(response.availabilityPeriod().until())
+                .isEqualTo(LocalDate.of(2027, 3, 31));
     }
 
     @Test

@@ -116,26 +116,16 @@ class BusinessOfferControllerIntegrationTest
                                 "$.offeredSpecializations[0].id"
                         ).value(specialization.getId())
                 )
-                .andExpect(
-                        jsonPath("$.priceMin")
-                                .value(25000)
-                )
-                .andExpect(
-                        jsonPath("$.priceMax")
-                                .value(50000)
-                )
-                .andExpect(
-                        jsonPath("$.priceCurrency")
-                                .value("PLN")
-                )
-                .andExpect(
-                        jsonPath("$.availableFrom")
-                                .value("2026-08-01")
-                )
-                .andExpect(
-                        jsonPath("$.availableUntil")
-                                .value("2027-03-31")
-                )
+                .andExpect(jsonPath("$.priceRange.min")
+                        .value(25000))
+                .andExpect(jsonPath("$.priceRange.max")
+                        .value(50000))
+                .andExpect(jsonPath("$.priceRange.currency")
+                        .value("PLN"))
+                .andExpect(jsonPath("$.availabilityPeriod.from")
+                        .value("2026-08-01"))
+                .andExpect(jsonPath("$.availabilityPeriod.until")
+                        .value("2027-03-31"))
                 .andExpect(
                         jsonPath("$.serviceRadiusKm")
                                 .value(300)
