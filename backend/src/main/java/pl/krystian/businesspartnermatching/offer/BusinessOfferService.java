@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
-import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationRepository;
-import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
+import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationResolver;
 import pl.krystian.businesspartnermatching.common.money.MoneyRange;
 import pl.krystian.businesspartnermatching.common.time.DateRange;
 import pl.krystian.businesspartnermatching.company.Company;
@@ -15,10 +14,8 @@ import pl.krystian.businesspartnermatching.offer.dto.BusinessOfferResponse;
 import pl.krystian.businesspartnermatching.offer.dto.CreateBusinessOfferRequest;
 import pl.krystian.businesspartnermatching.offer.exception.BusinessOfferNotFoundException;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class BusinessOfferService {
 
     private final BusinessOfferRepository businessOfferRepository;
     private final CompanyRepository companyRepository;
-    private final SpecializationRepository specializationRepository;
+    private final SpecializationResolver specializationResolver;
 
     @Transactional
     public BusinessOfferResponse createBusinessOffer(
@@ -39,14 +36,9 @@ public class BusinessOfferService {
                 );
 
         Set<Specialization> offeredSpecializations =
-                specializationRepository.findAllByIdInAndActiveTrue(
+                specializationResolver.resolveActive(
                         request.offeredSpecializationIds()
                 );
-
-        validateAllSpecializationsFound(
-                request.offeredSpecializationIds(),
-                offeredSpecializations
-        );
 
         MoneyRange priceRange = request.priceRange() == null
                 ? null
@@ -110,21 +102,5 @@ public class BusinessOfferService {
                 .stream()
                 .map(BusinessOfferResponse::from)
                 .toList();
-    }
-
-    private void validateAllSpecializationsFound(
-            Set<Long> requestedIds,
-            Set<Specialization> foundSpecializations
-    ) {
-        Set<Long> foundIds = foundSpecializations.stream()
-                .map(Specialization::getId)
-                .collect(Collectors.toSet());
-
-        Set<Long> missingIds = new HashSet<>(requestedIds);
-        missingIds.removeAll(foundIds);
-
-        if (!missingIds.isEmpty()) {
-            throw new SpecializationNotFoundException(missingIds);
-        }
     }
 }

@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import pl.krystian.businesspartnermatching.catalog.industry.Industry;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
-import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationRepository;
+import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationResolver;
 import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
 import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
 import pl.krystian.businesspartnermatching.common.money.CurrencyCode;
@@ -44,7 +44,7 @@ class BusinessOfferServiceTest {
     private CompanyRepository companyRepository;
 
     @Mock
-    private SpecializationRepository specializationRepository;
+    private SpecializationResolver specializationResolver;
 
     private BusinessOfferService businessOfferService;
 
@@ -53,7 +53,7 @@ class BusinessOfferServiceTest {
         businessOfferService = new BusinessOfferService(
                 businessOfferRepository,
                 companyRepository,
-                specializationRepository
+                specializationResolver
         );
     }
 
@@ -107,8 +107,7 @@ class BusinessOfferServiceTest {
                 .thenReturn(Optional.of(company));
 
         when(
-                specializationRepository
-                        .findAllByIdInAndActiveTrue(Set.of(10L))
+                specializationResolver.resolveActive(Set.of(10L))
         ).thenReturn(Set.of(specialization));
 
         when(
@@ -198,8 +197,8 @@ class BusinessOfferServiceTest {
                 .isInstanceOf(CompanyNotFoundException.class)
                 .hasMessageContaining("1");
 
-        verify(specializationRepository, never())
-                .findAllByIdInAndActiveTrue(any());
+        verify(specializationResolver, never())
+                .resolveActive(any());
 
         verify(businessOfferRepository, never())
                 .save(any());
@@ -238,12 +237,13 @@ class BusinessOfferServiceTest {
         when(companyRepository.findById(1L))
                 .thenReturn(Optional.of(company));
 
-        when(
-                specializationRepository
-                        .findAllByIdInAndActiveTrue(
-                                Set.of(10L, 20L)
-                        )
-        ).thenReturn(Set.of());
+        when(specializationResolver.resolveActive(
+                Set.of(10L, 20L)
+        )).thenThrow(
+                new SpecializationNotFoundException(
+                        Set.of(10L, 20L)
+                )
+        );
 
         assertThatThrownBy(
                 () -> businessOfferService.createBusinessOffer(

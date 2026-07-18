@@ -11,13 +11,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.never;
 
+import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationResolver;
 import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
 import pl.krystian.businesspartnermatching.need.exception.BusinessNeedNotFoundException;
 import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
 import pl.krystian.businesspartnermatching.company.exception.CompanyNotFoundException;
 import pl.krystian.businesspartnermatching.catalog.industry.Industry;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
-import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationRepository;
 import pl.krystian.businesspartnermatching.common.money.CurrencyCode;
 import pl.krystian.businesspartnermatching.company.Company;
 import pl.krystian.businesspartnermatching.company.CompanyRepository;
@@ -46,7 +46,7 @@ class BusinessNeedServiceTest {
     private CompanyRepository companyRepository;
 
     @Mock
-    private SpecializationRepository specializationRepository;
+    private SpecializationResolver specializationResolver;
 
     private BusinessNeedService businessNeedService;
 
@@ -55,7 +55,7 @@ class BusinessNeedServiceTest {
         businessNeedService = new BusinessNeedService(
                 businessNeedRepository,
                 companyRepository,
-                specializationRepository
+                specializationResolver
         );
     }
 
@@ -109,7 +109,7 @@ class BusinessNeedServiceTest {
         when(companyRepository.findById(1L))
                 .thenReturn(Optional.of(company));
 
-        when(specializationRepository.findAllByIdInAndActiveTrue(
+        when(specializationResolver.resolveActive(
                 Set.of(10L)
         )).thenReturn(Set.of(specialization));
 
@@ -169,8 +169,8 @@ class BusinessNeedServiceTest {
                 .isInstanceOf(CompanyNotFoundException.class)
                 .hasMessageContaining("1");
 
-        verify(specializationRepository, never())
-                .findAllByIdInAndActiveTrue(any());
+        verify(specializationResolver, never())
+                .resolveActive(any());
 
         verify(businessNeedRepository, never())
                 .save(any());
@@ -210,9 +210,13 @@ class BusinessNeedServiceTest {
         when(companyRepository.findById(1L))
                 .thenReturn(Optional.of(company));
 
-        when(specializationRepository.findAllByIdInAndActiveTrue(
+        when(specializationResolver.resolveActive(
                 Set.of(10L, 20L)
-        )).thenReturn(Set.of());
+        )).thenThrow(
+                new SpecializationNotFoundException(
+                        Set.of(10L, 20L)
+                )
+        );
 
         assertThatThrownBy(() ->
                 businessNeedService.createBusinessNeed(1L, request)
