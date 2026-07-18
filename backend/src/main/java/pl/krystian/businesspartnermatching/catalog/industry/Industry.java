@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import pl.krystian.businesspartnermatching.common.persistance.ActivatableEntity;
 
 @Entity
 @Table(
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Industry {
+public class Industry extends ActivatableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,9 +33,6 @@ public class Industry {
 
     @Column(nullable = false, length = 150)
     private String name;
-
-    @Column(nullable = false)
-    private boolean active = true;
 
     public Industry(
             String code,

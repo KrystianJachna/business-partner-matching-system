@@ -6,20 +6,20 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Testcontainers
 @Transactional
 public abstract class IntegrationTest {
 
-    @Container
     @ServiceConnection
-    static PostgreSQLContainer postgres =
+    static final PostgreSQLContainer POSTGRES =
             new PostgreSQLContainer("postgres:16-alpine");
+
+    static {
+        POSTGRES.start();
+    }
 
     @Autowired
     protected MockMvc mockMvc;

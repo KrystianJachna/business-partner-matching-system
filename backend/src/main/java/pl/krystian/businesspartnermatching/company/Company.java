@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pl.krystian.businesspartnermatching.catalog.industry.Industry;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
+import pl.krystian.businesspartnermatching.common.persistance.ActivatableEntity;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Table(name = "companies")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Company {
+public class Company extends ActivatableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,9 +51,6 @@ public class Company {
 
     @Column(columnDefinition = "TEXT")
     private String capabilities;
-
-    @Column(nullable = false)
-    private boolean active = true;
 
     public Company(
             String name,

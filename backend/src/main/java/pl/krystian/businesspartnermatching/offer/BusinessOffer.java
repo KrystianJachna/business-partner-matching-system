@@ -15,19 +15,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
 import pl.krystian.businesspartnermatching.common.money.MoneyRange;
+import pl.krystian.businesspartnermatching.common.persistance.ActivatableAuditableEntity;
 import pl.krystian.businesspartnermatching.common.time.DateRange;
 import pl.krystian.businesspartnermatching.company.Company;
 import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,7 +33,7 @@ import java.util.Set;
 @Table(name = "business_offers")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BusinessOffer {
+public class BusinessOffer extends ActivatableAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -110,32 +108,6 @@ public class BusinessOffer {
 
     @Column(name = "max_partners", nullable = false)
     private Integer maxPartners;
-
-    @Column(nullable = false)
-    private boolean active = true;
-
-    @Column(
-            name = "created_at",
-            nullable = false,
-            updatable = false
-    )
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
-
-        createdAt = now;
-        updatedAt = now;
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
     public BusinessOffer(
             Company company,

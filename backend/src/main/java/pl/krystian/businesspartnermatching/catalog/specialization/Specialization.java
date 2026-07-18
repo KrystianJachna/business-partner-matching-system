@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pl.krystian.businesspartnermatching.catalog.industry.Industry;
+import pl.krystian.businesspartnermatching.common.persistance.ActivatableEntity;
 
 @Entity
 @Table(
@@ -22,7 +23,7 @@ import pl.krystian.businesspartnermatching.catalog.industry.Industry;
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Specialization {
+public class Specialization extends ActivatableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,9 +34,6 @@ public class Specialization {
 
     @Column(nullable = false, length = 150)
     private String name;
-
-    @Column(nullable = false)
-    private boolean active = true;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "industry_id", nullable = false)
