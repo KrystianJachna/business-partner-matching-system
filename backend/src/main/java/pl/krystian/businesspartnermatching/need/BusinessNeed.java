@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
 import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
 import pl.krystian.businesspartnermatching.common.money.MoneyRange;
-import pl.krystian.businesspartnermatching.common.persistance.ActivatableAuditableEntity;
+import pl.krystian.businesspartnermatching.common.persistence.ActivatableAuditableEntity;
 import pl.krystian.businesspartnermatching.common.time.DateRange;
 import pl.krystian.businesspartnermatching.company.Company;
 

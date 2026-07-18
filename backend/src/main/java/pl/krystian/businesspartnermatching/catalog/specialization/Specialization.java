@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pl.krystian.businesspartnermatching.catalog.industry.Industry;
-import pl.krystian.businesspartnermatching.common.persistance.ActivatableEntity;
+import pl.krystian.businesspartnermatching.common.persistence.ActivatableEntity;
 
 @Entity
 @Table(

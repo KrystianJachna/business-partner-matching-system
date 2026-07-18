@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.common.persistance;
+package pl.krystian.businesspartnermatching.common.persistence;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
