@@ -11,6 +11,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.never;
 
+import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
 import pl.krystian.businesspartnermatching.need.exception.BusinessNeedNotFoundException;
 import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
 import pl.krystian.businesspartnermatching.company.exception.CompanyNotFoundException;
@@ -22,8 +23,8 @@ import pl.krystian.businesspartnermatching.company.Company;
 import pl.krystian.businesspartnermatching.company.CompanyRepository;
 import pl.krystian.businesspartnermatching.need.dto.BusinessNeedResponse;
 import pl.krystian.businesspartnermatching.need.dto.CreateBusinessNeedRequest;
-import pl.krystian.businesspartnermatching.need.dto.DateRangeRequest;
-import pl.krystian.businesspartnermatching.need.dto.MoneyRangeRequest;
+import pl.krystian.businesspartnermatching.common.time.dto.DateRangeRequest;
+import pl.krystian.businesspartnermatching.common.money.dto.MoneyRangeRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

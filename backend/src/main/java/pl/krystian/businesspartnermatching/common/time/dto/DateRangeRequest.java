@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.need.dto;
+package pl.krystian.businesspartnermatching.common.time.dto;
 
 import jakarta.validation.constraints.NotNull;
 

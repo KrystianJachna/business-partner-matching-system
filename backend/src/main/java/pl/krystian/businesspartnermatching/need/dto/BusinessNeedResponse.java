@@ -3,7 +3,7 @@ package pl.krystian.businesspartnermatching.need.dto;
 import pl.krystian.businesspartnermatching.catalog.specialization.dto.SpecializationResponse;
 import pl.krystian.businesspartnermatching.common.money.CurrencyCode;
 import pl.krystian.businesspartnermatching.need.BusinessNeed;
-import pl.krystian.businesspartnermatching.need.CooperationType;
+import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

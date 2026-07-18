@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.need.dto;
+package pl.krystian.businesspartnermatching.offer.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +13,7 @@ import pl.krystian.businesspartnermatching.common.time.dto.DateRangeRequest;
 
 import java.util.Set;
 
-public record CreateBusinessNeedRequest(
+public record CreateBusinessOfferRequest(
 
         @NotBlank
         @Size(max = 150)
@@ -26,19 +26,16 @@ public record CreateBusinessNeedRequest(
         CooperationType cooperationType,
 
         @NotEmpty
-        Set<Long> requiredSpecializationIds,
+        Set<Long> offeredSpecializationIds,
 
         @Valid
-        MoneyRangeRequest budget,
+        MoneyRangeRequest priceRange,
 
         @Valid
-        DateRangeRequest requiredPeriod,
+        DateRangeRequest availabilityPeriod,
 
         @PositiveOrZero
-        Integer maxDistanceKm,
-
-        @PositiveOrZero
-        Integer minPartnerExperienceYears,
+        Integer serviceRadiusKm,
 
         @NotNull
         @Positive

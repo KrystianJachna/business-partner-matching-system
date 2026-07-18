@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.need;
+package pl.krystian.businesspartnermatching.common.cooperation;
 
 public enum CooperationType {
 

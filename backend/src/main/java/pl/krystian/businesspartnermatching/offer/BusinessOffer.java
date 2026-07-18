@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.need;
+package pl.krystian.businesspartnermatching.offer;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -22,20 +22,20 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
-import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
 import pl.krystian.businesspartnermatching.common.money.MoneyRange;
 import pl.krystian.businesspartnermatching.common.time.DateRange;
 import pl.krystian.businesspartnermatching.company.Company;
+import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "business_needs")
+@Table(name = "business_offers")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BusinessNeed {
+public class BusinessOffer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,18 +57,19 @@ public class BusinessNeed {
 
     @ManyToMany
     @JoinTable(
-            name = "business_need_required_specializations",
-            joinColumns = @JoinColumn(name = "business_need_id"),
+            name = "business_offer_offered_specializations",
+            joinColumns = @JoinColumn(name = "business_offer_id"),
             inverseJoinColumns = @JoinColumn(name = "specialization_id")
     )
-    private Set<Specialization> requiredSpecializations = new HashSet<>();
+    private Set<Specialization> offeredSpecializations =
+            new HashSet<>();
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(
                     name = "min",
                     column = @Column(
-                            name = "budget_min",
+                            name = "price_min",
                             precision = 15,
                             scale = 2
                     )
@@ -76,7 +77,7 @@ public class BusinessNeed {
             @AttributeOverride(
                     name = "max",
                     column = @Column(
-                            name = "budget_max",
+                            name = "price_max",
                             precision = 15,
                             scale = 2
                     )
@@ -84,31 +85,28 @@ public class BusinessNeed {
             @AttributeOverride(
                     name = "currency",
                     column = @Column(
-                            name = "budget_currency",
+                            name = "price_currency",
                             length = 3
                     )
             )
     })
-    private MoneyRange budget;
+    private MoneyRange priceRange;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(
                     name = "from",
-                    column = @Column(name = "required_from")
+                    column = @Column(name = "available_from")
             ),
             @AttributeOverride(
                     name = "until",
-                    column = @Column(name = "required_until")
+                    column = @Column(name = "available_until")
             )
     })
-    private DateRange requiredPeriod;
+    private DateRange availabilityPeriod;
 
-    @Column(name = "max_distance_km")
-    private Integer maxDistanceKm;
-
-    @Column(name = "min_partner_experience_years")
-    private Integer minPartnerExperienceYears;
+    @Column(name = "service_radius_km")
+    private Integer serviceRadiusKm;
 
     @Column(name = "max_partners", nullable = false)
     private Integer maxPartners;
@@ -116,7 +114,11 @@ public class BusinessNeed {
     @Column(nullable = false)
     private boolean active = true;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(
+            name = "created_at",
+            nullable = false,
+            updatable = false
+    )
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
@@ -135,29 +137,26 @@ public class BusinessNeed {
         updatedAt = LocalDateTime.now();
     }
 
-    public BusinessNeed(
+    public BusinessOffer(
             Company company,
             String title,
             String description,
             CooperationType cooperationType,
-            Set<Specialization> requiredSpecializations,
-            MoneyRange budget,
-            DateRange requiredPeriod,
-            Integer maxDistanceKm,
-            Integer minPartnerExperienceYears,
+            Set<Specialization> offeredSpecializations,
+            MoneyRange priceRange,
+            DateRange availabilityPeriod,
+            Integer serviceRadiusKm,
             Integer maxPartners
     ) {
         this.company = company;
         this.title = title;
         this.description = description;
         this.cooperationType = cooperationType;
-        this.requiredSpecializations =
-                new HashSet<>(requiredSpecializations);
-        this.budget = budget;
-        this.requiredPeriod = requiredPeriod;
-        this.maxDistanceKm = maxDistanceKm;
-        this.minPartnerExperienceYears =
-                minPartnerExperienceYears;
+        this.offeredSpecializations =
+                new HashSet<>(offeredSpecializations);
+        this.priceRange = priceRange;
+        this.availabilityPeriod = availabilityPeriod;
+        this.serviceRadiusKm = serviceRadiusKm;
         this.maxPartners = maxPartners;
     }
 }
