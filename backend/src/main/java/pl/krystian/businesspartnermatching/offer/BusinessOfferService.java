@@ -6,7 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
 import pl.krystian.businesspartnermatching.catalog.specialization.SpecializationResolver;
 import pl.krystian.businesspartnermatching.common.money.MoneyRange;
+import pl.krystian.businesspartnermatching.common.money.dto.MoneyRangeRequest;
 import pl.krystian.businesspartnermatching.common.time.DateRange;
+import pl.krystian.businesspartnermatching.common.time.dto.DateRangeRequest;
 import pl.krystian.businesspartnermatching.company.Company;
 import pl.krystian.businesspartnermatching.company.CompanyRepository;
 import pl.krystian.businesspartnermatching.company.exception.CompanyNotFoundException;
@@ -40,21 +42,8 @@ public class BusinessOfferService {
                         request.offeredSpecializationIds()
                 );
 
-        MoneyRange priceRange = request.priceRange() == null
-                ? null
-                : new MoneyRange(
-                request.priceRange().min(),
-                request.priceRange().max(),
-                request.priceRange().currency()
-        );
-
-        DateRange availabilityPeriod =
-                request.availabilityPeriod() == null
-                        ? null
-                        : new DateRange(
-                        request.availabilityPeriod().from(),
-                        request.availabilityPeriod().until()
-                );
+        MoneyRange priceRange = MoneyRangeRequest.fromNullable(request.priceRange());
+        DateRange availabilityPeriod = DateRangeRequest.fromNullable(request.availabilityPeriod());
 
         BusinessOffer businessOffer = new BusinessOffer(
                 company,
