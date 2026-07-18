@@ -10,10 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
-public abstract class ActivatableAuditableEntity {
-
-    @Column(nullable = false)
-    private boolean active = true;
+public abstract class ActivatableAuditableEntity extends ActivatableEntity {
 
     @Column(
             name = "created_at",
