@@ -2,15 +2,8 @@ package pl.krystian.businesspartnermatching.need;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.postgresql.PostgreSQLContainer;
+import pl.krystian.businesspartnermatching.IntegrationTest;
 import pl.krystian.businesspartnermatching.catalog.industry.Industry;
 import pl.krystian.businesspartnermatching.catalog.industry.IndustryRepository;
 import pl.krystian.businesspartnermatching.catalog.specialization.Specialization;
@@ -26,19 +19,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Testcontainers
-@Transactional
-class BusinessNeedControllerIntegrationTest {
 
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer postgres =
-            new PostgreSQLContainer("postgres:16-alpine");
-
-    @Autowired
-    private MockMvc mockMvc;
+class BusinessNeedControllerIntegrationTest extends IntegrationTest {
 
     @Autowired
     private IndustryRepository industryRepository;
