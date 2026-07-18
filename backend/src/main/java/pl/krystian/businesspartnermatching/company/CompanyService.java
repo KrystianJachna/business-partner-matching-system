@@ -34,10 +34,7 @@ public class CompanyService {
         Set<Specialization> specializations = specializationRepository
                 .findAllByIdInAndActiveTrue(request.specializationIds());
 
-        validateAllSpecializationsFound(
-                request.specializationIds(),
-                specializations
-        );
+        validateAllSpecializationsFound(request.specializationIds(), specializations);
 
         validateSpecializationsBelongToIndustry(
                 industry.getId(),

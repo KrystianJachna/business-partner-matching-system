@@ -14,9 +14,7 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping
-    public CompanyResponse createCompany(
-            @Valid @RequestBody CreateCompanyRequest request
-    ) {
+    public CompanyResponse createCompany(@Valid @RequestBody CreateCompanyRequest request) {
         return companyService.createCompany(request);
     }
 

@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IndustryRepository extends JpaRepository<Industry, Long> {
+
     List<Industry> findAllByActiveTrueOrderByNameAsc();
 
     Optional<Industry> findByIdAndActiveTrue(Long id);
-
 }

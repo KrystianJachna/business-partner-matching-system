@@ -7,7 +7,19 @@ import lombok.NoArgsConstructor;
 import pl.krystian.businesspartnermatching.catalog.industry.Industry;
 
 @Entity
-@Table(name = "specializations", uniqueConstraints = {@UniqueConstraint(name = "uk_specializations_code", columnNames = "code"), @UniqueConstraint(name = "uk_specializations_industry_name", columnNames = {"industry_id", "name"})})
+@Table(
+        name = "specializations",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_specializations_code",
+                        columnNames = "code"
+                ),
+                @UniqueConstraint(
+                        name = "uk_specializations_industry_name",
+                        columnNames = {"industry_id", "name"}
+                )
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Specialization {

@@ -19,6 +19,7 @@ public record CompanyResponse(
         String capabilities,
         boolean active
 ) {
+
     public static CompanyResponse from(Company company) {
         return new CompanyResponse(
                 company.getId(),
