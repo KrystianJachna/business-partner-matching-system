@@ -8,6 +8,7 @@ import pl.krystian.businesspartnermatching.catalog.industry.model.entity.Industr
 import pl.krystian.businesspartnermatching.catalog.specialization.model.entity.Specialization;
 import pl.krystian.businesspartnermatching.common.persistence.ActivatableEntity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +47,12 @@ public class Company extends ActivatableEntity {
     @Column(nullable = false, length = 150)
     private String city;
 
+    @Column(precision = 9, scale = 6)
+    private BigDecimal latitude;
+
+    @Column(precision = 9, scale = 6)
+    private BigDecimal longitude;
+
     @Column(name = "established_at")
     private LocalDate establishedAt;
 
@@ -59,6 +66,8 @@ public class Company extends ActivatableEntity {
             Set<Specialization> specializations,
             String country,
             String city,
+            BigDecimal latitude,
+            BigDecimal longitude,
             LocalDate establishedAt,
             String capabilities
     ) {
@@ -68,6 +77,8 @@ public class Company extends ActivatableEntity {
         this.specializations = new HashSet<>(specializations);
         this.country = country;
         this.city = city;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.establishedAt = establishedAt;
         this.capabilities = capabilities;
     }

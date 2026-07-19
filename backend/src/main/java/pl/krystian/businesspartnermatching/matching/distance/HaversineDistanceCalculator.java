@@ -3,8 +3,8 @@ package pl.krystian.businesspartnermatching.matching.distance;
 import org.springframework.stereotype.Component;
 import pl.krystian.businesspartnermatching.company.model.entity.Company;
 
-import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.OptionalDouble;
 
 @Component
 public class HaversineDistanceCalculator
@@ -27,8 +27,12 @@ public class HaversineDistanceCalculator
                 "Second company cannot be null"
         );
 
-        validateCoordinates(firstCompany);
-        validateCoordinates(secondCompany);
+        if (!hasCoordinates(firstCompany)
+                || !hasCoordinates(secondCompany)) {
+            throw new IllegalStateException(
+                    "Both companies must have coordinates"
+            );
+        }
 
         double firstLatitude = Math.toRadians(
                 firstCompany.getLatitude().doubleValue()
@@ -72,29 +76,8 @@ public class HaversineDistanceCalculator
         return EARTH_RADIUS_KM * angularDistance;
     }
 
-    private void validateCoordinates(Company company) {
-        BigDecimal latitude = company.getLatitude();
-        BigDecimal longitude = company.getLongitude();
-
-        if (latitude == null || longitude == null) {
-            throw new CoordinatesNotAvailableException(
-                    "Coordinates are not available for company: "
-                            + company.getName()
-            );
-        }
-
-        if (latitude.compareTo(BigDecimal.valueOf(-90)) < 0
-                || latitude.compareTo(BigDecimal.valueOf(90)) > 0) {
-            throw new IllegalArgumentException(
-                    "Latitude must be between -90 and 90"
-            );
-        }
-
-        if (longitude.compareTo(BigDecimal.valueOf(-180)) < 0
-                || longitude.compareTo(BigDecimal.valueOf(180)) > 0) {
-            throw new IllegalArgumentException(
-                    "Longitude must be between -180 and 180"
-            );
-        }
+    private boolean hasCoordinates(Company company) {
+        return company.getLatitude() != null
+                && company.getLongitude() != null;
     }
 }

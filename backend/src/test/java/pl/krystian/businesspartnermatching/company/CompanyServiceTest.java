@@ -18,6 +18,7 @@ import pl.krystian.businesspartnermatching.company.model.entity.Company;
 import pl.krystian.businesspartnermatching.company.repository.CompanyRepository;
 import pl.krystian.businesspartnermatching.company.service.CompanyService;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
@@ -50,6 +51,8 @@ class CompanyServiceTest {
                 Set.of(1L),
                 "Poland",
                 "Kraków",
+                new BigDecimal("50.064650"),
+                new BigDecimal("19.944980"),
                 LocalDate.of(2018, 4, 10),
                 "Zespół programistów Java i Spring"
         );
@@ -97,6 +100,8 @@ class CompanyServiceTest {
                 Set.of(1L),
                 "Poland",
                 "Kraków",
+                new BigDecimal("50.064650"),
+                new BigDecimal("19.944980"),
                 LocalDate.of(2018, 4, 10),
                 "Zespół programistów Java i Spring"
         );
@@ -120,6 +125,8 @@ class CompanyServiceTest {
                 Set.of(1L, 2L),
                 "Poland",
                 "Kraków",
+                new BigDecimal("50.064650"),
+                new BigDecimal("19.944980"),
                 LocalDate.of(2018, 4, 10),
                 "Zespół programistów Java i Spring"
         );
@@ -151,6 +158,8 @@ class CompanyServiceTest {
                 Set.of(1L),
                 "Poland",
                 "Kraków",
+                new BigDecimal("50.064650"),
+                new BigDecimal("19.944980"),
                 LocalDate.of(2018, 4, 10),
                 "Zespół programistów Java i Spring"
         );

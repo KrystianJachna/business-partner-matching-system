@@ -50,6 +50,8 @@ public class CompanyService {
                 specializations,
                 request.country(),
                 request.city(),
+                request.latitude(),
+                request.longitude(),
                 request.establishedAt(),
                 request.capabilities()
         );

@@ -12,6 +12,7 @@ import pl.krystian.businesspartnermatching.company.model.entity.Company;
 import pl.krystian.businesspartnermatching.company.repository.CompanyRepository;
 import pl.krystian.businesspartnermatching.need.repository.BusinessNeedRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -60,6 +61,8 @@ class BusinessNeedControllerIntegrationTest extends IntegrationTest {
                         Set.of(specialization),
                         "Poland",
                         "Krakow",
+                        new BigDecimal("50.064650"),
+                        new BigDecimal("19.944980"),
                         LocalDate.of(2020, 1, 1),
                         "Software development"
                 )

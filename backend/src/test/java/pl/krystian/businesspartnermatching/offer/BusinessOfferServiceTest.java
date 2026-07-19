@@ -82,6 +82,8 @@ class BusinessOfferServiceTest {
                 Set.of(specialization),
                 "Poland",
                 "Krakow",
+                new BigDecimal("50.064650"),
+                new BigDecimal("19.944980"),
                 LocalDate.of(2020, 1, 1),
                 "Software development"
         );
@@ -227,6 +229,8 @@ class BusinessOfferServiceTest {
                 Set.of(),
                 "Poland",
                 "Krakow",
+                new BigDecimal("50.064650"),
+                new BigDecimal("19.944980"),
                 LocalDate.of(2020, 1, 1),
                 "Software development"
         );
@@ -292,6 +296,8 @@ class BusinessOfferServiceTest {
                 Set.of(specialization),
                 "Poland",
                 "Krakow",
+                new BigDecimal("50.064650"),
+                new BigDecimal("19.944980"),
                 LocalDate.of(2020, 1, 1),
                 "Software development"
         );

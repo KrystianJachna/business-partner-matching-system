@@ -5,5 +5,6 @@ Application for matching business needs with offers using scoring and stable mat
 http://localhost:8080/swagger-ui/index.html
 
 # todo:
+- mapa na froncie zeby mozna bylo zaznaczyc obszar w ktorym szukamy partnerow
 
 # next:
