@@ -26,8 +26,8 @@ public class HaversineDistanceCalculator
                 "Second company cannot be null"
         );
 
-        if (!hasCoordinates(firstCompany)
-                || !hasCoordinates(secondCompany)) {
+        if (hasMissingCoordinates(firstCompany)
+                || hasMissingCoordinates(secondCompany)) {
             throw new IllegalStateException(
                     "Both companies must have coordinates"
             );
@@ -75,8 +75,8 @@ public class HaversineDistanceCalculator
         return EARTH_RADIUS_KM * angularDistance;
     }
 
-    private boolean hasCoordinates(Company company) {
-        return company.getLatitude() != null
-                && company.getLongitude() != null;
+    private boolean hasMissingCoordinates(Company company) {
+        return company.getLatitude() == null
+                || company.getLongitude() == null;
     }
 }
