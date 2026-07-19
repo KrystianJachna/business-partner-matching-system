@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import pl.krystian.businesspartnermatching.company.model.entity.Company;
 
 import java.util.Objects;
-import java.util.OptionalDouble;
 
 @Component
 public class HaversineDistanceCalculator

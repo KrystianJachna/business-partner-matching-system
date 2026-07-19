@@ -2,7 +2,6 @@ package pl.krystian.businesspartnermatching.matching.distance;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.stereotype.Component;
 import pl.krystian.businesspartnermatching.company.model.entity.Company;
 
 import java.math.BigDecimal;

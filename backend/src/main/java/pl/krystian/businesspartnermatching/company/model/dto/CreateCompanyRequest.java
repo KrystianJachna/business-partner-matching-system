@@ -1,13 +1,11 @@
 package pl.krystian.businesspartnermatching.company.model.dto;
 
 import jakarta.validation.constraints.*;
-import pl.krystian.businesspartnermatching.common.validation.coordinates.ValidCoordinates;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
-@ValidCoordinates
 public record CreateCompanyRequest(
 
         @NotBlank
