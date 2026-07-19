@@ -6,5 +6,5 @@ http://localhost:8080/swagger-ui/index.html
 
 # todo:
 - mapa na froncie zeby mozna bylo zaznaczyc obszar w ktorym szukamy partnerow
-
+- dopracowanie sensu DateScoreCalculator, aby rozróżniać sam overlap od wcześniejszej dostępności?
 # next:
