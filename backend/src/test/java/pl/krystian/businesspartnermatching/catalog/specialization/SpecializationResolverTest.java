@@ -6,8 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import pl.krystian.businesspartnermatching.catalog.industry.Industry;
+import pl.krystian.businesspartnermatching.catalog.industry.model.entity.Industry;
 import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
+import pl.krystian.businesspartnermatching.catalog.specialization.model.entity.Specialization;
+import pl.krystian.businesspartnermatching.catalog.specialization.repository.SpecializationRepository;
+import pl.krystian.businesspartnermatching.catalog.specialization.service.SpecializationResolver;
 
 import java.util.Set;
 
