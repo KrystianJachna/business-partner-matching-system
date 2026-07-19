@@ -47,10 +47,10 @@ public class Company extends ActivatableEntity {
     @Column(nullable = false, length = 150)
     private String city;
 
-    @Column(precision = 9, scale = 6)
+    @Column(nullable = false, precision = 9, scale = 6)
     private BigDecimal latitude;
 
-    @Column(precision = 9, scale = 6)
+    @Column(nullable = false, precision = 9, scale = 6)
     private BigDecimal longitude;
 
     @Column(name = "established_at")

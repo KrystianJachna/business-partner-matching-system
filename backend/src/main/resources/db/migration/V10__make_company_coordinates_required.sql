@@ -1,0 +1,3 @@
+ALTER TABLE companies
+    ALTER COLUMN latitude SET NOT NULL,
+    ALTER COLUMN longitude SET NOT NULL;
