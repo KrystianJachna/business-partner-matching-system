@@ -3,6 +3,8 @@ package pl.krystian.businesspartnermatching.matching.scoring.calculators;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.krystian.businesspartnermatching.common.money.CurrencyCode;
+import pl.krystian.businesspartnermatching.common.money.FixedRateMoneyConverter;
+import pl.krystian.businesspartnermatching.common.money.MoneyConverter;
 import pl.krystian.businesspartnermatching.common.money.MoneyRange;
 import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
@@ -20,7 +22,12 @@ class BudgetScoreCalculatorTest {
 
     @BeforeEach
     void setUp() {
-        calculator = new BudgetScoreCalculator();
+        MoneyConverter moneyConverter =
+                new FixedRateMoneyConverter();
+
+        calculator = new BudgetScoreCalculator(
+                moneyConverter
+        );
     }
 
     @Test
@@ -33,90 +40,180 @@ class BudgetScoreCalculatorTest {
     void shouldReturnOneWhenPriceRangeFullyCoversBudget() {
         // given
         BusinessNeed need = needWithBudget(
-                moneyRange("10000", "20000", CurrencyCode.PLN)
+                moneyRange(
+                        "10000",
+                        "20000",
+                        CurrencyCode.PLN
+                )
         );
 
         BusinessOffer offer = offerWithPriceRange(
-                moneyRange("8000", "22000", CurrencyCode.PLN)
+                moneyRange(
+                        "8000",
+                        "22000",
+                        CurrencyCode.PLN
+                )
         );
 
         // when
-        BigDecimal score = calculator.calculateScore(need, offer);
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
 
         // then
-        assertThat(score).isEqualByComparingTo("1.0000");
+        assertThat(score)
+                .isEqualByComparingTo("1.0000");
     }
 
     @Test
     void shouldReturnPartialScoreWhenRangesPartiallyOverlap() {
         // given
         BusinessNeed need = needWithBudget(
-                moneyRange("10000", "20000", CurrencyCode.PLN)
+                moneyRange(
+                        "10000",
+                        "20000",
+                        CurrencyCode.PLN
+                )
         );
 
         BusinessOffer offer = offerWithPriceRange(
-                moneyRange("15000", "25000", CurrencyCode.PLN)
+                moneyRange(
+                        "15000",
+                        "25000",
+                        CurrencyCode.PLN
+                )
         );
 
         // when
-        BigDecimal score = calculator.calculateScore(need, offer);
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
 
         // then
-        assertThat(score).isEqualByComparingTo("0.5000");
+        assertThat(score)
+                .isEqualByComparingTo("0.5000");
     }
 
     @Test
     void shouldReturnZeroWhenRangesDoNotOverlap() {
         // given
         BusinessNeed need = needWithBudget(
-                moneyRange("10000", "20000", CurrencyCode.PLN)
+                moneyRange(
+                        "10000",
+                        "20000",
+                        CurrencyCode.PLN
+                )
         );
 
         BusinessOffer offer = offerWithPriceRange(
-                moneyRange("25000", "30000", CurrencyCode.PLN)
+                moneyRange(
+                        "25000",
+                        "30000",
+                        CurrencyCode.PLN
+                )
         );
 
         // when
-        BigDecimal score = calculator.calculateScore(need, offer);
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
     void shouldReturnZeroWhenRangesOnlyTouchAtBoundary() {
         // given
         BusinessNeed need = needWithBudget(
-                moneyRange("10000", "20000", CurrencyCode.PLN)
+                moneyRange(
+                        "10000",
+                        "20000",
+                        CurrencyCode.PLN
+                )
         );
 
         BusinessOffer offer = offerWithPriceRange(
-                moneyRange("20000", "30000", CurrencyCode.PLN)
+                moneyRange(
+                        "20000",
+                        "30000",
+                        CurrencyCode.PLN
+                )
         );
 
         // when
-        BigDecimal score = calculator.calculateScore(need, offer);
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
-    void shouldReturnZeroWhenCurrenciesAreDifferent() {
+    void shouldReturnPartialScoreWhenDifferentCurrenciesOverlapAfterConversion() {
         // given
         BusinessNeed need = needWithBudget(
-                moneyRange("10000", "20000", CurrencyCode.PLN)
+                moneyRange(
+                        "4000",
+                        "5000",
+                        CurrencyCode.PLN
+                )
         );
 
         BusinessOffer offer = offerWithPriceRange(
-                moneyRange("10000", "20000", CurrencyCode.EUR)
+                moneyRange(
+                        "900",
+                        "1100",
+                        CurrencyCode.EUR
+                )
         );
 
         // when
-        BigDecimal score = calculator.calculateScore(need, offer);
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(score)
+                .isEqualByComparingTo("0.7300");
+    }
+
+    @Test
+    void shouldReturnZeroWhenDifferentCurrenciesDoNotOverlapAfterConversion() {
+        // given
+        BusinessNeed need = needWithBudget(
+                moneyRange(
+                        "1000",
+                        "2000",
+                        CurrencyCode.PLN
+                )
+        );
+
+        BusinessOffer offer = offerWithPriceRange(
+                moneyRange(
+                        "900",
+                        "1100",
+                        CurrencyCode.EUR
+                )
+        );
+
+        // when
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
+
+        // then
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -125,66 +222,136 @@ class BudgetScoreCalculatorTest {
         BusinessNeed need = needWithBudget(null);
 
         BusinessOffer offer = offerWithPriceRange(
-                moneyRange("10000", "20000", CurrencyCode.PLN)
+                moneyRange(
+                        "10000",
+                        "20000",
+                        CurrencyCode.PLN
+                )
         );
 
         // when
-        BigDecimal score = calculator.calculateScore(need, offer);
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ONE);
     }
 
     @Test
     void shouldReturnOneWhenPriceRangeIsNotSpecified() {
         // given
         BusinessNeed need = needWithBudget(
-                moneyRange("10000", "20000", CurrencyCode.PLN)
+                moneyRange(
+                        "10000",
+                        "20000",
+                        CurrencyCode.PLN
+                )
         );
 
         BusinessOffer offer = offerWithPriceRange(null);
 
         // when
-        BigDecimal score = calculator.calculateScore(need, offer);
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ONE);
     }
 
     @Test
     void shouldReturnOneWhenPointBudgetIsCoveredByPriceRange() {
         // given
         BusinessNeed need = needWithBudget(
-                moneyRange("15000", "15000", CurrencyCode.PLN)
+                moneyRange(
+                        "15000",
+                        "15000",
+                        CurrencyCode.PLN
+                )
         );
 
         BusinessOffer offer = offerWithPriceRange(
-                moneyRange("10000", "20000", CurrencyCode.PLN)
+                moneyRange(
+                        "10000",
+                        "20000",
+                        CurrencyCode.PLN
+                )
         );
 
         // when
-        BigDecimal score = calculator.calculateScore(need, offer);
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ONE);
+    }
+
+    @Test
+    void shouldReturnOneWhenPointBudgetIsCoveredAfterCurrencyConversion() {
+        // given
+        BusinessNeed need = needWithBudget(
+                moneyRange(
+                        "4300",
+                        "4300",
+                        CurrencyCode.PLN
+                )
+        );
+
+        BusinessOffer offer = offerWithPriceRange(
+                moneyRange(
+                        "900",
+                        "1100",
+                        CurrencyCode.EUR
+                )
+        );
+
+        // when
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
+
+        // then
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ONE);
     }
 
     @Test
     void shouldReturnZeroWhenPointBudgetIsNotCoveredByPriceRange() {
         // given
         BusinessNeed need = needWithBudget(
-                moneyRange("15000", "15000", CurrencyCode.PLN)
+                moneyRange(
+                        "15000",
+                        "15000",
+                        CurrencyCode.PLN
+                )
         );
 
         BusinessOffer offer = offerWithPriceRange(
-                moneyRange("16000", "20000", CurrencyCode.PLN)
+                moneyRange(
+                        "16000",
+                        "20000",
+                        CurrencyCode.PLN
+                )
         );
 
         // when
-        BigDecimal score = calculator.calculateScore(need, offer);
+        BigDecimal score = calculator.calculateScore(
+                need,
+                offer
+        );
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     private BusinessNeed needWithBudget(MoneyRange budget) {
@@ -193,7 +360,9 @@ class BudgetScoreCalculatorTest {
         return need;
     }
 
-    private BusinessOffer offerWithPriceRange(MoneyRange priceRange) {
+    private BusinessOffer offerWithPriceRange(
+            MoneyRange priceRange
+    ) {
         BusinessOffer offer = mock(BusinessOffer.class);
         when(offer.getPriceRange()).thenReturn(priceRange);
         return offer;

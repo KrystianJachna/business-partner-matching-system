@@ -1,6 +1,7 @@
 package pl.krystian.businesspartnermatching.matching.scoring.calculators;
 
 import org.springframework.stereotype.Component;
+import pl.krystian.businesspartnermatching.common.money.MoneyConverter;
 import pl.krystian.businesspartnermatching.common.money.MoneyRange;
 import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
@@ -14,6 +15,12 @@ public class BudgetScoreCalculator
         implements CriterionScoreCalculator {
 
     private static final int SCORE_SCALE = 4;
+
+    private final MoneyConverter moneyConverter;
+
+    public BudgetScoreCalculator(MoneyConverter moneyConverter) {
+        this.moneyConverter = moneyConverter;
+    }
 
     @Override
     public MatchingCriterion criterion() {
@@ -32,19 +39,29 @@ public class BudgetScoreCalculator
             return BigDecimal.ONE;
         }
 
-        if (budget.getCurrency() != priceRange.getCurrency()) {
-            return BigDecimal.ZERO;
-        }
+        BigDecimal convertedPriceMin = moneyConverter.convert(
+                priceRange.getMin(),
+                priceRange.getCurrency(),
+                budget.getCurrency()
+        );
+
+        BigDecimal convertedPriceMax = moneyConverter.convert(
+                priceRange.getMax(),
+                priceRange.getCurrency(),
+                budget.getCurrency()
+        );
 
         BigDecimal budgetLength =
                 budget.getMax().subtract(budget.getMin());
 
         if (budgetLength.compareTo(BigDecimal.ZERO) == 0) {
             boolean pointBudgetIsCovered =
-                    priceRange.getMin()
-                            .compareTo(budget.getMin()) <= 0
-                            && priceRange.getMax()
-                            .compareTo(budget.getMax()) >= 0;
+                    convertedPriceMin.compareTo(
+                            budget.getMin()
+                    ) <= 0
+                            && convertedPriceMax.compareTo(
+                            budget.getMax()
+                    ) >= 0;
 
             return pointBudgetIsCovered
                     ? BigDecimal.ONE
@@ -52,10 +69,10 @@ public class BudgetScoreCalculator
         }
 
         BigDecimal overlapStart =
-                budget.getMin().max(priceRange.getMin());
+                budget.getMin().max(convertedPriceMin);
 
         BigDecimal overlapEnd =
-                budget.getMax().min(priceRange.getMax());
+                budget.getMax().min(convertedPriceMax);
 
         if (overlapStart.compareTo(overlapEnd) >= 0) {
             return BigDecimal.ZERO;
