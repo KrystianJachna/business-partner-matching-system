@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.matching.preference.profile;
+package pl.krystian.businesspartnermatching.matching.scoring.weights;
 
 import org.junit.jupiter.api.Test;
 import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
@@ -9,11 +9,11 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class PreferenceProfileTest {
+class ScoringWeightsTest {
 
     @Test
     void shouldCreatePreferenceProfileWhenWeightsSumToOne() {
-        PreferenceProfile profile = new PreferenceProfile(
+        ScoringWeights profile = new ScoringWeights(
                 Map.of(
                         MatchingCriterion.SPECIALIZATION,
                         new BigDecimal("0.60"),
@@ -41,7 +41,7 @@ class PreferenceProfileTest {
         );
 
         assertThatThrownBy(
-                () -> new PreferenceProfile(weights)
+                () -> new ScoringWeights(weights)
         )
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Criterion weights must sum to 1");
@@ -57,7 +57,7 @@ class PreferenceProfileTest {
         );
 
         assertThatThrownBy(
-                () -> new PreferenceProfile(weights)
+                () -> new ScoringWeights(weights)
         )
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Criterion weight cannot be negative");
@@ -65,7 +65,7 @@ class PreferenceProfileTest {
 
     @Test
     void shouldReturnZeroForMissingCriterion() {
-        PreferenceProfile profile = new PreferenceProfile(
+        ScoringWeights profile = new ScoringWeights(
                 Map.of(
                         MatchingCriterion.SPECIALIZATION,
                         BigDecimal.ONE

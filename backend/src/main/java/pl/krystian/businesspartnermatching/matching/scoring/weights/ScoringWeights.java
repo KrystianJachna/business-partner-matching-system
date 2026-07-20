@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.matching.preference.profile;
+package pl.krystian.businesspartnermatching.matching.scoring.weights;
 
 import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
 
@@ -7,13 +7,13 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-public record PreferenceProfile(
+public record ScoringWeights(
         Map<MatchingCriterion, BigDecimal> weights
 ) {
 
     private static final BigDecimal EXPECTED_SUM = BigDecimal.ONE;
 
-    public PreferenceProfile {
+    public ScoringWeights {
         if (weights == null || weights.isEmpty()) {
             throw new IllegalArgumentException(
                     "Preference profile must contain weights"

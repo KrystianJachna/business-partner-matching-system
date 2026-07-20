@@ -6,8 +6,8 @@ import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityC
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityFailureReason;
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityResult;
 import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
-import pl.krystian.businesspartnermatching.matching.preference.profile.PreferenceProfile;
-import pl.krystian.businesspartnermatching.matching.preference.profile.PreferenceProfileProvider;
+import pl.krystian.businesspartnermatching.matching.scoring.weights.ScoringWeights;
+import pl.krystian.businesspartnermatching.matching.scoring.weights.ScoringWeightsProvider;
 import pl.krystian.businesspartnermatching.matching.scoring.calculators.CriterionScoreCalculator;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
@@ -29,7 +29,7 @@ class MatchingScoreCalculatorTest {
     private CriterionScoreCalculator specializationCalculator;
     private CriterionScoreCalculator budgetCalculator;
     private CriterionScoreCalculator dateCalculator;
-    private PreferenceProfileProvider preferenceProfileProvider;
+    private ScoringWeightsProvider scoringWeightsProvider;
     private MatchingScoreCalculator matchingScoreCalculator;
 
     @BeforeEach
@@ -45,8 +45,8 @@ class MatchingScoreCalculatorTest {
         dateCalculator =
                 mock(CriterionScoreCalculator.class);
 
-        preferenceProfileProvider =
-                mock(PreferenceProfileProvider.class);
+        scoringWeightsProvider =
+                mock(ScoringWeightsProvider.class);
 
         matchingScoreCalculator = new MatchingScoreCalculator(
                 compatibilityChecker,
@@ -55,7 +55,7 @@ class MatchingScoreCalculatorTest {
                         budgetCalculator,
                         dateCalculator
                 ),
-                preferenceProfileProvider
+                scoringWeightsProvider
         );
     }
 
@@ -91,7 +91,7 @@ class MatchingScoreCalculatorTest {
                 offer
         );
 
-        PreferenceProfile profile = new PreferenceProfile(
+        ScoringWeights profile = new ScoringWeights(
                 Map.of(
                         MatchingCriterion.SPECIALIZATION,
                         new BigDecimal("0.50"),
@@ -102,7 +102,7 @@ class MatchingScoreCalculatorTest {
                 )
         );
 
-        when(preferenceProfileProvider.forNeed(need))
+        when(scoringWeightsProvider.forNeed(need))
                 .thenReturn(profile);
 
         // when
@@ -165,14 +165,14 @@ class MatchingScoreCalculatorTest {
                 offer
         );
 
-        PreferenceProfile profile = new PreferenceProfile(
+        ScoringWeights profile = new ScoringWeights(
                 Map.of(
                         MatchingCriterion.SPECIALIZATION,
                         BigDecimal.ONE
                 )
         );
 
-        when(preferenceProfileProvider.forNeed(need))
+        when(scoringWeightsProvider.forNeed(need))
                 .thenReturn(profile);
 
         // when
@@ -222,7 +222,7 @@ class MatchingScoreCalculatorTest {
                 offer
         );
 
-        PreferenceProfile profile = new PreferenceProfile(
+        ScoringWeights profile = new ScoringWeights(
                 Map.of(
                         MatchingCriterion.SPECIALIZATION,
                         new BigDecimal("0.50"),
@@ -233,7 +233,7 @@ class MatchingScoreCalculatorTest {
                 )
         );
 
-        when(preferenceProfileProvider.forNeed(need))
+        when(scoringWeightsProvider.forNeed(need))
                 .thenReturn(profile);
 
         // when
@@ -280,21 +280,21 @@ class MatchingScoreCalculatorTest {
                 offer
         );
 
-        PreferenceProfile profile = new PreferenceProfile(
+        ScoringWeights profile = new ScoringWeights(
                 Map.of(
                         MatchingCriterion.SPECIALIZATION,
                         BigDecimal.ONE
                 )
         );
 
-        when(preferenceProfileProvider.forNeed(need))
+        when(scoringWeightsProvider.forNeed(need))
                 .thenReturn(profile);
 
         // when
         matchingScoreCalculator.calculateForNeed(need, offer);
 
         // then
-        verify(preferenceProfileProvider).forNeed(need);
+        verify(scoringWeightsProvider).forNeed(need);
     }
 
     @Test
@@ -334,7 +334,7 @@ class MatchingScoreCalculatorTest {
                 specializationCalculator,
                 budgetCalculator,
                 dateCalculator,
-                preferenceProfileProvider
+                scoringWeightsProvider
         );
     }
 

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityChecker;
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityResult;
-import pl.krystian.businesspartnermatching.matching.preference.profile.PreferenceProfile;
-import pl.krystian.businesspartnermatching.matching.preference.profile.PreferenceProfileProvider;
+import pl.krystian.businesspartnermatching.matching.scoring.weights.ScoringWeights;
+import pl.krystian.businesspartnermatching.matching.scoring.weights.ScoringWeightsProvider;
 import pl.krystian.businesspartnermatching.matching.scoring.calculators.CriterionScoreCalculator;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
@@ -23,7 +23,7 @@ public class MatchingScoreCalculator {
 
     private final CompatibilityChecker compatibilityChecker;
     private final List<CriterionScoreCalculator> calculators;
-    private final PreferenceProfileProvider preferenceProfileProvider;
+    private final ScoringWeightsProvider scoringWeightsProvider;
 
     public MatchingScore calculateForNeed(
             BusinessNeed need,
@@ -39,13 +39,13 @@ public class MatchingScoreCalculator {
                 offer
         );
 
-        PreferenceProfile preferenceProfile =
-                preferenceProfileProvider.forNeed(need);
+        ScoringWeights scoringWeights =
+                scoringWeightsProvider.forNeed(need);
 
         return calculateScore(
                 need,
                 offer,
-                preferenceProfile
+                scoringWeights
         );
     }
 
@@ -63,20 +63,20 @@ public class MatchingScoreCalculator {
                 offer
         );
 
-        PreferenceProfile preferenceProfile =
-                preferenceProfileProvider.forOffer(offer);
+        ScoringWeights scoringWeights =
+                scoringWeightsProvider.forOffer(offer);
 
         return calculateScore(
                 need,
                 offer,
-                preferenceProfile
+                scoringWeights
         );
     }
 
     private MatchingScore calculateScore(
             BusinessNeed need,
             BusinessOffer offer,
-            PreferenceProfile preferenceProfile
+            ScoringWeights scoringWeights
     ) {
         List<CriterionScore> criterionScores = calculators
                 .stream()
@@ -94,7 +94,7 @@ public class MatchingScoreCalculator {
                 .map(criterionScore ->
                         calculateWeightedScore(
                                 criterionScore,
-                                preferenceProfile
+                                scoringWeights
                         )
                 )
                 .reduce(
@@ -114,12 +114,12 @@ public class MatchingScoreCalculator {
 
     private BigDecimal calculateWeightedScore(
             CriterionScore criterionScore,
-            PreferenceProfile preferenceProfile
+            ScoringWeights scoringWeights
     ) {
         return criterionScore
                 .value()
                 .multiply(
-                        preferenceProfile.weightOf(
+                        scoringWeights.weightOf(
                                 criterionScore.criterion()
                         )
                 );
