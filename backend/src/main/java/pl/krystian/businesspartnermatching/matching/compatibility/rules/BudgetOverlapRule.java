@@ -1,13 +1,20 @@
 package pl.krystian.businesspartnermatching.matching.compatibility.rules;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import pl.krystian.businesspartnermatching.common.money.MoneyConverter;
 import pl.krystian.businesspartnermatching.common.money.MoneyRange;
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityFailureReason;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 
+import java.math.BigDecimal;
+
 @Component
+@RequiredArgsConstructor
 public class BudgetOverlapRule implements CompatibilityRule {
+
+    private final MoneyConverter moneyConverter;
 
     @Override
     public boolean isSatisfied(
@@ -21,12 +28,21 @@ public class BudgetOverlapRule implements CompatibilityRule {
             return true;
         }
 
-        if (budget.getCurrency() != priceRange.getCurrency()) {
-            return false;
-        }
+        BigDecimal convertedPriceMin = moneyConverter.convert(
+                priceRange.getMin(),
+                priceRange.getCurrency(),
+                budget.getCurrency()
+        );
 
-        return budget.getMin().compareTo(priceRange.getMax()) <= 0
-                && priceRange.getMin().compareTo(budget.getMax()) <= 0;
+        BigDecimal convertedPriceMax = moneyConverter.convert(
+                priceRange.getMax(),
+                priceRange.getCurrency(),
+                budget.getCurrency()
+
+        );
+
+        return budget.getMin().compareTo(convertedPriceMax) <= 0
+                && convertedPriceMin.compareTo(budget.getMax()) <= 0;
     }
 
     @Override
