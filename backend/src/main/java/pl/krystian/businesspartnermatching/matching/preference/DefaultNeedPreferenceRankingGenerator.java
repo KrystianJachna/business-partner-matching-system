@@ -21,7 +21,7 @@ public class DefaultNeedPreferenceRankingGenerator
     private final MatchingScoreCalculator matchingScoreCalculator;
 
     @Override
-    public List<ScoredNeed> generateRanking(
+    public List<Preference<BusinessNeed>> generateRanking(
             BusinessOffer offer,
             List<BusinessNeed> needs
     ) {
@@ -44,19 +44,21 @@ public class DefaultNeedPreferenceRankingGenerator
                         )
                 )
                 .map(need ->
-                        toScoredNeed(
+                        toPreference(
                                 offer,
                                 need
                         )
                 )
                 .sorted(
-                        Comparator.comparing(ScoredNeed::score)
+                        Comparator.comparing(
+                                        Preference<BusinessNeed>::score
+                                )
                                 .reversed()
                 )
                 .toList();
     }
 
-    private ScoredNeed toScoredNeed(
+    private Preference<BusinessNeed> toPreference(
             BusinessOffer offer,
             BusinessNeed need
     ) {
@@ -66,7 +68,7 @@ public class DefaultNeedPreferenceRankingGenerator
                         need
                 );
 
-        return new ScoredNeed(
+        return new Preference<>(
                 need,
                 matchingScore.totalScore()
         );

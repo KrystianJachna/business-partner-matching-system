@@ -21,7 +21,7 @@ public class DefaultOfferPreferenceRankingGenerator
     private final MatchingScoreCalculator matchingScoreCalculator;
 
     @Override
-    public List<ScoredOffer> generateRanking(
+    public List<Preference<BusinessOffer>> generateRanking(
             BusinessNeed need,
             List<BusinessOffer> offers
     ) {
@@ -38,19 +38,27 @@ public class DefaultOfferPreferenceRankingGenerator
         return offers.stream()
                 .filter(Objects::nonNull)
                 .filter(offer ->
-                        compatibilityChecker.isCompatible(need, offer)
+                        compatibilityChecker.isCompatible(
+                                need,
+                                offer
+                        )
                 )
                 .map(offer ->
-                        toScoredOffer(need, offer)
+                        toPreference(
+                                need,
+                                offer
+                        )
                 )
                 .sorted(
-                        Comparator.comparing(ScoredOffer::score)
+                        Comparator.comparing(
+                                        Preference<BusinessOffer>::score
+                                )
                                 .reversed()
                 )
                 .toList();
     }
 
-    private ScoredOffer toScoredOffer(
+    private Preference<BusinessOffer> toPreference(
             BusinessNeed need,
             BusinessOffer offer
     ) {
@@ -60,7 +68,7 @@ public class DefaultOfferPreferenceRankingGenerator
                         offer
                 );
 
-        return new ScoredOffer(
+        return new Preference<>(
                 offer,
                 matchingScore.totalScore()
         );

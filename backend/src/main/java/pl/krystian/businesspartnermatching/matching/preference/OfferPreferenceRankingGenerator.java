@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OfferPreferenceRankingGenerator {
 
-    List<ScoredOffer> generateRanking(
+    List<Preference<BusinessOffer>> generateRanking(
             BusinessNeed need,
             List<BusinessOffer> offers
     );

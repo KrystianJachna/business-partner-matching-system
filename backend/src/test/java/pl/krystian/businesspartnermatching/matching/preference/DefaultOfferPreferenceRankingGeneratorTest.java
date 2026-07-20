@@ -73,18 +73,19 @@ class DefaultOfferPreferenceRankingGeneratorTest {
                 .thenReturn(matchingScore("0.9500"));
 
         // when
-        List<ScoredOffer> ranking = rankingGenerator.generateRanking(
-                need,
-                List.of(
-                        firstOffer,
-                        secondOffer,
-                        thirdOffer
-                )
-        );
+        List<Preference<BusinessOffer>> ranking =
+                rankingGenerator.generateRanking(
+                        need,
+                        List.of(
+                                firstOffer,
+                                secondOffer,
+                                thirdOffer
+                        )
+                );
 
         // then
         assertThat(ranking)
-                .extracting(ScoredOffer::offer)
+                .extracting(Preference::candidate)
                 .containsExactly(
                         thirdOffer,
                         firstOffer,
@@ -92,7 +93,7 @@ class DefaultOfferPreferenceRankingGeneratorTest {
                 );
 
         assertThat(ranking)
-                .extracting(ScoredOffer::score)
+                .extracting(Preference::score)
                 .containsExactly(
                         new BigDecimal("0.9500"),
                         new BigDecimal("0.8000"),
@@ -113,19 +114,20 @@ class DefaultOfferPreferenceRankingGeneratorTest {
                 .thenReturn(matchingScore("0.8000"));
 
         // when
-        List<ScoredOffer> ranking = rankingGenerator.generateRanking(
-                need,
-                List.of(
-                        firstOffer,
-                        secondOffer
-                )
-        );
+        List<Preference<BusinessOffer>> ranking =
+                rankingGenerator.generateRanking(
+                        need,
+                        List.of(
+                                firstOffer,
+                                secondOffer
+                        )
+                );
 
         // then
         assertThat(ranking)
                 .hasSize(1);
 
-        assertThat(ranking.getFirst().offer())
+        assertThat(ranking.getFirst().candidate())
                 .isSameAs(firstOffer);
 
         assertThat(ranking.getFirst().score())
@@ -150,13 +152,14 @@ class DefaultOfferPreferenceRankingGeneratorTest {
                 .thenReturn(false);
 
         // when
-        List<ScoredOffer> ranking = rankingGenerator.generateRanking(
-                need,
-                List.of(
-                        firstOffer,
-                        secondOffer
-                )
-        );
+        List<Preference<BusinessOffer>> ranking =
+                rankingGenerator.generateRanking(
+                        need,
+                        List.of(
+                                firstOffer,
+                                secondOffer
+                        )
+                );
 
         // then
         assertThat(ranking)
