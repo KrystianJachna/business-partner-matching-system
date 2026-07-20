@@ -38,7 +38,6 @@ public class BudgetOverlapRule implements CompatibilityRule {
                 priceRange.getMax(),
                 priceRange.getCurrency(),
                 budget.getCurrency()
-
         );
 
         return budget.getMin().compareTo(convertedPriceMax) <= 0

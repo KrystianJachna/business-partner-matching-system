@@ -3,7 +3,6 @@ package pl.krystian.businesspartnermatching.matching.scoring.calculators;
 import org.springframework.stereotype.Component;
 import pl.krystian.businesspartnermatching.catalog.specialization.model.entity.Specialization;
 import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
-import pl.krystian.businesspartnermatching.matching.scoring.CriterionScoreCalculator;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 

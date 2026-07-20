@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.matching.scoring;
+package pl.krystian.businesspartnermatching.matching.scoring.calculators;
 
 import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;

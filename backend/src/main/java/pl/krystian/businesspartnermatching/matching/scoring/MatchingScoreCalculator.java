@@ -6,6 +6,7 @@ import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityC
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityResult;
 import pl.krystian.businesspartnermatching.matching.preference.profile.PreferenceProfile;
 import pl.krystian.businesspartnermatching.matching.preference.profile.PreferenceProfileProvider;
+import pl.krystian.businesspartnermatching.matching.scoring.calculators.CriterionScoreCalculator;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 
