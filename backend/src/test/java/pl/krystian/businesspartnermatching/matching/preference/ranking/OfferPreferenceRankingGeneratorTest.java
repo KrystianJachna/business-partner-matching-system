@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DefaultOfferPreferenceRankingGeneratorTest {
+class OfferPreferenceRankingGeneratorTest {
 
     @Mock
     private CompatibilityChecker compatibilityChecker;
@@ -41,12 +41,12 @@ class DefaultOfferPreferenceRankingGeneratorTest {
     @Mock
     private BusinessOffer thirdOffer;
 
-    private DefaultOfferPreferenceRankingGenerator rankingGenerator;
+    private OfferPreferenceRankingGenerator rankingGenerator;
 
     @BeforeEach
     void setUp() {
         rankingGenerator =
-                new DefaultOfferPreferenceRankingGenerator(
+                new OfferPreferenceRankingGenerator(
                         compatibilityChecker,
                         matchingScoreCalculator
                 );

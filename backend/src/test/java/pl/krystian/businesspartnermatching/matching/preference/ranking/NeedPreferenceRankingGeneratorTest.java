@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DefaultNeedPreferenceRankingGeneratorTest {
+class NeedPreferenceRankingGeneratorTest {
 
     @Mock
     private CompatibilityChecker compatibilityChecker;
@@ -41,12 +41,12 @@ class DefaultNeedPreferenceRankingGeneratorTest {
     @Mock
     private BusinessNeed thirdNeed;
 
-    private DefaultNeedPreferenceRankingGenerator rankingGenerator;
+    private NeedPreferenceRankingGenerator rankingGenerator;
 
     @BeforeEach
     void setUp() {
         rankingGenerator =
-                new DefaultNeedPreferenceRankingGenerator(
+                new NeedPreferenceRankingGenerator(
                         compatibilityChecker,
                         matchingScoreCalculator
                 );
