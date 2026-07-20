@@ -16,7 +16,7 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 public class DefaultOfferPreferenceRankingGenerator
-        implements OfferPreferenceRankingGenerator {
+        implements PreferenceRankingGenerator<BusinessNeed, BusinessOffer> {
 
     private final CompatibilityChecker compatibilityChecker;
     private final MatchingScoreCalculator matchingScoreCalculator;
