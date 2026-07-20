@@ -28,43 +28,72 @@ public class MatchingScoreCalculator {
             BusinessNeed need,
             BusinessOffer offer
     ) {
-        Objects.requireNonNull(
+        validateArguments(
                 need,
-                "Business need cannot be null"
+                offer
         );
 
-        Objects.requireNonNull(
-                offer,
-                "Business offer cannot be null"
+        validateCompatibility(
+                need,
+                offer
         );
-
-        CompatibilityResult compatibilityResult =
-                compatibilityChecker.check(need, offer);
-
-        if (!compatibilityResult.compatible()) {
-            throw new IncompatiblePairException(
-                    compatibilityResult.failureReasons()
-            );
-        }
 
         PreferenceProfile preferenceProfile =
                 preferenceProfileProvider.forNeed(need);
 
+        return calculateScore(
+                need,
+                offer,
+                preferenceProfile
+        );
+    }
+
+    public MatchingScore calculateForOffer(
+            BusinessOffer offer,
+            BusinessNeed need
+    ) {
+        validateArguments(
+                need,
+                offer
+        );
+
+        validateCompatibility(
+                need,
+                offer
+        );
+
+        PreferenceProfile preferenceProfile =
+                preferenceProfileProvider.forOffer(offer);
+
+        return calculateScore(
+                need,
+                offer,
+                preferenceProfile
+        );
+    }
+
+    private MatchingScore calculateScore(
+            BusinessNeed need,
+            BusinessOffer offer,
+            PreferenceProfile preferenceProfile
+    ) {
         List<CriterionScore> criterionScores = calculators
                 .stream()
                 .map(calculator -> new CriterionScore(
                         calculator.criterion(),
-                        calculator.calculateScore(need, offer)
+                        calculator.calculateScore(
+                                need,
+                                offer
+                        )
                 ))
                 .toList();
 
         BigDecimal totalScore = criterionScores
                 .stream()
-                .map(score ->
-                        score.value().multiply(
-                                preferenceProfile.weightOf(
-                                        score.criterion()
-                                )
+                .map(criterionScore ->
+                        calculateWeightedScore(
+                                criterionScore,
+                                preferenceProfile
                         )
                 )
                 .reduce(
@@ -79,6 +108,51 @@ public class MatchingScoreCalculator {
         return new MatchingScore(
                 totalScore,
                 criterionScores
+        );
+    }
+
+    private BigDecimal calculateWeightedScore(
+            CriterionScore criterionScore,
+            PreferenceProfile preferenceProfile
+    ) {
+        return criterionScore
+                .value()
+                .multiply(
+                        preferenceProfile.weightOf(
+                                criterionScore.criterion()
+                        )
+                );
+    }
+
+    private void validateCompatibility(
+            BusinessNeed need,
+            BusinessOffer offer
+    ) {
+        CompatibilityResult compatibilityResult =
+                compatibilityChecker.check(
+                        need,
+                        offer
+                );
+
+        if (!compatibilityResult.compatible()) {
+            throw new IncompatiblePairException(
+                    compatibilityResult.failureReasons()
+            );
+        }
+    }
+
+    private void validateArguments(
+            BusinessNeed need,
+            BusinessOffer offer
+    ) {
+        Objects.requireNonNull(
+                need,
+                "Business need cannot be null"
+        );
+
+        Objects.requireNonNull(
+                offer,
+                "Business offer cannot be null"
         );
     }
 }
