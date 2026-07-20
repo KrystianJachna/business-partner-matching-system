@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class CriterionScoreTest {
+class SingleCriterionScoreTest {
 
     @Test
     void shouldCreateCriterionScoreForValueBetweenZeroAndOne() {
-        CriterionScore score = new CriterionScore(
+        SingleCriterionScore score = new SingleCriterionScore(
                 MatchingCriterion.BUDGET,
                 new BigDecimal("0.75")
         );
@@ -26,7 +26,7 @@ class CriterionScoreTest {
 
     @Test
     void shouldAllowZero() {
-        CriterionScore score = new CriterionScore(
+        SingleCriterionScore score = new SingleCriterionScore(
                 MatchingCriterion.DATE,
                 BigDecimal.ZERO
         );
@@ -37,7 +37,7 @@ class CriterionScoreTest {
 
     @Test
     void shouldAllowOne() {
-        CriterionScore score = new CriterionScore(
+        SingleCriterionScore score = new SingleCriterionScore(
                 MatchingCriterion.SPECIALIZATION,
                 BigDecimal.ONE
         );
@@ -49,7 +49,7 @@ class CriterionScoreTest {
     @Test
     void shouldRejectValueLowerThanZero() {
         assertThatThrownBy(
-                () -> new CriterionScore(
+                () -> new SingleCriterionScore(
                         MatchingCriterion.DISTANCE,
                         new BigDecimal("-0.01")
                 )
@@ -63,7 +63,7 @@ class CriterionScoreTest {
     @Test
     void shouldRejectValueGreaterThanOne() {
         assertThatThrownBy(
-                () -> new CriterionScore(
+                () -> new SingleCriterionScore(
                         MatchingCriterion.EXPERIENCE,
                         new BigDecimal("1.01")
                 )
@@ -77,7 +77,7 @@ class CriterionScoreTest {
     @Test
     void shouldRejectNullCriterion() {
         assertThatThrownBy(
-                () -> new CriterionScore(
+                () -> new SingleCriterionScore(
                         null,
                         new BigDecimal("0.50")
                 )
@@ -91,7 +91,7 @@ class CriterionScoreTest {
     @Test
     void shouldRejectNullValue() {
         assertThatThrownBy(
-                () -> new CriterionScore(
+                () -> new SingleCriterionScore(
                         MatchingCriterion.BUDGET,
                         null
                 )

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public record MatchingScore(
         BigDecimal totalScore,
-        List<CriterionScore> criterionScores
+        List<SingleCriterionScore> singleCriterionScores
 ) {
 
     public MatchingScore {
@@ -16,7 +16,7 @@ public record MatchingScore(
         );
 
         Objects.requireNonNull(
-                criterionScores,
+                singleCriterionScores,
                 "Criterion scores cannot be null"
         );
 
@@ -27,6 +27,6 @@ public record MatchingScore(
             );
         }
 
-        criterionScores = List.copyOf(criterionScores);
+        singleCriterionScores = List.copyOf(singleCriterionScores);
     }
 }

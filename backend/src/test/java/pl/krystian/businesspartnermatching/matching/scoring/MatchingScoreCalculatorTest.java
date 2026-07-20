@@ -116,17 +116,17 @@ class MatchingScoreCalculatorTest {
         assertThat(result.totalScore())
                 .isEqualByComparingTo("0.7800");
 
-        assertThat(result.criterionScores())
+        assertThat(result.singleCriterionScores())
                 .containsExactly(
-                        new CriterionScore(
+                        new SingleCriterionScore(
                                 MatchingCriterion.SPECIALIZATION,
                                 new BigDecimal("0.80")
                         ),
-                        new CriterionScore(
+                        new SingleCriterionScore(
                                 MatchingCriterion.BUDGET,
                                 new BigDecimal("0.60")
                         ),
-                        new CriterionScore(
+                        new SingleCriterionScore(
                                 MatchingCriterion.DATE,
                                 BigDecimal.ONE
                         )
@@ -186,7 +186,7 @@ class MatchingScoreCalculatorTest {
         assertThat(result.totalScore())
                 .isEqualByComparingTo("0.8000");
 
-        assertThat(result.criterionScores())
+        assertThat(result.singleCriterionScores())
                 .hasSize(3);
     }
 

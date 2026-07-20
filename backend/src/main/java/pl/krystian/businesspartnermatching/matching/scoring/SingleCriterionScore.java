@@ -5,7 +5,7 @@ import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public record CriterionScore(
+public record SingleCriterionScore(
         MatchingCriterion criterion,
         BigDecimal value
 ) {
@@ -13,7 +13,7 @@ public record CriterionScore(
     private static final BigDecimal MIN_VALUE = BigDecimal.ZERO;
     private static final BigDecimal MAX_VALUE = BigDecimal.ONE;
 
-    public CriterionScore {
+    public SingleCriterionScore {
         Objects.requireNonNull(
                 criterion,
                 "Matching criterion cannot be null"

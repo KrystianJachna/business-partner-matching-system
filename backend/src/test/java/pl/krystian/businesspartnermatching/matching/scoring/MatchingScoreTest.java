@@ -15,12 +15,12 @@ class MatchingScoreTest {
     @Test
     void shouldCreateMatchingScoreForValueBetweenZeroAndOne() {
         // given
-        List<CriterionScore> criterionScores = List.of(
-                new CriterionScore(
+        List<SingleCriterionScore> singleCriterionScores = List.of(
+                new SingleCriterionScore(
                         MatchingCriterion.SPECIALIZATION,
                         new BigDecimal("0.7500")
                 ),
-                new CriterionScore(
+                new SingleCriterionScore(
                         MatchingCriterion.BUDGET,
                         new BigDecimal("0.9000")
                 )
@@ -29,15 +29,15 @@ class MatchingScoreTest {
         // when
         MatchingScore matchingScore = new MatchingScore(
                 new BigDecimal("0.8250"),
-                criterionScores
+                singleCriterionScores
         );
 
         // then
         assertThat(matchingScore.totalScore())
                 .isEqualByComparingTo("0.8250");
 
-        assertThat(matchingScore.criterionScores())
-                .containsExactlyElementsOf(criterionScores);
+        assertThat(matchingScore.singleCriterionScores())
+                .containsExactlyElementsOf(singleCriterionScores);
     }
 
     @Test
@@ -121,10 +121,10 @@ class MatchingScoreTest {
     @Test
     void shouldMakeCriterionScoresImmutable() {
         // given
-        List<CriterionScore> originalScores = new ArrayList<>();
+        List<SingleCriterionScore> originalScores = new ArrayList<>();
 
         originalScores.add(
-                new CriterionScore(
+                new SingleCriterionScore(
                         MatchingCriterion.BUDGET,
                         new BigDecimal("0.8000")
                 )
@@ -139,12 +139,12 @@ class MatchingScoreTest {
         originalScores.clear();
 
         // then
-        assertThat(matchingScore.criterionScores())
+        assertThat(matchingScore.singleCriterionScores())
                 .hasSize(1);
 
         assertThatThrownBy(
-                () -> matchingScore.criterionScores().add(
-                        new CriterionScore(
+                () -> matchingScore.singleCriterionScores().add(
+                        new SingleCriterionScore(
                                 MatchingCriterion.DATE,
                                 BigDecimal.ONE
                         )

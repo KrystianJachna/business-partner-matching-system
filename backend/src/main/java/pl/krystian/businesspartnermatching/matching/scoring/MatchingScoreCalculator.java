@@ -78,9 +78,9 @@ public class MatchingScoreCalculator {
             BusinessOffer offer,
             ScoringWeights scoringWeights
     ) {
-        List<CriterionScore> criterionScores = calculators
+        List<SingleCriterionScore> singleCriterionScores = calculators
                 .stream()
-                .map(calculator -> new CriterionScore(
+                .map(calculator -> new SingleCriterionScore(
                         calculator.criterion(),
                         calculator.calculateScore(
                                 need,
@@ -89,7 +89,7 @@ public class MatchingScoreCalculator {
                 ))
                 .toList();
 
-        BigDecimal totalScore = criterionScores
+        BigDecimal totalScore = singleCriterionScores
                 .stream()
                 .map(criterionScore ->
                         calculateWeightedScore(
@@ -108,19 +108,19 @@ public class MatchingScoreCalculator {
 
         return new MatchingScore(
                 totalScore,
-                criterionScores
+                singleCriterionScores
         );
     }
 
     private BigDecimal calculateWeightedScore(
-            CriterionScore criterionScore,
+            SingleCriterionScore singleCriterionScore,
             ScoringWeights scoringWeights
     ) {
-        return criterionScore
+        return singleCriterionScore
                 .value()
                 .multiply(
                         scoringWeights.weightOf(
-                                criterionScore.criterion()
+                                singleCriterionScore.criterion()
                         )
                 );
     }
