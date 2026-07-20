@@ -1,8 +1,9 @@
-package pl.krystian.businesspartnermatching.matching.preference;
+package pl.krystian.businesspartnermatching.matching.preference.ranking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityChecker;
+import pl.krystian.businesspartnermatching.matching.preference.model.Preference;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingScore;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingScoreCalculator;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
@@ -14,62 +15,62 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class DefaultOfferPreferenceRankingGenerator
-        implements OfferPreferenceRankingGenerator {
+public class DefaultNeedPreferenceRankingGenerator
+        implements NeedPreferenceRankingGenerator {
 
     private final CompatibilityChecker compatibilityChecker;
     private final MatchingScoreCalculator matchingScoreCalculator;
 
     @Override
-    public List<Preference<BusinessOffer>> generateRanking(
-            BusinessNeed need,
-            List<BusinessOffer> offers
+    public List<Preference<BusinessNeed>> generateRanking(
+            BusinessOffer offer,
+            List<BusinessNeed> needs
     ) {
         Objects.requireNonNull(
-                need,
-                "Business need cannot be null"
+                offer,
+                "Business offer cannot be null"
         );
 
         Objects.requireNonNull(
-                offers,
-                "Business offers cannot be null"
+                needs,
+                "Business needs cannot be null"
         );
 
-        return offers.stream()
+        return needs.stream()
                 .filter(Objects::nonNull)
-                .filter(offer ->
+                .filter(need ->
                         compatibilityChecker.isCompatible(
                                 need,
                                 offer
                         )
                 )
-                .map(offer ->
+                .map(need ->
                         toPreference(
-                                need,
-                                offer
+                                offer,
+                                need
                         )
                 )
                 .sorted(
                         Comparator.comparing(
-                                        Preference<BusinessOffer>::score
+                                        Preference<BusinessNeed>::score
                                 )
                                 .reversed()
                 )
                 .toList();
     }
 
-    private Preference<BusinessOffer> toPreference(
-            BusinessNeed need,
-            BusinessOffer offer
+    private Preference<BusinessNeed> toPreference(
+            BusinessOffer offer,
+            BusinessNeed need
     ) {
         MatchingScore matchingScore =
-                matchingScoreCalculator.calculateForNeed(
-                        need,
-                        offer
+                matchingScoreCalculator.calculateForOffer(
+                        offer,
+                        need
                 );
 
         return new Preference<>(
-                offer,
+                need,
                 matchingScore.totalScore()
         );
     }

@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.matching.preference;
+package pl.krystian.businesspartnermatching.matching.preference.profile;
 
 import org.junit.jupiter.api.Test;
 import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;

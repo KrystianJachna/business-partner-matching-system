@@ -1,7 +1,9 @@
-package pl.krystian.businesspartnermatching.matching.preference;
+package pl.krystian.businesspartnermatching.matching.preference.generation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.krystian.businesspartnermatching.matching.preference.model.ParticipantPreferences;
+import pl.krystian.businesspartnermatching.matching.preference.model.Preference;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

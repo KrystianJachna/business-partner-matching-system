@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.matching.preference;
+package pl.krystian.businesspartnermatching.matching.preference.model;
 
 import java.util.List;
 import java.util.Objects;

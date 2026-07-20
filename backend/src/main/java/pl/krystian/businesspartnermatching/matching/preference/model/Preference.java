@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.matching.preference;
+package pl.krystian.businesspartnermatching.matching.preference.model;
 
 import java.math.BigDecimal;
 import java.util.Objects;

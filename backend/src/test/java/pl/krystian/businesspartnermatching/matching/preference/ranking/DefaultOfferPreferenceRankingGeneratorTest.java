@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.matching.preference;
+package pl.krystian.businesspartnermatching.matching.preference.ranking;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityChecker;
+import pl.krystian.businesspartnermatching.matching.preference.model.Preference;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingScore;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingScoreCalculator;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;

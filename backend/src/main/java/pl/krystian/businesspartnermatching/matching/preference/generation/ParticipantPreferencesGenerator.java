@@ -1,6 +1,8 @@
-package pl.krystian.businesspartnermatching.matching.preference;
+package pl.krystian.businesspartnermatching.matching.preference.generation;
 
 import org.springframework.stereotype.Component;
+import pl.krystian.businesspartnermatching.matching.preference.model.ParticipantPreferences;
+import pl.krystian.businesspartnermatching.matching.preference.model.Preference;
 
 import java.util.List;
 import java.util.Objects;
