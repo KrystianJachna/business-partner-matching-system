@@ -36,6 +36,10 @@ public class NeedPreferenceRankingGenerator
                 "Business needs cannot be null"
         );
 
+        if (needs.stream().anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("Business needs list contains null elements");
+        }
+
         return needs.stream()
                 .filter(Objects::nonNull)
                 .filter(need ->

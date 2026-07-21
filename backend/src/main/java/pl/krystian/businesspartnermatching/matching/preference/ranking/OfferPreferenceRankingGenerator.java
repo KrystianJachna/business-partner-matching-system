@@ -36,8 +36,11 @@ public class OfferPreferenceRankingGenerator
                 "Business offers cannot be null"
         );
 
+        if (offers.stream().anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("Business offers list contains null elements");
+        }
+
         return offers.stream()
-                .filter(Objects::nonNull)
                 .filter(offer ->
                         compatibilityChecker.isCompatible(
                                 need,
