@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class OfferPreferenceRankingGeneratorTest {
+class NeedsForOfferRankingGeneratorTest {
 
     @Mock
     private CompatibilityChecker compatibilityChecker;
@@ -30,57 +30,57 @@ class OfferPreferenceRankingGeneratorTest {
     private MatchingScoreCalculator matchingScoreCalculator;
 
     @Mock
-    private BusinessNeed need;
+    private BusinessOffer offer;
 
     @Mock
-    private BusinessOffer firstOffer;
+    private BusinessNeed firstNeed;
 
     @Mock
-    private BusinessOffer secondOffer;
+    private BusinessNeed secondNeed;
 
     @Mock
-    private BusinessOffer thirdOffer;
+    private BusinessNeed thirdNeed;
 
-    private OfferPreferenceRankingGenerator rankingGenerator;
+    private NeedsForOfferRankingGenerator rankingGenerator;
 
     @BeforeEach
     void setUp() {
         rankingGenerator =
-                new OfferPreferenceRankingGenerator(
+                new NeedsForOfferRankingGenerator(
                         compatibilityChecker,
                         matchingScoreCalculator
                 );
     }
 
     @Test
-    void shouldSortCompatibleOffersByScoreDescending() {
+    void shouldSortCompatibleNeedsByScoreDescending() {
         // given
-        when(compatibilityChecker.isCompatible(need, firstOffer))
+        when(compatibilityChecker.isCompatible(firstNeed, offer))
                 .thenReturn(true);
 
-        when(compatibilityChecker.isCompatible(need, secondOffer))
+        when(compatibilityChecker.isCompatible(secondNeed, offer))
                 .thenReturn(true);
 
-        when(compatibilityChecker.isCompatible(need, thirdOffer))
+        when(compatibilityChecker.isCompatible(thirdNeed, offer))
                 .thenReturn(true);
 
-        when(matchingScoreCalculator.calculateForNeed(need, firstOffer))
+        when(matchingScoreCalculator.calculateForOffer(offer, firstNeed))
                 .thenReturn(matchingScore("0.8000"));
 
-        when(matchingScoreCalculator.calculateForNeed(need, secondOffer))
+        when(matchingScoreCalculator.calculateForOffer(offer, secondNeed))
                 .thenReturn(matchingScore("0.5000"));
 
-        when(matchingScoreCalculator.calculateForNeed(need, thirdOffer))
+        when(matchingScoreCalculator.calculateForOffer(offer, thirdNeed))
                 .thenReturn(matchingScore("0.9500"));
 
         // when
-        List<Preference<BusinessOffer>> ranking =
+        List<Preference<BusinessNeed>> ranking =
                 rankingGenerator.generateRanking(
-                        need,
+                        offer,
                         List.of(
-                                firstOffer,
-                                secondOffer,
-                                thirdOffer
+                                firstNeed,
+                                secondNeed,
+                                thirdNeed
                         )
                 );
 
@@ -88,9 +88,9 @@ class OfferPreferenceRankingGeneratorTest {
         assertThat(ranking)
                 .extracting(Preference::candidate)
                 .containsExactly(
-                        thirdOffer,
-                        firstOffer,
-                        secondOffer
+                        thirdNeed,
+                        firstNeed,
+                        secondNeed
                 );
 
         assertThat(ranking)
@@ -103,24 +103,24 @@ class OfferPreferenceRankingGeneratorTest {
     }
 
     @Test
-    void shouldExcludeIncompatibleOfferFromRanking() {
+    void shouldExcludeIncompatibleNeedFromRanking() {
         // given
-        when(compatibilityChecker.isCompatible(need, firstOffer))
+        when(compatibilityChecker.isCompatible(firstNeed, offer))
                 .thenReturn(true);
 
-        when(compatibilityChecker.isCompatible(need, secondOffer))
+        when(compatibilityChecker.isCompatible(secondNeed, offer))
                 .thenReturn(false);
 
-        when(matchingScoreCalculator.calculateForNeed(need, firstOffer))
+        when(matchingScoreCalculator.calculateForOffer(offer, firstNeed))
                 .thenReturn(matchingScore("0.8000"));
 
         // when
-        List<Preference<BusinessOffer>> ranking =
+        List<Preference<BusinessNeed>> ranking =
                 rankingGenerator.generateRanking(
-                        need,
+                        offer,
                         List.of(
-                                firstOffer,
-                                secondOffer
+                                firstNeed,
+                                secondNeed
                         )
                 );
 
@@ -129,7 +129,7 @@ class OfferPreferenceRankingGeneratorTest {
                 .hasSize(1);
 
         assertThat(ranking.getFirst().candidate())
-                .isSameAs(firstOffer);
+                .isSameAs(firstNeed);
 
         assertThat(ranking.getFirst().score())
                 .isEqualByComparingTo("0.8000");
@@ -137,28 +137,28 @@ class OfferPreferenceRankingGeneratorTest {
         verify(
                 matchingScoreCalculator,
                 never()
-        ).calculateForNeed(
-                need,
-                secondOffer
+        ).calculateForOffer(
+                offer,
+                secondNeed
         );
     }
 
     @Test
-    void shouldReturnEmptyRankingWhenNoOfferIsCompatible() {
+    void shouldReturnEmptyRankingWhenNoNeedIsCompatible() {
         // given
-        when(compatibilityChecker.isCompatible(need, firstOffer))
+        when(compatibilityChecker.isCompatible(firstNeed, offer))
                 .thenReturn(false);
 
-        when(compatibilityChecker.isCompatible(need, secondOffer))
+        when(compatibilityChecker.isCompatible(secondNeed, offer))
                 .thenReturn(false);
 
         // when
-        List<Preference<BusinessOffer>> ranking =
+        List<Preference<BusinessNeed>> ranking =
                 rankingGenerator.generateRanking(
-                        need,
+                        offer,
                         List.of(
-                                firstOffer,
-                                secondOffer
+                                firstNeed,
+                                secondNeed
                         )
                 );
 
@@ -169,17 +169,17 @@ class OfferPreferenceRankingGeneratorTest {
         verify(
                 matchingScoreCalculator,
                 never()
-        ).calculateForNeed(
-                need,
-                firstOffer
+        ).calculateForOffer(
+                offer,
+                firstNeed
         );
 
         verify(
                 matchingScoreCalculator,
                 never()
-        ).calculateForNeed(
-                need,
-                secondOffer
+        ).calculateForOffer(
+                offer,
+                secondNeed
         );
     }
 
