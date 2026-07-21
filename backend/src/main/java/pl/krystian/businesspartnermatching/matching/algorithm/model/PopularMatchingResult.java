@@ -3,11 +3,11 @@ package pl.krystian.businesspartnermatching.matching.algorithm.model;
 import java.util.List;
 import java.util.Objects;
 
-public record StableMatchingResult<L, R>(
-        List<StableMatch<L, R>> matches
+public record PopularMatchingResult<L, R>(
+        List<Match<L, R>> matches
 ) {
 
-    public StableMatchingResult {
+    public PopularMatchingResult {
         Objects.requireNonNull(
                 matches,
                 "Stable matches cannot be null"
@@ -28,7 +28,7 @@ public record StableMatchingResult<L, R>(
         matches = List.copyOf(matches);
     }
 
-    public List<StableMatch<L, R>> matchesForLeftParticipant(
+    public List<Match<L, R>> matchesForLeftParticipant(
             L leftParticipant
     ) {
         Objects.requireNonNull(
@@ -41,7 +41,7 @@ public record StableMatchingResult<L, R>(
                 .toList();
     }
 
-    public List<StableMatch<L, R>> matchesForRightParticipant(
+    public List<Match<L, R>> matchesForRightParticipant(
             R rightParticipant
     ) {
         Objects.requireNonNull(
@@ -68,7 +68,7 @@ public record StableMatchingResult<L, R>(
         );
 
         return matches.contains(
-                new StableMatch<>(
+                new Match<>(
                         leftParticipant,
                         rightParticipant
                 )

@@ -9,13 +9,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-class StableMatchingResultTest {
+class MatchingResultTest {
 
     @Test
     void shouldCreateEmptyResult() {
         // when
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(List.of());
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(List.of());
 
         // then
         assertThat(result.isEmpty()).isTrue();
@@ -26,15 +26,15 @@ class StableMatchingResultTest {
     @Test
     void shouldCreateResultContainingMatches() {
         // given
-        StableMatch<String, String> firstMatch =
-                new StableMatch<>("need-1", "offer-1");
+        Match<String, String> firstMatch =
+                new Match<>("need-1", "offer-1");
 
-        StableMatch<String, String> secondMatch =
-                new StableMatch<>("need-2", "offer-2");
+        Match<String, String> secondMatch =
+                new Match<>("need-2", "offer-2");
 
         // when
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(
                         List.of(firstMatch, secondMatch)
                 );
 
@@ -49,17 +49,17 @@ class StableMatchingResultTest {
     @Test
     void shouldReturnMatchesForLeftParticipant() {
         // given
-        StableMatch<String, String> firstMatch =
-                new StableMatch<>("need-1", "offer-1");
+        Match<String, String> firstMatch =
+                new Match<>("need-1", "offer-1");
 
-        StableMatch<String, String> secondMatch =
-                new StableMatch<>("need-1", "offer-2");
+        Match<String, String> secondMatch =
+                new Match<>("need-1", "offer-2");
 
-        StableMatch<String, String> thirdMatch =
-                new StableMatch<>("need-2", "offer-3");
+        Match<String, String> thirdMatch =
+                new Match<>("need-2", "offer-3");
 
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(
                         List.of(
                                 firstMatch,
                                 secondMatch,
@@ -68,7 +68,7 @@ class StableMatchingResultTest {
                 );
 
         // when
-        List<StableMatch<String, String>> matches =
+        List<Match<String, String>> matches =
                 result.matchesForLeftParticipant("need-1");
 
         // then
@@ -79,17 +79,17 @@ class StableMatchingResultTest {
     @Test
     void shouldReturnMatchesForRightParticipant() {
         // given
-        StableMatch<String, String> firstMatch =
-                new StableMatch<>("need-1", "offer-1");
+        Match<String, String> firstMatch =
+                new Match<>("need-1", "offer-1");
 
-        StableMatch<String, String> secondMatch =
-                new StableMatch<>("need-2", "offer-1");
+        Match<String, String> secondMatch =
+                new Match<>("need-2", "offer-1");
 
-        StableMatch<String, String> thirdMatch =
-                new StableMatch<>("need-3", "offer-2");
+        Match<String, String> thirdMatch =
+                new Match<>("need-3", "offer-2");
 
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(
                         List.of(
                                 firstMatch,
                                 secondMatch,
@@ -98,7 +98,7 @@ class StableMatchingResultTest {
                 );
 
         // when
-        List<StableMatch<String, String>> matches =
+        List<Match<String, String>> matches =
                 result.matchesForRightParticipant("offer-1");
 
         // then
@@ -109,10 +109,10 @@ class StableMatchingResultTest {
     @Test
     void shouldReturnEmptyListWhenLeftParticipantHasNoMatches() {
         // given
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(
                         List.of(
-                                new StableMatch<>(
+                                new Match<>(
                                         "need-1",
                                         "offer-1"
                                 )
@@ -120,7 +120,7 @@ class StableMatchingResultTest {
                 );
 
         // when
-        List<StableMatch<String, String>> matches =
+        List<Match<String, String>> matches =
                 result.matchesForLeftParticipant("need-2");
 
         // then
@@ -130,10 +130,10 @@ class StableMatchingResultTest {
     @Test
     void shouldReturnTrueWhenResultContainsMatch() {
         // given
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(
                         List.of(
-                                new StableMatch<>(
+                                new Match<>(
                                         "need-1",
                                         "offer-1"
                                 )
@@ -153,10 +153,10 @@ class StableMatchingResultTest {
     @Test
     void shouldReturnFalseWhenResultDoesNotContainMatch() {
         // given
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(
                         List.of(
-                                new StableMatch<>(
+                                new Match<>(
                                         "need-1",
                                         "offer-1"
                                 )
@@ -176,22 +176,22 @@ class StableMatchingResultTest {
     @Test
     void shouldCreateDefensiveCopyOfMatches() {
         // given
-        List<StableMatch<String, String>> matches =
+        List<Match<String, String>> matches =
                 new ArrayList<>();
 
         matches.add(
-                new StableMatch<>(
+                new Match<>(
                         "need-1",
                         "offer-1"
                 )
         );
 
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(matches);
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(matches);
 
         // when
         matches.add(
-                new StableMatch<>(
+                new Match<>(
                         "need-2",
                         "offer-2"
                 )
@@ -204,13 +204,13 @@ class StableMatchingResultTest {
     @Test
     void shouldExposeUnmodifiableMatches() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> new StableMatchingResult<>(
+                .isThrownBy(() -> new PopularMatchingResult<>(
                         List.of(
-                                new StableMatch<>(
+                                new Match<>(
                                         "need-1",
                                         "offer-1"
                                 ),
-                                new StableMatch<>(
+                                new Match<>(
                                         "need-1",
                                         "offer-1"
                                 )
@@ -222,7 +222,7 @@ class StableMatchingResultTest {
     void shouldRejectNullMatchesList() {
         assertThatNullPointerException()
                 .isThrownBy(() ->
-                        new StableMatchingResult<String, String>(null)
+                        new PopularMatchingResult<String, String>(null)
                 )
                 .withMessage(
                         "Stable matches cannot be null"
@@ -232,11 +232,11 @@ class StableMatchingResultTest {
     @Test
     void shouldRejectListContainingNullMatch() {
         // given
-        List<StableMatch<String, String>> matches =
+        List<Match<String, String>> matches =
                 new ArrayList<>();
 
         matches.add(
-                new StableMatch<>(
+                new Match<>(
                         "need-1",
                         "offer-1"
                 )
@@ -246,7 +246,7 @@ class StableMatchingResultTest {
         // then
         assertThatIllegalArgumentException()
                 .isThrownBy(() ->
-                        new StableMatchingResult<>(matches)
+                        new PopularMatchingResult<>(matches)
                 )
                 .withMessage(
                         "Stable matches cannot contain null"
@@ -256,8 +256,8 @@ class StableMatchingResultTest {
     @Test
     void shouldRejectDuplicateMatches() {
         // given
-        StableMatch<String, String> match =
-                new StableMatch<>(
+        Match<String, String> match =
+                new Match<>(
                         "need-1",
                         "offer-1"
                 );
@@ -265,7 +265,7 @@ class StableMatchingResultTest {
         // then
         assertThatIllegalArgumentException()
                 .isThrownBy(() ->
-                        new StableMatchingResult<>(
+                        new PopularMatchingResult<>(
                                 List.of(match, match)
                         )
                 )
@@ -277,8 +277,8 @@ class StableMatchingResultTest {
     @Test
     void shouldRejectNullLeftParticipantWhenSearchingMatches() {
         // given
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(List.of());
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(List.of());
 
         // then
         assertThatNullPointerException()
@@ -293,8 +293,8 @@ class StableMatchingResultTest {
     @Test
     void shouldRejectNullRightParticipantWhenSearchingMatches() {
         // given
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(List.of());
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(List.of());
 
         // then
         assertThatNullPointerException()
@@ -309,8 +309,8 @@ class StableMatchingResultTest {
     @Test
     void shouldRejectNullLeftParticipantWhenCheckingMatch() {
         // given
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(List.of());
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(List.of());
 
         // then
         assertThatNullPointerException()
@@ -325,8 +325,8 @@ class StableMatchingResultTest {
     @Test
     void shouldRejectNullRightParticipantWhenCheckingMatch() {
         // given
-        StableMatchingResult<String, String> result =
-                new StableMatchingResult<>(List.of());
+        PopularMatchingResult<String, String> result =
+                new PopularMatchingResult<>(List.of());
 
         // then
         assertThatNullPointerException()
