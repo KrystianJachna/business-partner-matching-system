@@ -41,7 +41,6 @@ public class NeedsForOfferRankingGenerator
         }
 
         return needs.stream()
-                .filter(Objects::nonNull)
                 .filter(need ->
                         compatibilityChecker.isCompatible(
                                 need,
