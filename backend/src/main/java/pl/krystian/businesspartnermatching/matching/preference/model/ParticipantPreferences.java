@@ -25,6 +25,12 @@ public record ParticipantPreferences<P, C>(
             );
         }
 
+        if (preferredCandidates.stream().distinct().count() != preferredCandidates.size()) {
+            throw new IllegalArgumentException(
+                    "Preferred candidates cannot contain duplicates"
+            );
+        }
+
         preferredCandidates = List.copyOf(
                 preferredCandidates
         );
