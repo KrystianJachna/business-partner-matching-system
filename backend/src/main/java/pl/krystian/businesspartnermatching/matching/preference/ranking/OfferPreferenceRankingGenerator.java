@@ -54,10 +54,15 @@ public class OfferPreferenceRankingGenerator
                         )
                 )
                 .sorted(
-                        Comparator.comparing(
-                                        Preference<BusinessOffer>::score
+                        Comparator
+                                .comparing(
+                                        (Preference<BusinessOffer> preference) ->
+                                                preference.score()
                                 )
                                 .reversed()
+                                .thenComparing(
+                                        preference -> preference.candidate().getId()
+                                )
                 )
                 .toList();
     }

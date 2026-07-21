@@ -55,10 +55,15 @@ public class NeedPreferenceRankingGenerator
                         )
                 )
                 .sorted(
-                        Comparator.comparing(
-                                        Preference<BusinessNeed>::score
+                        Comparator
+                                .comparing(
+                                        (Preference<BusinessNeed> preference) ->
+                                                preference.score()
                                 )
                                 .reversed()
+                                .thenComparing(
+                                        preference -> preference.candidate().getId()
+                                )
                 )
                 .toList();
     }
