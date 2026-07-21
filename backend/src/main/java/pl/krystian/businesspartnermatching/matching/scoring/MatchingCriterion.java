@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.matching.criterion;
+package pl.krystian.businesspartnermatching.matching.scoring;
 
 public enum MatchingCriterion {
 

@@ -1,6 +1,6 @@
 package pl.krystian.businesspartnermatching.matching.scoring.weights;
 
-import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
+import pl.krystian.businesspartnermatching.matching.scoring.MatchingCriterion;
 
 import java.math.BigDecimal;
 import java.util.EnumMap;

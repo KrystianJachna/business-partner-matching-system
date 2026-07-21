@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityChecker;
 import pl.krystian.businesspartnermatching.matching.preference.model.Preference;
-import pl.krystian.businesspartnermatching.matching.scoring.MatchingScore;
+import pl.krystian.businesspartnermatching.matching.scoring.model.MatchingScore;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingScoreCalculator;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;

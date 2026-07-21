@@ -1,7 +1,7 @@
 package pl.krystian.businesspartnermatching.matching.scoring;
 
 import org.junit.jupiter.api.Test;
-import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
+import pl.krystian.businesspartnermatching.matching.scoring.model.SingleCriterionScore;
 
 import java.math.BigDecimal;
 

@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.matching.scoring;
+package pl.krystian.businesspartnermatching.matching.scoring.exception;
 
 import lombok.Getter;
 import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityFailureReason;

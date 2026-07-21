@@ -1,6 +1,6 @@
 package pl.krystian.businesspartnermatching.matching.scoring.calculators;
 
-import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
+import pl.krystian.businesspartnermatching.matching.scoring.MatchingCriterion;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 

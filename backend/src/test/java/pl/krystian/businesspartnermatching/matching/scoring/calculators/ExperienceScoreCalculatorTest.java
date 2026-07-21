@@ -3,7 +3,7 @@ package pl.krystian.businesspartnermatching.matching.scoring.calculators;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.krystian.businesspartnermatching.company.model.entity.Company;
-import pl.krystian.businesspartnermatching.matching.criterion.MatchingCriterion;
+import pl.krystian.businesspartnermatching.matching.scoring.MatchingCriterion;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 
