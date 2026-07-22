@@ -11,4 +11,6 @@ public interface BusinessNeedRepository
     List<BusinessNeed> findAllByCompanyIdOrderByCreatedAtDesc(
             Long companyId
     );
+
+    List<BusinessNeed> findAllByActiveTrue();
 }

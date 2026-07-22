@@ -8,6 +8,7 @@ import pl.krystian.businesspartnermatching.matching.algorithm.model.PopularMatch
 import pl.krystian.businesspartnermatching.matching.preference.model.ParticipantPreferenceSet;
 import pl.krystian.businesspartnermatching.matching.preference.model.ParticipantPreferences;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -746,11 +747,7 @@ class ManyToManyGaleShapleyAlgorithmTest {
         R worstCurrentCandidate =
                 currentMatches.stream()
                         .map(Match::rightParticipant)
-                        .max((firstCandidate, secondCandidate) ->
-                                Integer.compare(
-                                        preferences.positionOf(firstCandidate),
-                                        preferences.positionOf(secondCandidate)
-                                )
+                        .max(Comparator.comparingInt(preferences::positionOf)
                         )
                         .orElseThrow(() -> new IllegalStateException(
                                 "Left participant %s has no current matches"
@@ -777,11 +774,7 @@ class ManyToManyGaleShapleyAlgorithmTest {
         L worstCurrentCandidate =
                 currentMatches.stream()
                         .map(Match::leftParticipant)
-                        .max((firstCandidate, secondCandidate) ->
-                                Integer.compare(
-                                        preferences.positionOf(firstCandidate),
-                                        preferences.positionOf(secondCandidate)
-                                )
+                        .max(Comparator.comparingInt(preferences::positionOf)
                         )
                         .orElseThrow(() -> new IllegalStateException(
                                 "Right participant %s has no current matches"

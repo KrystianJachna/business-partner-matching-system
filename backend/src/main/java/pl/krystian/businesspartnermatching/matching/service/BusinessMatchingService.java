@@ -13,7 +13,10 @@ import pl.krystian.businesspartnermatching.matching.preference.model.Preference;
 import pl.krystian.businesspartnermatching.matching.preference.ranking.NeedsForOfferRankingGenerator;
 import pl.krystian.businesspartnermatching.matching.preference.ranking.OffersForNeedRankingGenerator;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
+import pl.krystian.businesspartnermatching.need.repository.BusinessNeedRepository;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
+import pl.krystian.businesspartnermatching.offer.repository.BusinessOfferRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,6 +38,24 @@ public class BusinessMatchingService {
 
     private final PopularMatchingAlgorithm<BusinessNeed, BusinessOffer>
             matchingAlgorithm;
+
+    private final BusinessNeedRepository businessNeedRepository;
+
+    private final BusinessOfferRepository businessOfferRepository;
+
+    @Transactional
+    public PopularMatchingResult<BusinessNeed, BusinessOffer> match() {
+        List<BusinessNeed> needs =
+                businessNeedRepository.findAllByActiveTrue();
+
+        List<BusinessOffer> offers =
+                businessOfferRepository.findAllByActiveTrue();
+
+        return match(
+                needs,
+                offers
+        );
+    }
 
     public PopularMatchingResult<BusinessNeed, BusinessOffer> match(
             List<BusinessNeed> needs,

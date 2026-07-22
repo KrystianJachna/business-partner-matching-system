@@ -11,4 +11,6 @@ public interface BusinessOfferRepository
     List<BusinessOffer> findAllByCompanyIdOrderByCreatedAtDesc(
             Long companyId
     );
+
+    List<BusinessOffer> findAllByActiveTrue();
 }

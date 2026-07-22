@@ -15,7 +15,9 @@ import pl.krystian.businesspartnermatching.matching.preference.model.Preference;
 import pl.krystian.businesspartnermatching.matching.preference.ranking.NeedsForOfferRankingGenerator;
 import pl.krystian.businesspartnermatching.matching.preference.ranking.OffersForNeedRankingGenerator;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
+import pl.krystian.businesspartnermatching.need.repository.BusinessNeedRepository;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
+import pl.krystian.businesspartnermatching.offer.repository.BusinessOfferRepository;
 
 import java.util.List;
 
@@ -54,6 +56,12 @@ class BusinessMatchingServiceTest {
     @Mock
     private PopularMatchingResult<BusinessNeed, BusinessOffer>
             expectedResult;
+
+    @Mock
+    private BusinessNeedRepository businessNeedRepository;
+
+    @Mock
+    private BusinessOfferRepository businessOfferRepository;
 
     @Test
     void shouldCreateMatchingProblemAndReturnAlgorithmResult() {
@@ -184,6 +192,99 @@ class BusinessMatchingServiceTest {
                 capturedProblem.rightCapacities()
                         .capacityOf(offer)
         ).isEqualTo(3);
+    }
+
+    @Test
+    void shouldLoadActiveNeedsAndOffersAndRunMatching() {
+        // given
+        List<BusinessNeed> needs =
+                List.of(need);
+
+        List<BusinessOffer> offers =
+                List.of(offer);
+
+        List<Preference<BusinessOffer>> offersRanking =
+                List.of();
+
+        List<Preference<BusinessNeed>> needsRanking =
+                List.of();
+
+        ParticipantPreferences<BusinessNeed, BusinessOffer> needPreferences =
+                new ParticipantPreferences<>(
+                        need,
+                        List.of()
+                );
+
+        ParticipantPreferences<BusinessOffer, BusinessNeed> offerPreferences =
+                new ParticipantPreferences<>(
+                        offer,
+                        List.of()
+                );
+
+        when(businessNeedRepository.findAllByActiveTrue())
+                .thenReturn(needs);
+
+        when(businessOfferRepository.findAllByActiveTrue())
+                .thenReturn(offers);
+
+        when(need.getMaxPartners())
+                .thenReturn(1);
+
+        when(offer.getMaxPartners())
+                .thenReturn(1);
+
+        when(
+                offersForNeedRankingGenerator.generateRanking(
+                        need,
+                        offers
+                )
+        ).thenReturn(offersRanking);
+
+        when(
+                needsForOfferRankingGenerator.generateRanking(
+                        offer,
+                        needs
+                )
+        ).thenReturn(needsRanking);
+
+        when(
+                participantPreferencesGenerator.generate(
+                        need,
+                        offersRanking
+                )
+        ).thenReturn(needPreferences);
+
+        when(
+                participantPreferencesGenerator.generate(
+                        offer,
+                        needsRanking
+                )
+        ).thenReturn(offerPreferences);
+
+        when(
+                matchingAlgorithm.match(
+                        org.mockito.ArgumentMatchers.any()
+                )
+        ).thenReturn(expectedResult);
+
+        // when
+        PopularMatchingResult<BusinessNeed, BusinessOffer> result =
+                businessMatchingService.match();
+
+        // then
+        assertThat(result)
+                .isSameAs(expectedResult);
+
+        verify(businessNeedRepository)
+                .findAllByActiveTrue();
+
+        verify(businessOfferRepository)
+                .findAllByActiveTrue();
+
+        verify(matchingAlgorithm)
+                .match(
+                        org.mockito.ArgumentMatchers.any()
+                );
     }
 
     @SuppressWarnings({

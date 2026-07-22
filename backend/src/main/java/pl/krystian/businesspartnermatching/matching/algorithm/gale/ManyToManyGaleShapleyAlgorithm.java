@@ -7,15 +7,7 @@ import pl.krystian.businesspartnermatching.matching.algorithm.model.MatchingProb
 import pl.krystian.businesspartnermatching.matching.algorithm.model.PopularMatchingResult;
 import pl.krystian.businesspartnermatching.matching.preference.model.ParticipantPreferences;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class ManyToManyGaleShapleyAlgorithm<L, R>
@@ -188,11 +180,7 @@ public class ManyToManyGaleShapleyAlgorithm<L, R>
             ParticipantPreferences<R, L> preferences
     ) {
         return currentMatches.stream()
-                .max((firstParticipant, secondParticipant) ->
-                        Integer.compare(
-                                preferences.positionOf(firstParticipant),
-                                preferences.positionOf(secondParticipant)
-                        )
+                .max(Comparator.comparingInt(preferences::positionOf)
                 )
                 .orElseThrow(() -> new IllegalStateException(
                         "Cannot find the worst match in an empty match set"
