@@ -38,6 +38,9 @@ class BusinessOfferControllerIntegrationTest
 
     @Test
     void shouldCreateBusinessOffer() throws Exception {
+        long initialNeedCount =
+                businessOfferRepository.count();
+
         Industry industry = industryRepository.save(
                 new Industry(
                         "TEST_OFFER_IT",
@@ -143,7 +146,9 @@ class BusinessOfferControllerIntegrationTest
                                 .value(true)
                 );
 
+
+
         assertThat(businessOfferRepository.count())
-                .isEqualTo(1);
+                .isEqualTo(initialNeedCount + 1);
     }
 }
