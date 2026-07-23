@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.common.money.dto;
+package pl.krystian.businesspartnermatching.common.money.model.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;

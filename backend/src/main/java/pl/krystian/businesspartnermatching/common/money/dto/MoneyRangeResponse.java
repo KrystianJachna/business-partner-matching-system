@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.common.money.dto;
+package pl.krystian.businesspartnermatching.common.money.model.dto;
 
 import pl.krystian.businesspartnermatching.common.money.CurrencyCode;
 import pl.krystian.businesspartnermatching.common.money.MoneyRange;

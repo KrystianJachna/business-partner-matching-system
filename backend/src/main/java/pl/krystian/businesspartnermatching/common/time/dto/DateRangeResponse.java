@@ -1,4 +1,4 @@
-package pl.krystian.businesspartnermatching.common.time.dto;
+package pl.krystian.businesspartnermatching.common.time.model.dto;
 
 import pl.krystian.businesspartnermatching.common.time.DateRange;
 
