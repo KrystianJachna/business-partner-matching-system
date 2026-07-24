@@ -7,6 +7,8 @@ import pl.krystian.businesspartnermatching.company.service.CompanyService;
 import pl.krystian.businesspartnermatching.company.model.dto.CompanyResponse;
 import pl.krystian.businesspartnermatching.company.model.dto.CreateCompanyRequest;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/companies")
 @RequiredArgsConstructor
@@ -22,5 +24,10 @@ public class CompanyController {
     @GetMapping("/{companyId}")
     public CompanyResponse getCompanyById(@PathVariable Long companyId) {
         return companyService.getCompanyById(companyId);
+    }
+
+    @GetMapping
+    public List<CompanyResponse> getAllCompanies() {
+        return companyService.getAllActiveCompanies();
     }
 }
