@@ -71,8 +71,8 @@ public class CompanyService {
     }
 
     @Transactional(readOnly = true)
-    public List<CompanyResponse> getAllActiveCompanies() {
-        return companyRepository.findAllByActiveTrueOrderByNameAsc()
+    public List<CompanyResponse> getAllCompanies() {
+        return companyRepository.findAllByOrderByNameAsc()
                 .stream()
                 .map(CompanyResponse::from)
                 .toList();

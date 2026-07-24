@@ -28,6 +28,6 @@ public class CompanyController {
 
     @GetMapping
     public List<CompanyResponse> getAllCompanies() {
-        return companyService.getAllActiveCompanies();
+        return companyService.getAllCompanies();
     }
 }

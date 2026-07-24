@@ -12,6 +12,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
             "industry",
             "specializations"
     })
-    List<Company> findAllByActiveTrueOrderByNameAsc();
+    List<Company> findAllByOrderByNameAsc();
 
 }

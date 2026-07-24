@@ -19,7 +19,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "DELETE",
                         "OPTIONS"
                 )
-                .allowedHeaders("*")
-                .allowedOrigins("http://localhost:5174");
+                .allowedHeaders("*");
     }
 }
