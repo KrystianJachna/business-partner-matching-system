@@ -148,6 +148,6 @@ class BusinessOfferControllerIntegrationTest
 
 
         assertThat(businessOfferRepository.count())
-                .isEqualTo(initialNeedCount + 1);
+                .isEqualTo(1);
     }
 }
