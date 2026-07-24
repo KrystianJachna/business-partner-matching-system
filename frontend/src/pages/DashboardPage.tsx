@@ -3,7 +3,9 @@ import HandshakeIcon from "@mui/icons-material/Handshake";
 import SearchIcon from "@mui/icons-material/Search";
 import {
     Box,
+    Button,
     Card,
+    CardActions,
     CardContent,
     Stack,
     Typography,
@@ -26,7 +28,7 @@ export function DashboardPage() {
                     color="text.secondary"
                     sx={{
                         mt: 2,
-                        maxWidth: 1000,
+                        maxWidth: 820,
                         fontWeight: 400,
                     }}
                 >
@@ -45,12 +47,28 @@ export function DashboardPage() {
                     gap: 3,
                 }}
             >
-                <Card>
-                    <CardContent>
-                        <BusinessIcon
-                            color="primary"
-                            sx={{ fontSize: 40, mb: 2 }}
-                        />
+                <Card
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
+                    <CardContent sx={{ flexGrow: 1 }}>
+                        <Box
+                            sx={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: 48,
+                                height: 48,
+                                borderRadius: 3,
+                                bgcolor: "primary.main",
+                                color: "primary.contrastText",
+                                mb: 2,
+                            }}
+                        >
+                            <BusinessIcon />
+                        </Box>
 
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>
                             Companies
@@ -61,14 +79,36 @@ export function DashboardPage() {
                             and business capabilities.
                         </Typography>
                     </CardContent>
+
+                    <CardActions sx={{ px: 2, pb: 2 }}>
+                        <Button variant="contained">
+                            Open companies
+                        </Button>
+                    </CardActions>
                 </Card>
 
-                <Card>
-                    <CardContent>
-                        <SearchIcon
-                            color="primary"
-                            sx={{ fontSize: 40, mb: 2 }}
-                        />
+                <Card
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
+                    <CardContent sx={{ flexGrow: 1 }}>
+                        <Box
+                            sx={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: 48,
+                                height: 48,
+                                borderRadius: 3,
+                                bgcolor: "primary.main",
+                                color: "primary.contrastText",
+                                mb: 2,
+                            }}
+                        >
+                            <SearchIcon />
+                        </Box>
 
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>
                             Needs and offers
@@ -79,14 +119,36 @@ export function DashboardPage() {
                             provide to potential partners.
                         </Typography>
                     </CardContent>
+
+                    <CardActions sx={{ px: 2, pb: 2 }}>
+                        <Button variant="contained">
+                            Open needs and offers
+                        </Button>
+                    </CardActions>
                 </Card>
 
-                <Card>
-                    <CardContent>
-                        <HandshakeIcon
-                            color="primary"
-                            sx={{ fontSize: 40, mb: 2 }}
-                        />
+                <Card
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
+                    <CardContent sx={{ flexGrow: 1 }}>
+                        <Box
+                            sx={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: 48,
+                                height: 48,
+                                borderRadius: 3,
+                                bgcolor: "primary.main",
+                                color: "primary.contrastText",
+                                mb: 2,
+                            }}
+                        >
+                            <HandshakeIcon />
+                        </Box>
 
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>
                             Matching
@@ -97,6 +159,12 @@ export function DashboardPage() {
                             preferences, and matching scores.
                         </Typography>
                     </CardContent>
+
+                    <CardActions sx={{ px: 2, pb: 2 }}>
+                        <Button variant="contained">
+                            Run matching
+                        </Button>
+                    </CardActions>
                 </Card>
             </Box>
         </Stack>
