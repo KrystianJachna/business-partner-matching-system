@@ -71,44 +71,119 @@ export function CompaniesPage() {
                     No companies have been registered yet.
                 </Alert>
             ) : (
-                <TableContainer component={Paper}>
+                <TableContainer
+                    component={Paper}
+                    sx={{
+                        borderRadius: 1,
+                        overflow: "hidden",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        boxShadow: 1,
+                    }}
+                >
                     <Table>
                         <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Industry</TableCell>
-                                <TableCell>Location</TableCell>
-                                <TableCell>Established</TableCell>
-                                <TableCell>Specializations</TableCell>
-                                <TableCell>Status</TableCell>
+                            <TableRow
+                                sx={{
+                                    backgroundColor: "grey.100",
+                                }}
+                            >
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
+                                    Name
+                                </TableCell>
+
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
+                                    Industry
+                                </TableCell>
+
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
+                                    Location
+                                </TableCell>
+
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
+                                    Established
+                                </TableCell>
+
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
+                                    Specializations
+                                </TableCell>
+
+                                <TableCell
+                                    align="center"
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
+                                    Status
+                                </TableCell>
                             </TableRow>
                         </TableHead>
 
                         <TableBody>
-                            {companies.map((company) => (
+                            {companies.map((company, index) => (
                                 <TableRow
                                     key={company.id}
                                     hover
+                                    sx={{
+                                        backgroundColor:
+                                            index % 2 === 0
+                                                ? "background.paper"
+                                                : "grey.50",
+                                        transition: "background-color 0.2s ease",
+                                        "&:last-child td": {
+                                            borderBottom: 0,
+                                        },
+                                    }}
                                 >
-                                    <TableCell>
-                                        <Typography fontWeight={600}>
+                                    <TableCell sx={{ py: 2 }}>
+                                        <Typography
+                                            sx={{
+                                                fontWeight: 700,
+                                            }}
+                                        >
                                             {company.name}
                                         </Typography>
                                     </TableCell>
 
-                                    <TableCell>
+                                    <TableCell sx={{ py: 2 }}>
                                         {company.industry.name}
                                     </TableCell>
 
-                                    <TableCell>
+                                    <TableCell sx={{ py: 2 }}>
                                         {company.city}, {company.country}
                                     </TableCell>
 
-                                    <TableCell>
+                                    <TableCell sx={{ py: 2 }}>
                                         {company.establishedAt ?? "Not provided"}
                                     </TableCell>
 
-                                    <TableCell>
+                                    <TableCell sx={{ py: 2 }}>
                                         <Box
                                             sx={{
                                                 display: "flex",
@@ -120,17 +195,25 @@ export function CompaniesPage() {
                                                 (specialization) => (
                                                     <Chip
                                                         key={specialization.id}
-                                                        label={
-                                                            specialization.name
-                                                        }
+                                                        label={specialization.name}
                                                         size="small"
+                                                        variant="outlined"
+                                                        sx={{
+                                                            backgroundColor:
+                                                                "background.paper",
+                                                        }}
                                                     />
                                                 ),
                                             )}
                                         </Box>
                                     </TableCell>
 
-                                    <TableCell>
+                                    <TableCell
+                                        align="center"
+                                        sx={{
+                                            py: 2,
+                                        }}
+                                    >
                                         <Chip
                                             label={
                                                 company.active
@@ -140,9 +223,13 @@ export function CompaniesPage() {
                                             color={
                                                 company.active
                                                     ? "success"
-                                                    : "default"
+                                                    : "error"
                                             }
                                             size="small"
+                                            sx={{
+                                                minWidth: 76,
+                                                fontWeight: 600,
+                                            }}
                                         />
                                     </TableCell>
                                 </TableRow>
