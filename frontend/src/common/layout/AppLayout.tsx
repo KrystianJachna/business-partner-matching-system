@@ -13,20 +13,33 @@ export function AppLayout() {
         <Box
             sx={{
                 minHeight: "100vh",
-                bgcolor: "background.default",
+                bgcolor: "grey.50",
             }}
         >
-            <AppBar position="static">
-                <Toolbar>
-                    <BusinessCenterIcon sx={{ mr: 1.5 }} />
+            <AppBar
+                position="static"
+                elevation={0}
+                sx={{
+                    borderBottom: 1,
+                    borderColor: "divider",
+                }}
+            >
+                <Container maxWidth="xl">
+                    <Toolbar disableGutters>
+                        <BusinessCenterIcon sx={{ mr: 1.5 }} />
 
-                    <Typography variant="h6" component="div">
-                        Business Partner Matching
-                    </Typography>
-                </Toolbar>
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ fontWeight: 600 }}
+                        >
+                            Business Partner Matching
+                        </Typography>
+                    </Toolbar>
+                </Container>
             </AppBar>
 
-            <Container maxWidth="xl" sx={{ py: 4 }}>
+            <Container maxWidth="lg" sx={{ py: 6 }}>
                 <Outlet />
             </Container>
         </Box>
