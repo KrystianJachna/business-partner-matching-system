@@ -6,6 +6,7 @@ import { CompaniesPage } from "../pages/CompaniesPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { MatchingPage } from "../pages/MatchingPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
+import { CreateCompanyPage } from "../pages/CreateCompanyPage";
 
 export function AppRouter() {
     return (
@@ -24,6 +25,11 @@ export function AppRouter() {
                 <Route
                     path="/companies"
                     element={<CompaniesPage />}
+                />
+
+                <Route
+                    path="/companies/new"
+                    element={<CreateCompanyPage />}
                 />
 
                 <Route

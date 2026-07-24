@@ -1,22 +1,34 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-if (!API_BASE_URL) {
-    throw new Error("VITE_API_BASE_URL is not configured");
-}
+const API_BASE_URL = "http://localhost:8080";
 
 export async function apiGet<T>(path: string): Promise<T> {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-        method: "GET",
-        headers: {
-            Accept: "application/json",
-        },
-    });
+    const response = await fetch(`${API_BASE_URL}${path}`);
 
     if (!response.ok) {
         throw new Error(
-            `Request failed with status ${response.status}`,
+            `GET request failed with status ${response.status}`,
         );
     }
 
     return response.json() as Promise<T>;
+}
+
+export async function apiPost<TResponse, TRequest>(
+    path: string,
+    body: TRequest,
+): Promise<TResponse> {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            `POST request failed with status ${response.status}`,
+        );
+    }
+
+    return response.json() as Promise<TResponse>;
 }

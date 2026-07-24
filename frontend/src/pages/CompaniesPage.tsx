@@ -1,9 +1,11 @@
 import {
     Alert,
     Box,
+    Button,
     Chip,
     CircularProgress,
     Paper,
+    Stack,
     Table,
     TableBody,
     TableCell,
@@ -12,6 +14,7 @@ import {
     TableRow,
     Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router";
 import { useCompanies } from "../features/company/hooks/useCompanies";
 
 export function CompaniesPage() {
@@ -20,6 +23,8 @@ export function CompaniesPage() {
         isLoading,
         isError,
     } = useCompanies();
+
+    const navigate = useNavigate();
 
     if (isLoading) {
         return (
@@ -45,26 +50,46 @@ export function CompaniesPage() {
 
     return (
         <Box>
-            <Typography
-                variant="h4"
-                component="h1"
-                sx={{
-                    mb: 1,
-                    fontWeight: 700,
+            <Stack
+                direction={{
+                    xs: "column",
+                    sm: "row",
                 }}
-            >
-                Companies
-            </Typography>
-
-            <Typography
-                color="text.secondary"
+                spacing={2}
                 sx={{
+                    justifyContent: "space-between",
+                    alignItems: {
+                        xs: "flex-start",
+                        sm: "center",
+                    },
                     mb: 4,
                 }}
             >
-                Browse companies registered in the business partner matching
-                system.
-            </Typography>
+                <Box>
+                    <Typography
+                        variant="h4"
+                        component="h1"
+                        sx={{
+                            mb: 1,
+                            fontWeight: 700,
+                        }}
+                    >
+                        Companies
+                    </Typography>
+
+                    <Typography color="text.secondary">
+                        Browse companies registered in the business partner
+                        matching system.
+                    </Typography>
+                </Box>
+
+                <Button
+                    variant="contained"
+                    onClick={() => navigate("/companies/new")}
+                >
+                    Add company
+                </Button>
+            </Stack>
 
             {!companies || companies.length === 0 ? (
                 <Alert severity="info">
@@ -155,7 +180,8 @@ export function CompaniesPage() {
                                             index % 2 === 0
                                                 ? "background.paper"
                                                 : "grey.50",
-                                        transition: "background-color 0.2s ease",
+                                        transition:
+                                            "background-color 0.2s ease",
                                         "&:last-child td": {
                                             borderBottom: 0,
                                         },
@@ -180,7 +206,8 @@ export function CompaniesPage() {
                                     </TableCell>
 
                                     <TableCell sx={{ py: 2 }}>
-                                        {company.establishedAt ?? "Not provided"}
+                                        {company.establishedAt ??
+                                            "Not provided"}
                                     </TableCell>
 
                                     <TableCell sx={{ py: 2 }}>
@@ -194,8 +221,12 @@ export function CompaniesPage() {
                                             {company.specializations.map(
                                                 (specialization) => (
                                                     <Chip
-                                                        key={specialization.id}
-                                                        label={specialization.name}
+                                                        key={
+                                                            specialization.id
+                                                        }
+                                                        label={
+                                                            specialization.name
+                                                        }
                                                         size="small"
                                                         variant="outlined"
                                                         sx={{
