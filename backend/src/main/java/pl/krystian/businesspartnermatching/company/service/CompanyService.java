@@ -70,6 +70,7 @@ public class CompanyService {
         return CompanyResponse.from(company);
     }
 
+    @Transactional(readOnly = true)
     public List<CompanyResponse> getAllActiveCompanies() {
         return companyRepository.findAllByActiveTrueOrderByNameAsc()
                 .stream()
