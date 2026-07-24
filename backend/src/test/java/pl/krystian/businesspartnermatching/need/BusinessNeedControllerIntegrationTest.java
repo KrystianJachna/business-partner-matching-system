@@ -38,6 +38,9 @@ class BusinessNeedControllerIntegrationTest extends IntegrationTest {
 
     @Test
     void shouldCreateBusinessNeed() throws Exception {
+        long initialNeedCount =
+                businessNeedRepository.count();
+
         Industry industry = industryRepository.save(
                 new Industry(
                         "TEST_IT",
@@ -127,6 +130,6 @@ class BusinessNeedControllerIntegrationTest extends IntegrationTest {
                         .value(true));
 
         assertThat(businessNeedRepository.count())
-                .isEqualTo(1);
+                .isEqualTo(initialNeedCount + 1);
     }
 }
