@@ -19,6 +19,8 @@ import { useIndustries } from "../../industry/hooks/useIndustries";
 import { useSpecializationsByIndustry } from "../../specialization/hooks/useSpecializationsByIndustry";
 import { useCreateCompany } from "../hooks/useCreateCompany";
 import type { CreateCompanyRequest } from "../model/CreateCompanyRequest";
+import { CompanyLocationPicker } from "./CompanyLocationPicker";
+import { findLocation } from "../api/geocodingApi";
 
 export function CompanyForm() {
     const navigate = useNavigate();
@@ -33,6 +35,11 @@ export function CompanyForm() {
     const [longitude, setLongitude] = useState("");
     const [establishedAt, setEstablishedAt] = useState("");
     const [capabilities, setCapabilities] = useState("");
+    const [isFindingLocation, setIsFindingLocation] = useState(false);
+    const [locationSearchError, setLocationSearchError] =
+        useState<string | null>(null);
+    const [locationVerified, setLocationVerified] =
+        useState(false);
 
     const {
         data: industries,
@@ -60,6 +67,13 @@ export function CompanyForm() {
             return;
         }
 
+        if (!locationVerified) {
+            setLocationSearchError(
+                "Verify the location before creating the company.",
+            );
+            return;
+        }
+
         const request: CreateCompanyRequest = {
             name: name.trim(),
             description: description.trim() || null,
@@ -78,6 +92,45 @@ export function CompanyForm() {
                 navigate("/companies");
             },
         });
+    }
+
+    async function handleFindLocation() {
+        if (!country.trim() || !city.trim()) {
+            setLocationSearchError(
+                "Enter both country and city.",
+            );
+            return;
+        }
+
+        setIsFindingLocation(true);
+        setLocationSearchError(null);
+        setLocationVerified(false);
+
+        try {
+            const result = await findLocation(
+                country.trim(),
+                city.trim(),
+            );
+
+            if (!result) {
+                setLocationSearchError(
+                    "Location could not be found.",
+                );
+                return;
+            }
+
+            setCountry(result.country);
+            setCity(result.city);
+            setLatitude(result.latitude.toFixed(6));
+            setLongitude(result.longitude.toFixed(6));
+            setLocationVerified(true);
+        } catch {
+            setLocationSearchError(
+                "Failed to search for the location.",
+            );
+        } finally {
+            setIsFindingLocation(false);
+        }
     }
 
     return (
@@ -256,9 +309,13 @@ export function CompanyForm() {
                                 <TextField
                                     label="Country"
                                     value={country}
-                                    onChange={(event) =>
-                                        setCountry(event.target.value)
-                                    }
+                                    onChange={(event) => {
+                                        setCountry(event.target.value);
+                                        setLatitude("");
+                                        setLongitude("");
+                                        setLocationVerified(false);
+                                        setLocationSearchError(null);
+                                    }}
                                     required
                                     fullWidth
                                 />
@@ -266,57 +323,92 @@ export function CompanyForm() {
                                 <TextField
                                     label="City"
                                     value={city}
-                                    onChange={(event) =>
-                                        setCity(event.target.value)
-                                    }
-                                    required
-                                    fullWidth
-                                />
-                            </Stack>
-
-                            <Stack
-                                direction={{
-                                    xs: "column",
-                                    sm: "row",
-                                }}
-                                spacing={2}
-                            >
-                                <TextField
-                                    label="Latitude"
-                                    type="number"
-                                    value={latitude}
-                                    onChange={(event) =>
-                                        setLatitude(event.target.value)
-                                    }
-                                    slotProps={{
-                                        htmlInput: {
-                                            step: "any",
-                                            min: -90,
-                                            max: 90,
-                                        },
+                                    onChange={(event) => {
+                                        setCity(event.target.value);
+                                        setLatitude("");
+                                        setLongitude("");
+                                        setLocationVerified(false);
+                                        setLocationSearchError(null);
                                     }}
                                     required
                                     fullWidth
                                 />
 
-                                <TextField
-                                    label="Longitude"
-                                    type="number"
-                                    value={longitude}
-                                    onChange={(event) =>
-                                        setLongitude(event.target.value)
-                                    }
-                                    slotProps={{
-                                        htmlInput: {
-                                            step: "any",
-                                            min: -180,
-                                            max: 180,
-                                        },
-                                    }}
-                                    required
-                                    fullWidth
-                                />
                             </Stack>
+
+
+                            <Box>
+                                <Button
+                                    type="button"
+                                    variant="outlined"
+                                    onClick={handleFindLocation}
+                                    disabled={
+                                        isFindingLocation ||
+                                        !country.trim() ||
+                                        !city.trim()
+                                    }
+                                >
+                                    {isFindingLocation
+                                        ? "Finding location..."
+                                        : "Find on map"}
+                                </Button>
+                            </Box>
+
+                            {locationSearchError && (
+                                <Alert severity="warning">
+                                    {locationSearchError}
+                                </Alert>
+                            )}
+
+                            {locationVerified && (
+                                <Alert severity="success">
+                                    Location verified.
+                                </Alert>
+                            )}
+
+                            <Box>
+                                <Typography
+                                    sx={{
+                                        mb: 1,
+                                        fontWeight: 600,
+                                    }}
+                                >
+                                    Select location on map
+                                </Typography>
+
+                                <Typography
+                                    color="text.secondary"
+                                    sx={{
+                                        mb: 2,
+                                    }}
+                                >
+                                    Click on the map to set the company coordinates.
+                                </Typography>
+
+                                <CompanyLocationPicker
+                                    latitude={
+                                        latitude === ""
+                                            ? null
+                                            : Number(latitude)
+                                    }
+                                    longitude={
+                                        longitude === ""
+                                            ? null
+                                            : Number(longitude)
+                                    }
+                                    onLocationChange={(
+                                        selectedLatitude,
+                                        selectedLongitude,
+                                    ) => {
+                                        setLatitude(
+                                            selectedLatitude.toFixed(6),
+                                        );
+                                        setLongitude(
+                                            selectedLongitude.toFixed(6),
+                                        );
+                                    }}
+                                />
+                            </Box>
                         </Stack>
                     </Box>
 
@@ -387,7 +479,8 @@ export function CompanyForm() {
                             disabled={
                                 createCompanyMutation.isPending ||
                                 industryId === null ||
-                                specializationIds.length === 0
+                                specializationIds.length === 0 ||
+                                !locationVerified
                             }
                         >
                             {createCompanyMutation.isPending ? (
