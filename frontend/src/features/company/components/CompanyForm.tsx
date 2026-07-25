@@ -1,4 +1,7 @@
-import { useState } from "react";
+import {
+    useRef,
+    useState,
+} from "react";
 import {
     Alert,
     Box,
@@ -17,25 +20,32 @@ import {
 import { useNavigate } from "react-router";
 import { useIndustries } from "../../industry/hooks/useIndustries";
 import { useSpecializationsByIndustry } from "../../specialization/hooks/useSpecializationsByIndustry";
+import { findLocation } from "../api/geocodingApi";
 import { useCreateCompany } from "../hooks/useCreateCompany";
 import type { CreateCompanyRequest } from "../model/CreateCompanyRequest";
 import { CompanyLocationPicker } from "./CompanyLocationPicker";
-import { findLocation } from "../api/geocodingApi";
 
 export function CompanyForm() {
     const navigate = useNavigate();
 
+    const countryInputRef = useRef<HTMLInputElement>(null);
+    const locationSectionRef = useRef<HTMLDivElement>(null);
+
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [industryId, setIndustryId] = useState<number | null>(null);
-    const [specializationIds, setSpecializationIds] = useState<number[]>([]);
+    const [industryId, setIndustryId] =
+        useState<number | null>(null);
+    const [specializationIds, setSpecializationIds] =
+        useState<number[]>([]);
     const [country, setCountry] = useState("");
     const [city, setCity] = useState("");
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
     const [establishedAt, setEstablishedAt] = useState("");
     const [capabilities, setCapabilities] = useState("");
-    const [isFindingLocation, setIsFindingLocation] = useState(false);
+
+    const [isFindingLocation, setIsFindingLocation] =
+        useState(false);
     const [locationSearchError, setLocationSearchError] =
         useState<string | null>(null);
     const [locationVerified, setLocationVerified] =
@@ -55,51 +65,33 @@ export function CompanyForm() {
 
     const createCompanyMutation = useCreateCompany();
 
-    function handleIndustryChange(selectedIndustryId: number) {
+    function handleIndustryChange(
+        selectedIndustryId: number,
+    ) {
         setIndustryId(selectedIndustryId);
         setSpecializationIds([]);
     }
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-
-        if (industryId === null) {
-            return;
-        }
-
-        if (!locationVerified) {
-            setLocationSearchError(
-                "Verify the location before creating the company.",
-            );
-            return;
-        }
-
-        const request: CreateCompanyRequest = {
-            name: name.trim(),
-            description: description.trim() || null,
-            industryId,
-            specializationIds,
-            country: country.trim(),
-            city: city.trim(),
-            latitude: Number(latitude),
-            longitude: Number(longitude),
-            establishedAt: establishedAt || null,
-            capabilities: capabilities.trim() || null,
-        };
-
-        createCompanyMutation.mutate(request, {
-            onSuccess: () => {
-                navigate("/companies");
-            },
+    function moveToLocationFields() {
+        locationSectionRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
         });
+
+        window.setTimeout(() => {
+            countryInputRef.current?.focus();
+        }, 400);
     }
 
-    async function handleFindLocation() {
+    async function resolveLocation() {
         if (!country.trim() || !city.trim()) {
             setLocationSearchError(
                 "Enter both country and city.",
             );
-            return;
+            setLocationVerified(false);
+            moveToLocationFields();
+
+            return null;
         }
 
         setIsFindingLocation(true);
@@ -114,9 +106,11 @@ export function CompanyForm() {
 
             if (!result) {
                 setLocationSearchError(
-                    "Location could not be found.",
+                    "Location could not be found. Check the country and city.",
                 );
-                return;
+                moveToLocationFields();
+
+                return null;
             }
 
             setCountry(result.country);
@@ -124,13 +118,77 @@ export function CompanyForm() {
             setLatitude(result.latitude.toFixed(6));
             setLongitude(result.longitude.toFixed(6));
             setLocationVerified(true);
+
+            return result;
         } catch {
             setLocationSearchError(
-                "Failed to search for the location.",
+                "Failed to search for the location. Try again.",
             );
+            moveToLocationFields();
+
+            return null;
         } finally {
             setIsFindingLocation(false);
         }
+    }
+
+    async function handleFindLocation() {
+        await resolveLocation();
+    }
+
+    async function handleSubmit(
+        event: React.FormEvent<HTMLFormElement>,
+    ) {
+        event.preventDefault();
+
+        if (
+            industryId === null ||
+            specializationIds.length === 0
+        ) {
+            return;
+        }
+
+        let resolvedLatitude = latitude;
+        let resolvedLongitude = longitude;
+        let resolvedCountry = country;
+        let resolvedCity = city;
+
+        if (!locationVerified) {
+            const location = await resolveLocation();
+
+            if (!location) {
+                return;
+            }
+
+            resolvedLatitude =
+                location.latitude.toFixed(6);
+            resolvedLongitude =
+                location.longitude.toFixed(6);
+            resolvedCountry = location.country;
+            resolvedCity = location.city;
+        }
+
+        const request: CreateCompanyRequest = {
+            name: name.trim(),
+            description:
+                description.trim() || null,
+            industryId,
+            specializationIds,
+            country: resolvedCountry.trim(),
+            city: resolvedCity.trim(),
+            latitude: Number(resolvedLatitude),
+            longitude: Number(resolvedLongitude),
+            establishedAt:
+                establishedAt || null,
+            capabilities:
+                capabilities.trim() || null,
+        };
+
+        createCompanyMutation.mutate(request, {
+            onSuccess: () => {
+                navigate("/companies");
+            },
+        });
     }
 
     return (
@@ -177,7 +235,9 @@ export function CompanyForm() {
                                 label="Company name"
                                 value={name}
                                 onChange={(event) =>
-                                    setName(event.target.value)
+                                    setName(
+                                        event.target.value,
+                                    )
                                 }
                                 required
                                 fullWidth
@@ -187,7 +247,9 @@ export function CompanyForm() {
                                 label="Description"
                                 value={description}
                                 onChange={(event) =>
-                                    setDescription(event.target.value)
+                                    setDescription(
+                                        event.target.value,
+                                    )
                                 }
                                 multiline
                                 minRows={3}
@@ -206,21 +268,34 @@ export function CompanyForm() {
                                     labelId="industry-label"
                                     value={industryId ?? ""}
                                     label="Industry"
-                                    disabled={industriesLoading}
+                                    disabled={
+                                        industriesLoading
+                                    }
                                     onChange={(event) =>
                                         handleIndustryChange(
-                                            Number(event.target.value),
+                                            Number(
+                                                event.target
+                                                    .value,
+                                            ),
                                         )
                                     }
                                 >
-                                    {industries?.map((industry) => (
-                                        <MenuItem
-                                            key={industry.id}
-                                            value={industry.id}
-                                        >
-                                            {industry.name}
-                                        </MenuItem>
-                                    ))}
+                                    {industries?.map(
+                                        (industry) => (
+                                            <MenuItem
+                                                key={
+                                                    industry.id
+                                                }
+                                                value={
+                                                    industry.id
+                                                }
+                                            >
+                                                {
+                                                    industry.name
+                                                }
+                                            </MenuItem>
+                                        ),
+                                    )}
                                 </Select>
                             </FormControl>
 
@@ -239,55 +314,85 @@ export function CompanyForm() {
                                 <Select
                                     labelId="specializations-label"
                                     multiple
-                                    value={specializationIds}
+                                    value={
+                                        specializationIds
+                                    }
                                     input={
                                         <OutlinedInput label="Specializations" />
                                     }
                                     onChange={(event) => {
-                                        const value = event.target.value;
+                                        const value =
+                                            event.target
+                                                .value;
 
                                         setSpecializationIds(
-                                            typeof value === "string"
+                                            typeof value ===
+                                            "string"
                                                 ? value
-                                                    .split(",")
-                                                    .map(Number)
+                                                    .split(
+                                                        ",",
+                                                    )
+                                                    .map(
+                                                        Number,
+                                                    )
                                                 : value,
                                         );
                                     }}
-                                    renderValue={(selectedIds) =>
+                                    renderValue={(
+                                        selectedIds,
+                                    ) =>
                                         specializations
-                                            ?.filter((specialization) =>
-                                                selectedIds.includes(
-                                                    specialization.id,
-                                                ),
+                                            ?.filter(
+                                                (
+                                                    specialization,
+                                                ) =>
+                                                    selectedIds.includes(
+                                                        specialization.id,
+                                                    ),
                                             )
                                             .map(
-                                                (specialization) =>
+                                                (
+                                                    specialization,
+                                                ) =>
                                                     specialization.name,
                                             )
-                                            .join(", ") ?? ""
+                                            .join(", ") ??
+                                        ""
                                     }
                                 >
-                                    {specializations?.map((specialization) => (
-                                        <MenuItem
-                                            key={specialization.id}
-                                            value={specialization.id}
-                                        >
-                                            {specialization.name}
-                                        </MenuItem>
-                                    ))}
+                                    {specializations?.map(
+                                        (
+                                            specialization,
+                                        ) => (
+                                            <MenuItem
+                                                key={
+                                                    specialization.id
+                                                }
+                                                value={
+                                                    specialization.id
+                                                }
+                                            >
+                                                {
+                                                    specialization.name
+                                                }
+                                            </MenuItem>
+                                        ),
+                                    )}
                                 </Select>
                             </FormControl>
 
                             {specializationsError && (
                                 <Alert severity="error">
-                                    Failed to load specializations.
+                                    Failed to load
+                                    specializations.
                                 </Alert>
                             )}
                         </Stack>
                     </Box>
 
-                    <Box>
+                    <Box
+                        ref={locationSectionRef}
+                    >
                         <Typography
                             variant="h6"
                             sx={{
@@ -307,14 +412,23 @@ export function CompanyForm() {
                                 spacing={2}
                             >
                                 <TextField
+                                    inputRef={
+                                        countryInputRef
+                                    }
                                     label="Country"
                                     value={country}
                                     onChange={(event) => {
-                                        setCountry(event.target.value);
+                                        setCountry(
+                                            event.target.value,
+                                        );
                                         setLatitude("");
                                         setLongitude("");
-                                        setLocationVerified(false);
-                                        setLocationSearchError(null);
+                                        setLocationVerified(
+                                            false,
+                                        );
+                                        setLocationSearchError(
+                                            null,
+                                        );
                                     }}
                                     required
                                     fullWidth
@@ -324,24 +438,30 @@ export function CompanyForm() {
                                     label="City"
                                     value={city}
                                     onChange={(event) => {
-                                        setCity(event.target.value);
+                                        setCity(
+                                            event.target.value,
+                                        );
                                         setLatitude("");
                                         setLongitude("");
-                                        setLocationVerified(false);
-                                        setLocationSearchError(null);
+                                        setLocationVerified(
+                                            false,
+                                        );
+                                        setLocationSearchError(
+                                            null,
+                                        );
                                     }}
                                     required
                                     fullWidth
                                 />
-
                             </Stack>
-
 
                             <Box>
                                 <Button
                                     type="button"
                                     variant="outlined"
-                                    onClick={handleFindLocation}
+                                    onClick={
+                                        handleFindLocation
+                                    }
                                     disabled={
                                         isFindingLocation ||
                                         !country.trim() ||
@@ -356,7 +476,9 @@ export function CompanyForm() {
 
                             {locationSearchError && (
                                 <Alert severity="warning">
-                                    {locationSearchError}
+                                    {
+                                        locationSearchError
+                                    }
                                 </Alert>
                             )}
 
@@ -382,29 +504,39 @@ export function CompanyForm() {
                                         mb: 2,
                                     }}
                                 >
-                                    Click on the map to set the company coordinates.
+                                    Click on the map to set
+                                    the exact company
+                                    coordinates.
                                 </Typography>
 
                                 <CompanyLocationPicker
                                     latitude={
                                         latitude === ""
                                             ? null
-                                            : Number(latitude)
+                                            : Number(
+                                                latitude,
+                                            )
                                     }
                                     longitude={
                                         longitude === ""
                                             ? null
-                                            : Number(longitude)
+                                            : Number(
+                                                longitude,
+                                            )
                                     }
                                     onLocationChange={(
                                         selectedLatitude,
                                         selectedLongitude,
                                     ) => {
                                         setLatitude(
-                                            selectedLatitude.toFixed(6),
+                                            selectedLatitude.toFixed(
+                                                6,
+                                            ),
                                         );
                                         setLongitude(
-                                            selectedLongitude.toFixed(6),
+                                            selectedLongitude.toFixed(
+                                                6,
+                                            ),
                                         );
                                     }}
                                 />
@@ -429,7 +561,9 @@ export function CompanyForm() {
                                 type="date"
                                 value={establishedAt}
                                 onChange={(event) =>
-                                    setEstablishedAt(event.target.value)
+                                    setEstablishedAt(
+                                        event.target.value,
+                                    )
                                 }
                                 slotProps={{
                                     inputLabel: {
@@ -448,7 +582,9 @@ export function CompanyForm() {
                                 label="Capabilities"
                                 value={capabilities}
                                 onChange={(event) =>
-                                    setCapabilities(event.target.value)
+                                    setCapabilities(
+                                        event.target.value,
+                                    )
                                 }
                                 multiline
                                 minRows={3}
@@ -461,14 +597,20 @@ export function CompanyForm() {
                         direction="row"
                         spacing={2}
                         sx={{
-                            justifyContent: "flex-end",
+                            justifyContent:
+                                "flex-end",
                         }}
                     >
                         <Button
                             type="button"
                             variant="outlined"
-                            disabled={createCompanyMutation.isPending}
-                            onClick={() => navigate("/companies")}
+                            disabled={
+                                createCompanyMutation.isPending ||
+                                isFindingLocation
+                            }
+                            onClick={() =>
+                                navigate("/companies")
+                            }
                         >
                             Cancel
                         </Button>
@@ -478,12 +620,14 @@ export function CompanyForm() {
                             variant="contained"
                             disabled={
                                 createCompanyMutation.isPending ||
+                                isFindingLocation ||
                                 industryId === null ||
-                                specializationIds.length === 0 ||
-                                !locationVerified
+                                specializationIds.length ===
+                                0
                             }
                         >
-                            {createCompanyMutation.isPending ? (
+                            {createCompanyMutation.isPending ||
+                            isFindingLocation ? (
                                 <CircularProgress
                                     size={22}
                                     color="inherit"
