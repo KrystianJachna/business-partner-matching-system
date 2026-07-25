@@ -167,6 +167,16 @@ export function CompaniesPage() {
                                 >
                                     Status
                                 </TableCell>
+
+                                <TableCell
+                                    align="right"
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
+                                    Actions
+                                </TableCell>
                             </TableRow>
                         </TableHead>
 
@@ -262,6 +272,35 @@ export function CompaniesPage() {
                                                 fontWeight: 600,
                                             }}
                                         />
+                                    </TableCell>
+
+                                    <TableCell
+                                        align="right"
+                                        sx={{
+                                            py: 2,
+                                        }}
+                                    >
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            disabled={!company.active}
+                                            onClick={() =>
+                                                navigate(
+                                                    `/companies/${company.id}/needs/new`,
+                                                )
+                                            }
+                                            sx={{
+                                                whiteSpace: "nowrap",
+                                                minWidth: 0,
+                                                px: 2,
+                                                py: 0.75,
+                                                borderRadius: 2,
+                                                textTransform: "none",
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            Add need
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
