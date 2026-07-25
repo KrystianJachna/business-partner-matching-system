@@ -17,6 +17,7 @@ import pl.krystian.businesspartnermatching.company.exception.CompanyNotFoundExce
 import pl.krystian.businesspartnermatching.company.repository.CompanyRepository;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -67,6 +68,14 @@ public class CompanyService {
                 .orElseThrow(() -> new CompanyNotFoundException(companyId));
 
         return CompanyResponse.from(company);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CompanyResponse> getAllCompanies() {
+        return companyRepository.findAllByOrderByNameAsc()
+                .stream()
+                .map(CompanyResponse::from)
+                .toList();
     }
 
     private void validateAllSpecializationsFound(
