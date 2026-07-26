@@ -11,12 +11,15 @@ import {
 } from "react-router";
 import { BusinessNeedForm } from "../features/businessNeed/components/BusinessNeedForm";
 import { useCompanies } from "../features/company/hooks/useCompanies";
+import { useSpecializationGroups } from "../features/specialization/hooks/useSpecializationGroups";
 
 export function CreateBusinessNeedPage() {
     const { companyId } = useParams();
     const navigate = useNavigate();
 
     const companiesQuery = useCompanies();
+    const specializationGroupsQuery =
+        useSpecializationGroups();
 
     const parsedCompanyId = Number(companyId);
 
@@ -27,7 +30,10 @@ export function CreateBusinessNeedPage() {
         return <Navigate to="/companies" replace />;
     }
 
-    if (companiesQuery.isPending) {
+    if (
+        companiesQuery.isPending
+        || specializationGroupsQuery.isPending
+    ) {
         return (
             <Box
                 sx={{
@@ -41,11 +47,18 @@ export function CreateBusinessNeedPage() {
         );
     }
 
-    if (companiesQuery.isError) {
+    if (
+        companiesQuery.isError
+        || specializationGroupsQuery.isError
+    ) {
         return (
-            <Container maxWidth="md">
+            <Container
+                maxWidth="md"
+                sx={{ py: 4 }}
+            >
                 <Alert severity="error">
-                    Failed to load company information.
+                    Failed to load data required for the
+                    business need form.
                 </Alert>
             </Container>
         );
@@ -58,7 +71,10 @@ export function CreateBusinessNeedPage() {
 
     if (!company) {
         return (
-            <Container maxWidth="md">
+            <Container
+                maxWidth="md"
+                sx={{ py: 4 }}
+            >
                 <Alert severity="warning">
                     The selected company does not exist.
                 </Alert>
@@ -74,7 +90,12 @@ export function CreateBusinessNeedPage() {
             <BusinessNeedForm
                 companyId={company.id}
                 companyName={company.name}
-                specializations={company.specializations}
+                companySpecializations={
+                    company.specializations
+                }
+                specializationGroups={
+                    specializationGroupsQuery.data
+                }
                 onSuccess={() => {
                     navigate("/companies");
                 }}

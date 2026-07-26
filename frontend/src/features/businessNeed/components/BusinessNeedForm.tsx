@@ -3,21 +3,21 @@ import {
     Box,
     Button,
     Checkbox,
+    Chip,
     Divider,
     FormControl,
     FormControlLabel,
     FormHelperText,
     InputLabel,
     MenuItem,
-    OutlinedInput,
     Paper,
     Select,
     Stack,
     TextField,
     Typography,
 } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import type { SpecializationGroupResponse } from "../../specialization/model/SpecializationGroupResponse";
 import type { SpecializationResponse } from "../../specialization/model/SpecializationResponse";
 import { useCreateBusinessNeed } from "../hooks/useCreateBusinessNeed";
 import {
@@ -34,7 +34,8 @@ import {
 interface BusinessNeedFormProps {
     companyId: number;
     companyName: string;
-    specializations: SpecializationResponse[];
+    companySpecializations: SpecializationResponse[];
+    specializationGroups: SpecializationGroupResponse[];
     onSuccess?: () => void;
 }
 
@@ -71,7 +72,8 @@ function parseOptionalNonNegativeInteger(
 export function BusinessNeedForm({
                                      companyId,
                                      companyName,
-                                     specializations,
+                                     companySpecializations,
+                                     specializationGroups,
                                      onSuccess,
                                  }: BusinessNeedFormProps) {
     const createBusinessNeedMutation =
@@ -97,14 +99,18 @@ export function BusinessNeedForm({
     const [currency, setCurrency] =
         useState<CurrencyCode>("PLN");
 
-    const [requiredPeriodEnabled, setRequiredPeriodEnabled] =
-        useState(false);
+    const [
+        requiredPeriodEnabled,
+        setRequiredPeriodEnabled,
+    ] = useState(false);
 
     const [requiredPeriodFrom, setRequiredPeriodFrom] =
         useState("");
 
-    const [requiredPeriodUntil, setRequiredPeriodUntil] =
-        useState("");
+    const [
+        requiredPeriodUntil,
+        setRequiredPeriodUntil,
+    ] = useState("");
 
     const [maxDistanceKm, setMaxDistanceKm] =
         useState("");
@@ -119,18 +125,56 @@ export function BusinessNeedForm({
     const [errors, setErrors] =
         useState<FormErrors>({});
 
-    function handleSpecializationsChange(
-        event: SelectChangeEvent<number[]>,
-    ) {
-        const value = event.target.value;
+    const companySpecializationIds = useMemo(
+        () =>
+            new Set(
+                companySpecializations.map(
+                    (specialization) =>
+                        specialization.id,
+                ),
+            ),
+        [companySpecializations],
+    );
 
+    const availableSpecializationsCount = useMemo(
+        () =>
+            specializationGroups.reduce(
+                (count, group) =>
+                    count
+                    + group.specializations.length,
+                0,
+            ),
+        [specializationGroups],
+    );
+
+    function handleSpecializationChange(
+        specializationId: number,
+    ) {
         setRequiredSpecializationIds(
-            typeof value === "string"
-                ? value
-                    .split(",")
-                    .map(Number)
-                : value,
+            (currentIds) => {
+                if (
+                    currentIds.includes(
+                        specializationId,
+                    )
+                ) {
+                    return currentIds.filter(
+                        (currentId) =>
+                            currentId
+                            !== specializationId,
+                    );
+                }
+
+                return [
+                    ...currentIds,
+                    specializationId,
+                ];
+            },
         );
+
+        setErrors((currentErrors) => ({
+            ...currentErrors,
+            requiredSpecializationIds: undefined,
+        }));
     }
 
     function validateForm(): boolean {
@@ -182,7 +226,8 @@ export function BusinessNeedForm({
                 validationErrors.requiredPeriod =
                     "Provide both the start and end date.";
             } else if (
-                requiredPeriodFrom > requiredPeriodUntil
+                requiredPeriodFrom
+                > requiredPeriodUntil
             ) {
                 validationErrors.requiredPeriod =
                     "Start date cannot be later than end date.";
@@ -201,7 +246,9 @@ export function BusinessNeedForm({
             }
         }
 
-        if (minPartnerExperienceYears.trim() !== "") {
+        if (
+            minPartnerExperienceYears.trim() !== ""
+        ) {
             const parsedExperience =
                 parseOptionalNonNegativeInteger(
                     minPartnerExperienceYears,
@@ -289,8 +336,11 @@ export function BusinessNeedForm({
             component="form"
             onSubmit={handleSubmit}
             sx={{
-                p: 4,
-                maxWidth: 900,
+                p: {
+                    xs: 2,
+                    sm: 4,
+                },
+                maxWidth: 1000,
                 mx: "auto",
             }}
         >
@@ -330,9 +380,14 @@ export function BusinessNeedForm({
                 <TextField
                     label="Title"
                     value={title}
-                    onChange={(event) =>
-                        setTitle(event.target.value)
-                    }
+                    onChange={(event) => {
+                        setTitle(event.target.value);
+
+                        setErrors((currentErrors) => ({
+                            ...currentErrors,
+                            title: undefined,
+                        }));
+                    }}
                     required
                     fullWidth
                     error={Boolean(errors.title)}
@@ -379,12 +434,20 @@ export function BusinessNeedForm({
                         labelId="cooperation-type-label"
                         value={cooperationType}
                         label="Cooperation type"
-                        onChange={(event) =>
+                        onChange={(event) => {
                             setCooperationType(
                                 event.target
                                     .value as CooperationType,
-                            )
-                        }
+                            );
+
+                            setErrors(
+                                (currentErrors) => ({
+                                    ...currentErrors,
+                                    cooperationType:
+                                    undefined,
+                                }),
+                            );
+                        }}
                     >
                         {cooperationTypes.map((type) => (
                             <MenuItem
@@ -405,76 +468,223 @@ export function BusinessNeedForm({
                     </FormHelperText>
                 </FormControl>
 
-                <FormControl
-                    fullWidth
-                    required
-                    error={Boolean(
-                        errors.requiredSpecializationIds,
-                    )}
-                >
-                    <InputLabel id="required-specializations-label">
+                <Divider />
+
+                <Box>
+                    <Typography variant="h6">
                         Required specializations
-                    </InputLabel>
+                    </Typography>
 
-                    <Select
-                        labelId="required-specializations-label"
-                        multiple
-                        value={requiredSpecializationIds}
-                        onChange={
-                            handleSpecializationsChange
-                        }
-                        input={
-                            <OutlinedInput label="Required specializations" />
-                        }
-                        renderValue={(selectedIds) =>
-                            selectedIds
-                                .map((specializationId) =>
-                                    specializations.find(
-                                        (specialization) =>
-                                            specialization.id
-                                            === specializationId,
-                                    ),
-                                )
-                                .filter(
-                                    (
-                                        specialization,
-                                    ): specialization is SpecializationResponse =>
-                                        specialization
-                                        !== undefined,
-                                )
-                                .map(
-                                    (specialization) =>
-                                        specialization.name,
-                                )
-                                .join(", ")
-                        }
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mt: 0.5 }}
                     >
-                        {specializations.map(
-                            (specialization) => (
-                                <MenuItem
-                                    key={specialization.id}
-                                    value={
-                                        specialization.id
-                                    }
-                                >
-                                    <Checkbox
-                                        checked={requiredSpecializationIds.includes(
-                                            specialization.id,
-                                        )}
+                        Select the skills and services
+                        required from a potential business
+                        partner.
+                    </Typography>
+                </Box>
+
+                {companySpecializations.length > 0 && (
+                    <Paper
+                        variant="outlined"
+                        sx={{
+                            p: 2.5,
+                            backgroundColor:
+                                "action.hover",
+                        }}
+                    >
+                        <Typography
+                            variant="subtitle1"
+                            sx={{
+                                fontWeight: 700,
+                            }}
+                        >
+                            Company specializations
+                        </Typography>
+
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 0.5, mb: 2 }}
+                        >
+                            Quick access to specializations
+                            associated with your company.
+                        </Typography>
+
+                        <Box
+                            sx={{
+                                display: "grid",
+                                gridTemplateColumns: {
+                                    xs: "1fr",
+                                    sm: "repeat(2, minmax(0, 1fr))",
+                                },
+                                columnGap: 2,
+                                rowGap: 0.5,
+                            }}
+                        >
+                            {companySpecializations.map(
+                                (specialization) => (
+                                    <FormControlLabel
+                                        key={
+                                            specialization.id
+                                        }
+                                        control={
+                                            <Checkbox
+                                                checked={requiredSpecializationIds.includes(
+                                                    specialization.id,
+                                                )}
+                                                onChange={() =>
+                                                    handleSpecializationChange(
+                                                        specialization.id,
+                                                    )
+                                                }
+                                            />
+                                        }
+                                        label={
+                                            specialization.name
+                                        }
                                     />
+                                ),
+                            )}
+                        </Box>
+                    </Paper>
+                )}
 
-                                    {specialization.name}
-                                </MenuItem>
-                            ),
-                        )}
-                    </Select>
+                <Box>
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
+                            mb: 2,
+                            fontWeight: 700,
+                        }}
+                    >
+                        All specializations
+                    </Typography>
 
-                    <FormHelperText>
-                        {
-                            errors.requiredSpecializationIds
-                        }
-                    </FormHelperText>
-                </FormControl>
+                    {specializationGroups.length === 0 ? (
+                        <Alert severity="warning">
+                            No active specializations are
+                            currently available.
+                        </Alert>
+                    ) : (
+                        <Stack spacing={2}>
+                            {specializationGroups.map(
+                                (group) => (
+                                    <Paper
+                                        key={
+                                            group.industryId
+                                        }
+                                        variant="outlined"
+                                        sx={{ p: 2.5 }}
+                                    >
+                                        <Typography
+                                            variant="subtitle1"
+                                            sx={{
+                                                mb: 1.5,
+                                                fontWeight: 700,
+                                            }}
+                                        >
+                                            {
+                                                group.industryName
+                                            }
+                                        </Typography>
+
+                                        <Box
+                                            sx={{
+                                                display:
+                                                    "grid",
+                                                gridTemplateColumns:
+                                                    {
+                                                        xs: "1fr",
+                                                        md: "repeat(2, minmax(0, 1fr))",
+                                                    },
+                                                columnGap: 3,
+                                                rowGap: 0.5,
+                                            }}
+                                        >
+                                            {group.specializations.map(
+                                                (
+                                                    specialization,
+                                                ) => {
+                                                    const isCompanySpecialization =
+                                                        companySpecializationIds.has(
+                                                            specialization.id,
+                                                        );
+
+                                                    return (
+                                                        <Box
+                                                            key={
+                                                                specialization.id
+                                                            }
+                                                            sx={{
+                                                                display:
+                                                                    "flex",
+                                                                alignItems:
+                                                                    "center",
+                                                                justifyContent:
+                                                                    "space-between",
+                                                                gap: 1,
+                                                                minWidth: 0,
+                                                            }}
+                                                        >
+                                                            <FormControlLabel
+                                                                sx={{
+                                                                    flex: 1,
+                                                                    minWidth: 0,
+                                                                    mr: 0,
+                                                                }}
+                                                                control={
+                                                                    <Checkbox
+                                                                        checked={requiredSpecializationIds.includes(
+                                                                            specialization.id,
+                                                                        )}
+                                                                        onChange={() =>
+                                                                            handleSpecializationChange(
+                                                                                specialization.id,
+                                                                            )
+                                                                        }
+                                                                    />
+                                                                }
+                                                                label={
+                                                                    specialization.name
+                                                                }
+                                                            />
+
+                                                            {isCompanySpecialization && (
+                                                                <Chip
+                                                                    label="Your company"
+                                                                    size="small"
+                                                                    color="primary"
+                                                                    variant="outlined"
+                                                                    sx={{
+                                                                        flexShrink: 0,
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </Box>
+                                                    );
+                                                },
+                                            )}
+                                        </Box>
+                                    </Paper>
+                                ),
+                            )}
+                        </Stack>
+                    )}
+
+                    {errors.requiredSpecializationIds && (
+                        <FormHelperText
+                            error
+                            sx={{ mt: 1 }}
+                        >
+                            {
+                                errors.requiredSpecializationIds
+                            }
+                        </FormHelperText>
+                    )}
+                </Box>
 
                 <Divider />
 
@@ -487,11 +697,18 @@ export function BusinessNeedForm({
                         control={
                             <Checkbox
                                 checked={budgetEnabled}
-                                onChange={(event) =>
+                                onChange={(event) => {
                                     setBudgetEnabled(
                                         event.target.checked,
-                                    )
-                                }
+                                    );
+
+                                    setErrors(
+                                        (currentErrors) => ({
+                                            ...currentErrors,
+                                            budget: undefined,
+                                        }),
+                                    );
+                                }}
                             />
                         }
                         label="Specify budget range"
@@ -602,11 +819,19 @@ export function BusinessNeedForm({
                                 checked={
                                     requiredPeriodEnabled
                                 }
-                                onChange={(event) =>
+                                onChange={(event) => {
                                     setRequiredPeriodEnabled(
                                         event.target.checked,
-                                    )
-                                }
+                                    );
+
+                                    setErrors(
+                                        (currentErrors) => ({
+                                            ...currentErrors,
+                                            requiredPeriod:
+                                            undefined,
+                                        }),
+                                    );
+                                }}
                             />
                         }
                         label="Specify required cooperation period"
@@ -771,7 +996,8 @@ export function BusinessNeedForm({
                         size="large"
                         disabled={
                             createBusinessNeedMutation.isPending
-                            || specializations.length === 0
+                            || availableSpecializationsCount
+                            === 0
                         }
                     >
                         {createBusinessNeedMutation.isPending
