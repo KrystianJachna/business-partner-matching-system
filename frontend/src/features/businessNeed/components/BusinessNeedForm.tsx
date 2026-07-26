@@ -9,14 +9,22 @@ import {
     FormControlLabel,
     FormHelperText,
     InputLabel,
+    List,
+    ListItemButton,
+    ListItemText,
     MenuItem,
     Paper,
+    Popover,
     Select,
     Stack,
     TextField,
     Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import {
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import type { SpecializationGroupResponse } from "../../specialization/model/SpecializationGroupResponse";
 import type { SpecializationResponse } from "../../specialization/model/SpecializationResponse";
 import { useCreateBusinessNeed } from "../hooks/useCreateBusinessNeed";
@@ -90,6 +98,18 @@ export function BusinessNeedForm({
         setRequiredSpecializationIds,
     ] = useState<number[]>([]);
 
+    const [
+        specializationPickerAnchor,
+        setSpecializationPickerAnchor,
+    ] = useState<HTMLElement | null>(null);
+
+    const [
+        selectedIndustryId,
+        setSelectedIndustryId,
+    ] = useState<number | null>(
+        specializationGroups[0]?.industryId ?? null,
+    );
+
     const [budgetEnabled, setBudgetEnabled] =
         useState(false);
 
@@ -125,6 +145,27 @@ export function BusinessNeedForm({
     const [errors, setErrors] =
         useState<FormErrors>({});
 
+    useEffect(() => {
+        const selectedIndustryStillExists =
+            specializationGroups.some(
+                (group) =>
+                    group.industryId
+                    === selectedIndustryId,
+            );
+
+        if (
+            !selectedIndustryStillExists
+            && specializationGroups.length > 0
+        ) {
+            setSelectedIndustryId(
+                specializationGroups[0].industryId,
+            );
+        }
+    }, [
+        selectedIndustryId,
+        specializationGroups,
+    ]);
+
     const companySpecializationIds = useMemo(
         () =>
             new Set(
@@ -136,16 +177,90 @@ export function BusinessNeedForm({
         [companySpecializations],
     );
 
-    const availableSpecializationsCount = useMemo(
+    const allSpecializations = useMemo(
         () =>
-            specializationGroups.reduce(
-                (count, group) =>
-                    count
-                    + group.specializations.length,
-                0,
+            specializationGroups.flatMap(
+                (group) => group.specializations,
             ),
         [specializationGroups],
     );
+
+    const specializationsById = useMemo(() => {
+        const result = new Map<
+            number,
+            SpecializationResponse
+        >();
+
+        for (const specialization of allSpecializations) {
+            result.set(
+                specialization.id,
+                specialization,
+            );
+        }
+
+        for (
+            const specialization
+            of companySpecializations
+            ) {
+            result.set(
+                specialization.id,
+                specialization,
+            );
+        }
+
+        return result;
+    }, [
+        allSpecializations,
+        companySpecializations,
+    ]);
+
+    const selectedSpecializations = useMemo(
+        () =>
+            requiredSpecializationIds
+                .map((specializationId) =>
+                    specializationsById.get(
+                        specializationId,
+                    ),
+                )
+                .filter(
+                    (
+                        specialization,
+                    ): specialization is SpecializationResponse =>
+                        specialization !== undefined,
+                ),
+        [
+            requiredSpecializationIds,
+            specializationsById,
+        ],
+    );
+
+    const selectedIndustryGroup = useMemo(
+        () =>
+            specializationGroups.find(
+                (group) =>
+                    group.industryId
+                    === selectedIndustryId,
+            ) ?? null,
+        [
+            selectedIndustryId,
+            specializationGroups,
+        ],
+    );
+
+    const specializationPickerOpen =
+        specializationPickerAnchor !== null;
+
+    function openSpecializationPicker(
+        event: React.MouseEvent<HTMLElement>,
+    ) {
+        setSpecializationPickerAnchor(
+            event.currentTarget,
+        );
+    }
+
+    function closeSpecializationPicker() {
+        setSpecializationPickerAnchor(null);
+    }
 
     function handleSpecializationChange(
         specializationId: number,
@@ -497,9 +612,7 @@ export function BusinessNeedForm({
                     >
                         <Typography
                             variant="subtitle1"
-                            sx={{
-                                fontWeight: 700,
-                            }}
+                            sx={{ fontWeight: 700 }}
                         >
                             Company specializations
                         </Typography>
@@ -556,55 +669,197 @@ export function BusinessNeedForm({
                     <Typography
                         variant="subtitle1"
                         sx={{
-                            mb: 2,
+                            mb: 1,
                             fontWeight: 700,
                         }}
                     >
                         All specializations
                     </Typography>
 
-                    {specializationGroups.length === 0 ? (
-                        <Alert severity="warning">
-                            No active specializations are
-                            currently available.
-                        </Alert>
-                    ) : (
-                        <Stack spacing={2}>
-                            {specializationGroups.map(
-                                (group) => (
-                                    <Paper
-                                        key={
-                                            group.industryId
-                                        }
-                                        variant="outlined"
-                                        sx={{ p: 2.5 }}
-                                    >
+                    <Button
+                        variant="outlined"
+                        fullWidth
+                        onClick={openSpecializationPicker}
+                        disabled={
+                            specializationGroups.length === 0
+                        }
+                        aria-haspopup="dialog"
+                        aria-expanded={
+                            specializationPickerOpen
+                        }
+                        sx={{
+                            minHeight: 56,
+                            justifyContent:
+                                "space-between",
+                            px: 2,
+                            textTransform: "none",
+                        }}
+                    >
+                        <Typography
+                            component="span"
+                            color={
+                                requiredSpecializationIds.length
+                                > 0
+                                    ? "text.primary"
+                                    : "text.secondary"
+                            }
+                        >
+                            {requiredSpecializationIds.length
+                            > 0
+                                ? `${requiredSpecializationIds.length} specializations selected`
+                                : "Select specializations"}
+                        </Typography>
+
+                        <Typography
+                            component="span"
+                            aria-hidden="true"
+                        >
+                            ▾
+                        </Typography>
+                    </Button>
+
+                    <Popover
+                        open={specializationPickerOpen}
+                        anchorEl={
+                            specializationPickerAnchor
+                        }
+                        onClose={
+                            closeSpecializationPicker
+                        }
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "left",
+                        }}
+                        transformOrigin={{
+                            vertical: "top",
+                            horizontal: "left",
+                        }}
+                        slotProps={{
+                            paper: {
+                                sx: {
+                                    mt: 1,
+                                    width: {
+                                        xs: "calc(100vw - 32px)",
+                                        sm: 760,
+                                    },
+                                    maxWidth:
+                                        "calc(100vw - 32px)",
+                                    maxHeight: 480,
+                                    overflow: "hidden",
+                                },
+                            },
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: "grid",
+                                gridTemplateColumns: {
+                                    xs: "1fr",
+                                    sm: "260px minmax(0, 1fr)",
+                                },
+                                minHeight: {
+                                    xs: 300,
+                                    sm: 380,
+                                },
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    borderRight: {
+                                        xs: "none",
+                                        sm: 1,
+                                    },
+                                    borderBottom: {
+                                        xs: 1,
+                                        sm: "none",
+                                    },
+                                    borderColor: "divider",
+                                    overflowY: "auto",
+                                    maxHeight: {
+                                        xs: 160,
+                                        sm: 480,
+                                    },
+                                }}
+                            >
+                                <Typography
+                                    variant="overline"
+                                    color="text.secondary"
+                                    sx={{
+                                        display: "block",
+                                        px: 2,
+                                        pt: 2,
+                                        pb: 1,
+                                    }}
+                                >
+                                    Industries
+                                </Typography>
+
+                                <List
+                                    disablePadding
+                                    sx={{ pb: 1 }}
+                                >
+                                    {specializationGroups.map(
+                                        (group) => (
+                                            <ListItemButton
+                                                key={
+                                                    group.industryId
+                                                }
+                                                selected={
+                                                    group.industryId
+                                                    === selectedIndustryId
+                                                }
+                                                onMouseEnter={() =>
+                                                    setSelectedIndustryId(
+                                                        group.industryId,
+                                                    )
+                                                }
+                                                onClick={() =>
+                                                    setSelectedIndustryId(
+                                                        group.industryId,
+                                                    )
+                                                }
+                                            >
+                                                <ListItemText
+                                                    primary={
+                                                        group.industryName
+                                                    }
+                                                    secondary={`${group.specializations.length} specializations`}
+                                                />
+
+                                                <Typography
+                                                    color="text.secondary"
+                                                    aria-hidden="true"
+                                                >
+                                                    ›
+                                                </Typography>
+                                            </ListItemButton>
+                                        ),
+                                    )}
+                                </List>
+                            </Box>
+
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    overflowY: "auto",
+                                }}
+                            >
+                                {selectedIndustryGroup ? (
+                                    <>
                                         <Typography
                                             variant="subtitle1"
                                             sx={{
-                                                mb: 1.5,
+                                                mb: 1,
                                                 fontWeight: 700,
                                             }}
                                         >
                                             {
-                                                group.industryName
+                                                selectedIndustryGroup.industryName
                                             }
                                         </Typography>
 
-                                        <Box
-                                            sx={{
-                                                display:
-                                                    "grid",
-                                                gridTemplateColumns:
-                                                    {
-                                                        xs: "1fr",
-                                                        md: "repeat(2, minmax(0, 1fr))",
-                                                    },
-                                                columnGap: 3,
-                                                rowGap: 0.5,
-                                            }}
-                                        >
-                                            {group.specializations.map(
+                                        <Stack spacing={0.25}>
+                                            {selectedIndustryGroup.specializations.map(
                                                 (
                                                     specialization,
                                                 ) => {
@@ -626,14 +881,20 @@ export function BusinessNeedForm({
                                                                 justifyContent:
                                                                     "space-between",
                                                                 gap: 1,
-                                                                minWidth: 0,
+                                                                borderRadius: 1,
+                                                                px: 1,
+                                                                "&:hover":
+                                                                    {
+                                                                        backgroundColor:
+                                                                            "action.hover",
+                                                                    },
                                                             }}
                                                         >
                                                             <FormControlLabel
                                                                 sx={{
                                                                     flex: 1,
                                                                     minWidth: 0,
-                                                                    mr: 0,
+                                                                    m: 0,
                                                                 }}
                                                                 control={
                                                                     <Checkbox
@@ -658,17 +919,84 @@ export function BusinessNeedForm({
                                                                     size="small"
                                                                     color="primary"
                                                                     variant="outlined"
-                                                                    sx={{
-                                                                        flexShrink: 0,
-                                                                    }}
                                                                 />
                                                             )}
                                                         </Box>
                                                     );
                                                 },
                                             )}
-                                        </Box>
-                                    </Paper>
+                                        </Stack>
+                                    </>
+                                ) : (
+                                    <Typography color="text.secondary">
+                                        Select an industry.
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Box>
+
+                        <Divider />
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent:
+                                    "space-between",
+                                alignItems: "center",
+                                gap: 2,
+                                px: 2,
+                                py: 1.5,
+                            }}
+                        >
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                            >
+                                {
+                                    requiredSpecializationIds.length
+                                }{" "}
+                                selected
+                            </Typography>
+
+                            <Button
+                                onClick={
+                                    closeSpecializationPicker
+                                }
+                            >
+                                Done
+                            </Button>
+                        </Box>
+                    </Popover>
+
+                    {selectedSpecializations.length > 0 && (
+                        <Stack
+                            direction="row"
+                            useFlexGap
+                            spacing={1}
+                            sx={{
+                                mt: 2,
+                                flexWrap: "wrap",
+                            }}
+                        >
+                            {selectedSpecializations.map(
+                                (specialization) => (
+                                    <Chip
+                                        key={specialization.id}
+                                        label={specialization.name}
+                                        onDelete={() =>
+                                            handleSpecializationChange(
+                                                specialization.id,
+                                            )
+                                        }
+                                        color={
+                                            companySpecializationIds.has(
+                                                specialization.id,
+                                            )
+                                                ? "primary"
+                                                : "default"
+                                        }
+                                        variant="outlined"
+                                    />
                                 ),
                             )}
                         </Stack>
@@ -996,7 +1324,7 @@ export function BusinessNeedForm({
                         size="large"
                         disabled={
                             createBusinessNeedMutation.isPending
-                            || availableSpecializationsCount
+                            || specializationGroups.length
                             === 0
                         }
                     >
