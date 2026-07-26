@@ -1,5 +1,6 @@
 package pl.krystian.businesspartnermatching.catalog.specialization.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import pl.krystian.businesspartnermatching.catalog.specialization.model.entity.Specialization;
 
@@ -11,4 +12,8 @@ public interface SpecializationRepository extends JpaRepository<Specialization, 
     List<Specialization> findAllByIndustryIdAndActiveTrueOrderByNameAsc(Long industryId);
 
     Set<Specialization> findAllByIdInAndActiveTrue(Set<Long> ids);
+
+    @EntityGraph(attributePaths = "industry")
+    List<Specialization>
+    findAllByActiveTrueOrderByIndustryNameAscNameAsc();
 }
