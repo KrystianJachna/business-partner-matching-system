@@ -3,8 +3,19 @@ Application for matching business needs with offers using scoring and stable mat
 
 # swagger ui
 http://localhost:8080/swagger-ui/index.html
+http://localhost:5173/
+
 
 # todo:
-- mapa na froncie zeby mozna bylo zaznaczyc obszar w ktorym szukamy partnerow
 - dopracowanie sensu DateScoreCalculator, aby rozróżniać sam overlap od wcześniejszej dostępności?
+- implementacja businessneed a konkretniej sposobu wyswietlania specjalizacji:
+  - Company specializations
+    Obróbka metali
+    Produkcja konstrukcji stalowych
+
+    All specializations
+    Technologie informatyczne
+    Marketing
+    Transport
+    ...
 # next:
