@@ -6,6 +6,7 @@ import type { MoneyRangeResponse } from "./MoneyRange";
 export interface BusinessNeedResponse {
     id: number;
     companyId: number;
+    companyName: string;
     title: string;
     description: string | null;
     cooperationType: CooperationType;

@@ -4,7 +4,7 @@ import {
     Button,
     Chip,
     CircularProgress,
-    Container,
+    Container, IconButton,
     Paper,
     Stack,
     Table,
@@ -17,43 +17,29 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useBusinessNeeds } from "../features/businessNeed/hooks/useBusinessNeeds";
-import type { BusinessNeedResponse } from "../features/businessNeed/model/BusinessNeedResponse";
+import { VisibilityOutlined as VisibilityOutlinedIcon } from "@mui/icons-material";
+import Tooltip from "@mui/material/Tooltip";
 
-function formatMoney(
-    businessNeed: BusinessNeedResponse,
+function formatMoneyValue(
+    value: number,
+    currency: string,
 ): string {
-    const budget = businessNeed.budget;
-
-    if (!budget) {
-        return "Not specified";
-    }
-
-    const formatter = new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-GB", {
         style: "currency",
-        currency: budget.currency,
+        currency,
         maximumFractionDigits: 0,
-    });
-
-    return `${formatter.format(budget.min)} – ${formatter.format(
-        budget.max,
-    )}`;
+    }).format(value);
 }
 
-function formatPeriod(
-    businessNeed: BusinessNeedResponse,
-): string {
-    const period = businessNeed.requiredPeriod;
-
-    if (!period) {
-        return "Not specified";
-    }
-
-    return `${period.from} – ${period.until}`;
+function formatDate(value: string): string {
+    return new Intl.DateTimeFormat("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    }).format(new Date(`${value}T00:00:00`));
 }
 
-function formatCooperationType(
-    value: string,
-): string {
+function formatCooperationType(value: string): string {
     return value
         .toLowerCase()
         .split("_")
@@ -63,6 +49,60 @@ function formatCooperationType(
                 + part.slice(1),
         )
         .join(" ");
+}
+
+function getCooperationTypeStyle(
+    cooperationType: string,
+) {
+    switch (cooperationType) {
+        case "SUBCONTRACTING":
+            return {
+                backgroundColor: "#FFF3E0",
+                color: "#E65100",
+            };
+
+        case "SUPPLY":
+            return {
+                backgroundColor: "#E8F5E9",
+                color: "#2E7D32",
+            };
+
+        case "DISTRIBUTION":
+            return {
+                backgroundColor: "#E0F2F1",
+                color: "#00796B",
+            };
+
+        case "OUTSOURCING":
+            return {
+                backgroundColor: "#E3F2FD",
+                color: "#1565C0",
+            };
+
+        case "CONSULTING":
+            return {
+                backgroundColor: "#FFF8E1",
+                color: "#F57F17",
+            };
+
+        case "TECHNOLOGY_PARTNERSHIP":
+            return {
+                backgroundColor: "#F3E5F5",
+                color: "#7B1FA2",
+            };
+
+        case "JOINT_PROJECT":
+            return {
+                backgroundColor: "#E8EAF6",
+                color: "#3949AB",
+            };
+
+        default:
+            return {
+                backgroundColor: "#F5F5F5",
+                color: "#616161",
+            };
+    }
 }
 
 export function BusinessNeedsPage() {
@@ -106,9 +146,16 @@ export function BusinessNeedsPage() {
             <Stack
                 sx={{
                     mb: 3,
-                    flexDirection: "row",
+                    gap: 2,
+                    flexDirection: {
+                        xs: "column",
+                        sm: "row",
+                    },
                     justifyContent: "space-between",
-                    alignItems: "center",
+                    alignItems: {
+                        xs: "flex-start",
+                        sm: "center",
+                    },
                 }}
             >
                 <Box>
@@ -160,28 +207,54 @@ export function BusinessNeedsPage() {
                 <TableContainer
                     component={Paper}
                     variant="outlined"
+                    sx={{
+                        borderRadius: 2,
+                        overflowX: "auto",
+                    }}
                 >
-                    <Table>
+                    <Table
+                        sx={{
+                            width: "100%",
+                            tableLayout: "auto",
+                        }}
+                    >
                         <TableHead>
                             <TableRow>
-                                <TableCell>Title</TableCell>
+                                <TableCell>
+                                    Business need
+                                </TableCell>
+
                                 <TableCell>
                                     Cooperation type
                                 </TableCell>
+
                                 <TableCell>
                                     Specializations
                                 </TableCell>
-                                <TableCell>Budget</TableCell>
+
+                                <TableCell>
+                                    Budget
+                                </TableCell>
+
                                 <TableCell>
                                     Required period
                                 </TableCell>
+
                                 <TableCell align="center">
                                     Partners
                                 </TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell align="right">
-                                    Actions
+
+                                <TableCell>
+                                    Status
                                 </TableCell>
+
+                                <TableCell
+                                    align="right"
+                                    sx={{
+                                        width: 56,
+                                        minWidth: 56,
+                                    }}
+                                />
                             </TableRow>
                         </TableHead>
 
@@ -191,10 +264,25 @@ export function BusinessNeedsPage() {
                                     <TableRow
                                         key={businessNeed.id}
                                         hover
+                                        sx={{
+                                            "&:last-child td": {
+                                                borderBottom: 0,
+                                            },
+                                        }}
                                     >
-                                        <TableCell>
+                                        <TableCell
+                                            sx={{
+                                                py: 2,
+                                                minWidth: 210,
+                                            }}
+                                        >
                                             <Stack spacing={0.5}>
-                                                <Typography sx={{ fontWeight: 600 }}>
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: 600,
+                                                        lineHeight: 1.35,
+                                                    }}
+                                                >
                                                     {
                                                         businessNeed.title
                                                     }
@@ -204,28 +292,48 @@ export function BusinessNeedsPage() {
                                                     variant="body2"
                                                     color="text.secondary"
                                                 >
-                                                    Company ID:{" "}
                                                     {
-                                                        businessNeed.companyId
+                                                        businessNeed.companyName
                                                     }
                                                 </Typography>
                                             </Stack>
                                         </TableCell>
 
-                                        <TableCell>
-                                            {formatCooperationType(
-                                                businessNeed.cooperationType,
-                                            )}
+                                        <TableCell
+                                            sx={{
+                                                py: 2,
+                                                minWidth: 135,
+                                            }}
+                                        >
+                                            <Chip
+                                                label={formatCooperationType(
+                                                    businessNeed.cooperationType,
+                                                )}
+                                                size="small"
+                                                sx={{
+                                                    height: 26,
+                                                    fontWeight: 500,
+                                                    px: 0.5,
+                                                    border: "none",
+                                                    ...getCooperationTypeStyle(
+                                                        businessNeed.cooperationType,
+                                                    ),
+                                                }}
+                                            />
                                         </TableCell>
 
-                                        <TableCell>
+                                        <TableCell
+                                            sx={{
+                                                py: 2,
+                                                minWidth: 200,
+                                            }}
+                                        >
                                             <Stack
                                                 direction="row"
                                                 spacing={0.5}
                                                 useFlexGap
                                                 sx={{
-                                                    flexWrap:
-                                                        "wrap",
+                                                    flexWrap: "wrap",
                                                 }}
                                             >
                                                 {businessNeed.requiredSpecializations.map(
@@ -247,25 +355,112 @@ export function BusinessNeedsPage() {
                                             </Stack>
                                         </TableCell>
 
-                                        <TableCell>
-                                            {formatMoney(
-                                                businessNeed,
+                                        <TableCell
+                                            sx={{
+                                                py: 2,
+                                                minWidth: 130,
+                                            }}
+                                        >
+                                            {businessNeed.budget ? (
+                                                <Stack spacing={0.25}>
+                                                    <Typography variant="body2">
+                                                        {formatMoneyValue(
+                                                            businessNeed
+                                                                .budget
+                                                                .min,
+                                                            businessNeed
+                                                                .budget
+                                                                .currency,
+                                                        )}
+                                                    </Typography>
+
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                    >
+                                                        —
+                                                    </Typography>
+
+                                                    <Typography variant="body2">
+                                                        {formatMoneyValue(
+                                                            businessNeed
+                                                                .budget
+                                                                .max,
+                                                            businessNeed
+                                                                .budget
+                                                                .currency,
+                                                        )}
+                                                    </Typography>
+                                                </Stack>
+                                            ) : (
+                                                <Typography
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                >
+                                                    Not specified
+                                                </Typography>
                                             )}
                                         </TableCell>
 
-                                        <TableCell>
-                                            {formatPeriod(
-                                                businessNeed,
+                                        <TableCell
+                                            sx={{
+                                                py: 2,
+                                                minWidth: 130,
+                                            }}
+                                        >
+                                            {businessNeed.requiredPeriod ? (
+                                                <Stack spacing={0.25}>
+                                                    <Typography variant="body2">
+                                                        {formatDate(
+                                                            businessNeed
+                                                                .requiredPeriod
+                                                                .from,
+                                                        )}
+                                                    </Typography>
+
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                    >
+                                                        —
+                                                    </Typography>
+
+                                                    <Typography variant="body2">
+                                                        {formatDate(
+                                                            businessNeed
+                                                                .requiredPeriod
+                                                                .until,
+                                                        )}
+                                                    </Typography>
+                                                </Stack>
+                                            ) : (
+                                                <Typography
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                >
+                                                    Not specified
+                                                </Typography>
                                             )}
                                         </TableCell>
 
-                                        <TableCell align="center">
+                                        <TableCell
+                                            align="center"
+                                            sx={{
+                                                py: 2,
+                                                width: 80,
+                                            }}
+                                        >
                                             {
                                                 businessNeed.maxPartners
                                             }
                                         </TableCell>
 
-                                        <TableCell>
+                                        <TableCell
+                                            sx={{
+                                                py: 2,
+                                                width: 90,
+                                            }}
+                                        >
                                             <Chip
                                                 label={
                                                     businessNeed.active
@@ -281,17 +476,35 @@ export function BusinessNeedsPage() {
                                             />
                                         </TableCell>
 
-                                        <TableCell align="right">
-                                            <Button
-                                                size="small"
-                                                onClick={() => {
-                                                    navigate(
-                                                        `/business-needs/${businessNeed.id}`,
-                                                    );
-                                                }}
-                                            >
-                                                View
-                                            </Button>
+                                        <TableCell
+                                            align="right"
+                                            sx={{
+                                                py: 2,
+                                                width: 56,
+                                                minWidth: 56,
+                                                whiteSpace: "nowrap",
+                                            }}
+                                        >
+                                            <Tooltip title="View details">
+                                                <IconButton
+                                                    size="small"
+                                                    aria-label="View business need details"
+                                                    sx={{
+                                                        color: "text.secondary",
+                                                        "&:hover": {
+                                                            color: "primary.main",
+                                                            backgroundColor: "action.hover",
+                                                        },
+                                                    }}
+                                                    onClick={() => {
+                                                        navigate(
+                                                            `/business-needs/${businessNeed.id}`,
+                                                        );
+                                                    }}
+                                                >
+                                                    <VisibilityOutlinedIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
                                         </TableCell>
                                     </TableRow>
                                 ),
