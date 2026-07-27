@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useCompanies } from "../features/company/hooks/useCompanies";
+import { formatDate } from "../common/utils/dateFormatters";
+
 
 export function CompaniesPage() {
     const {
@@ -216,8 +218,9 @@ export function CompaniesPage() {
                                     </TableCell>
 
                                     <TableCell sx={{ py: 2 }}>
-                                        {company.establishedAt ??
-                                            "Not provided"}
+                                        {company.establishedAt
+                                            ? formatDate(company.establishedAt)
+                                            : "Not provided"}
                                     </TableCell>
 
                                     <TableCell sx={{ py: 2 }}>

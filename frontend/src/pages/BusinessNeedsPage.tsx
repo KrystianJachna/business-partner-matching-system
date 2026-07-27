@@ -19,6 +19,7 @@ import { useNavigate } from "react-router";
 import { useBusinessNeeds } from "../features/businessNeed/hooks/useBusinessNeeds";
 import { VisibilityOutlined as VisibilityOutlinedIcon } from "@mui/icons-material";
 import Tooltip from "@mui/material/Tooltip";
+import { formatDate } from "../common/utils/dateFormatters";
 
 function formatMoneyValue(
     value: number,
@@ -29,14 +30,6 @@ function formatMoneyValue(
         currency,
         maximumFractionDigits: 0,
     }).format(value);
-}
-
-function formatDate(value: string): string {
-    return new Intl.DateTimeFormat("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-    }).format(new Date(`${value}T00:00:00`));
 }
 
 function formatCooperationType(value: string): string {
