@@ -46,7 +46,7 @@ public class BusinessNeedController {
         return businessNeedService.getBusinessNeedsByCompanyId(companyId);
     }
 
-    @GetMapping("/api/business-needs")
+    @GetMapping("/business-needs")
     public List<BusinessNeedResponse> getAllBusinessNeeds() {
         return businessNeedService.getAllBusinessNeeds();
     }
