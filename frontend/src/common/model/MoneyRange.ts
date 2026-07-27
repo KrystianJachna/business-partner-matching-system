@@ -1,4 +1,4 @@
-import type { CurrencyCode } from "./CurrencyCode";
+import type { CurrencyCode } from "./CurrencyCode.ts";
 
 export interface MoneyRangeRequest {
     min: number;

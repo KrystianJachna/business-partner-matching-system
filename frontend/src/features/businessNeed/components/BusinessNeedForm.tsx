@@ -32,12 +32,12 @@ import {
     cooperationTypeLabels,
     cooperationTypes,
     type CooperationType,
-} from "../model/CooperationType";
+} from "../../../common/model/CooperationType.ts";
 import type { CreateBusinessNeedRequest } from "../model/CreateBusinessNeedRequest";
 import {
     currencyCodes,
     type CurrencyCode,
-} from "../model/CurrencyCode";
+} from "../../../common/model/CurrencyCode.ts";
 
 interface BusinessNeedFormProps {
     companyId: number;

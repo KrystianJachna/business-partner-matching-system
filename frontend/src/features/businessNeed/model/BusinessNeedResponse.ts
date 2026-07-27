@@ -1,7 +1,7 @@
 import type { SpecializationResponse } from "../../specialization/model/SpecializationResponse";
-import type { CooperationType } from "./CooperationType";
-import type { DateRangeResponse } from "./DateRange";
-import type { MoneyRangeResponse } from "./MoneyRange";
+import type { CooperationType } from "../../../common/model/CooperationType.ts";
+import type { DateRangeResponse } from "../../../common/model/DateRange.ts";
+import type { MoneyRangeResponse } from "../../../common/model/MoneyRange.ts";
 
 export interface BusinessNeedResponse {
     id: number;

@@ -1,6 +1,6 @@
-import type { CooperationType } from "./CooperationType";
-import type { DateRangeRequest } from "./DateRange";
-import type { MoneyRangeRequest } from "./MoneyRange";
+import type { CooperationType } from "../../../common/model/CooperationType.ts";
+import type { DateRangeRequest } from "../../../common/model/DateRange.ts";
+import type { MoneyRangeRequest } from "../../../common/model/MoneyRange.ts";
 
 export interface CreateBusinessNeedRequest {
     title: string;
