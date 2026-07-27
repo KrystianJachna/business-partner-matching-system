@@ -33,3 +33,11 @@ export function createBusinessNeed(
         request,
     );
 }
+
+export function getBusinessNeed(
+    businessNeedId: number,
+): Promise<BusinessNeedResponse> {
+    return apiGet<BusinessNeedResponse>(
+        `/api/business-needs/${businessNeedId}`,
+    );
+}

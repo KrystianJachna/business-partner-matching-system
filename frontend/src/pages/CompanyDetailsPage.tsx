@@ -25,11 +25,26 @@ import {
 } from "@mui/material";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useCompanyBusinessNeeds } from "../features/businessNeed/hooks/useCompanyBusinessNeeds";
-import { useNavigate, useParams } from "react-router";
+import {useNavigate, useParams, useSearchParams} from "react-router";
 import { formatDate, formatCooperationType, formatMoneyValue } from "../common/utils/Formatters";
 import { useCompany } from "../features/company/hooks/useCompany";
 
 export function CompanyDetailsPage() {
+    const [searchParams] = useSearchParams();
+
+    const fromNeedParam = searchParams.get("fromNeed");
+
+    const parsedFromNeedId = fromNeedParam
+        ? Number(fromNeedParam)
+        : undefined;
+
+    const validFromNeedId =
+        parsedFromNeedId !== undefined &&
+        Number.isInteger(parsedFromNeedId) &&
+        parsedFromNeedId > 0
+            ? parsedFromNeedId
+            : undefined;
+
     const navigate = useNavigate();
     const { companyId } = useParams();
 
@@ -53,6 +68,15 @@ export function CompanyDetailsPage() {
         isLoading: areBusinessNeedsLoading,
         isError: areBusinessNeedsError,
     } = useCompanyBusinessNeeds(validCompanyId);
+
+    const handleBack = () => {
+        if (validFromNeedId !== undefined) {
+            navigate(`/business-needs/${validFromNeedId}`);
+            return;
+        }
+
+        navigate("/companies");
+    };
 
     if (validCompanyId === undefined) {
         return (
@@ -94,13 +118,15 @@ export function CompanyDetailsPage() {
         <Box>
             <Button
                 startIcon={<ArrowBackOutlinedIcon />}
-                onClick={() => navigate("/companies")}
+                onClick={handleBack}
                 sx={{
                     mb: 3,
                     textTransform: "none",
                 }}
             >
-                Back to companies
+                {validFromNeedId !== undefined
+                    ? "Back to business need"
+                    : "Back to companies"}
             </Button>
 
             <Stack
@@ -635,7 +661,7 @@ export function CompanyDetailsPage() {
                                                     <IconButton
                                                         onClick={() =>
                                                             navigate(
-                                                                `/business-needs/${businessNeed.id}`,
+                                                                `/business-needs/${businessNeed.id}?fromCompany=${company.id}`,
                                                             )
                                                         }
                                                         sx={{

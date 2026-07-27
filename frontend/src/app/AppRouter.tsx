@@ -9,6 +9,7 @@ import { CreateCompanyPage } from "../pages/CreateCompanyPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { MatchingPage } from "../pages/MatchingPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
+import { BusinessNeedDetailsPage } from "../pages/BusinessNeedDetailsPage";
 
 export function AppRouter() {
     return (
@@ -42,6 +43,11 @@ export function AppRouter() {
                 <Route
                     path="/companies/:companyId/needs/new"
                     element={<CreateBusinessNeedPage />}
+                />
+
+                <Route
+                    path="/business-needs/:businessNeedId"
+                    element={<BusinessNeedDetailsPage />}
                 />
 
                 <Route

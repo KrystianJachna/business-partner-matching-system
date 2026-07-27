@@ -6,7 +6,6 @@ export function formatDate(value: string): string {
     }).format(new Date(`${value}T00:00:00`));
 }
 
-
 export function formatMoneyValue(
     value: number,
     currency: string,
@@ -28,4 +27,14 @@ export function formatCooperationType(value: string): string {
                 + part.slice(1),
         )
         .join(" ");
+}
+
+export function formatDateTime(value: string): string {
+    return new Intl.DateTimeFormat("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    }).format(new Date(value));
 }
