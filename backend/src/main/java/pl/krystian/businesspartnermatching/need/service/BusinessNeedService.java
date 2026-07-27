@@ -89,4 +89,12 @@ public class BusinessNeedService {
                 .map(BusinessNeedResponse::from)
                 .toList();
     }
+
+    public List<BusinessNeedResponse> getAllBusinessNeeds() {
+        return businessNeedRepository
+                .findAllByActiveTrueOrderByCreatedAtDesc()
+                .stream()
+                .map(BusinessNeedResponse::from)
+                .toList();
+    }
 }
