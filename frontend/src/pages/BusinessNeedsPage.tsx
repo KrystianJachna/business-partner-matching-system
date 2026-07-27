@@ -208,7 +208,7 @@ export function BusinessNeedsPage() {
                     component={Paper}
                     variant="outlined"
                     sx={{
-                        borderRadius: 2,
+                        borderRadius: 1,
                         overflowX: "auto",
                     }}
                 >
@@ -216,6 +216,9 @@ export function BusinessNeedsPage() {
                         sx={{
                             width: "100%",
                             tableLayout: "auto",
+                            "& .MuiTableCell-root": {
+                                px: 1.5,
+                            },
                         }}
                     >
                         <TableHead>
@@ -240,8 +243,8 @@ export function BusinessNeedsPage() {
                                     Required period
                                 </TableCell>
 
-                                <TableCell align="center">
-                                    Partners
+                                <TableCell>
+                                    Partner criteria
                                 </TableCell>
 
                                 <TableCell>
@@ -249,10 +252,11 @@ export function BusinessNeedsPage() {
                                 </TableCell>
 
                                 <TableCell
-                                    align="right"
+                                    align="center"
                                     sx={{
-                                        width: 56,
-                                        minWidth: 56,
+                                        px: 0.25,
+                                        width: 40,
+                                        minWidth: 40,
                                     }}
                                 />
                             </TableRow>
@@ -273,7 +277,8 @@ export function BusinessNeedsPage() {
                                         <TableCell
                                             sx={{
                                                 py: 2,
-                                                minWidth: 210,
+                                                minWidth: 180,
+                                                width: 180
                                             }}
                                         >
                                             <Stack spacing={0.5}>
@@ -325,7 +330,8 @@ export function BusinessNeedsPage() {
                                         <TableCell
                                             sx={{
                                                 py: 2,
-                                                minWidth: 200,
+                                                minWidth: 170,
+                                                width: 170,
                                             }}
                                         >
                                             <Stack
@@ -450,15 +456,67 @@ export function BusinessNeedsPage() {
                                                 width: 80,
                                             }}
                                         >
-                                            {
-                                                businessNeed.maxPartners
-                                            }
+                                            <TableCell
+                                                sx={{
+                                                    py: 2,
+                                                    minWidth: 140,
+                                                    width: 140,
+                                                }}
+                                            >
+                                                <Stack spacing={0.5}>
+                                                    <Chip
+                                                        size="small"
+                                                        variant="outlined"
+                                                        label={
+                                                            businessNeed.maxDistanceKm !== null
+                                                                ? `dist. ≤ ${businessNeed.maxDistanceKm} km`
+                                                                : "No distance limit"
+                                                        }
+                                                        sx={{
+                                                            alignSelf: "flex-start",
+                                                        }}
+                                                    />
+
+                                                    <Chip
+                                                        size="small"
+                                                        variant="outlined"
+                                                        label={
+                                                            businessNeed.minPartnerExperienceYears !==
+                                                            null
+                                                                ? `${businessNeed.minPartnerExperienceYears} ${
+                                                                    businessNeed.minPartnerExperienceYears
+                                                                    === 1
+                                                                        ? "year"
+                                                                        : "years"
+                                                                }`
+                                                                : "Any experience"
+                                                        }
+                                                        sx={{
+                                                            alignSelf: "flex-start",
+                                                        }}
+                                                    />
+
+                                                    <Chip
+                                                        size="small"
+                                                        variant="outlined"
+                                                        label={`${businessNeed.maxPartners} ${
+                                                            businessNeed.maxPartners === 1
+                                                                ? "partner"
+                                                                : "partners"
+                                                        }`}
+                                                        sx={{
+                                                            alignSelf: "flex-start",
+                                                        }}
+                                                    />
+                                                </Stack>
+                                            </TableCell>
                                         </TableCell>
 
                                         <TableCell
                                             sx={{
                                                 py: 2,
-                                                width: 90,
+                                                width: 80,
+                                                minWidth: 80
                                             }}
                                         >
                                             <Chip
@@ -477,12 +535,12 @@ export function BusinessNeedsPage() {
                                         </TableCell>
 
                                         <TableCell
-                                            align="right"
+                                            align="center"
                                             sx={{
                                                 py: 2,
-                                                width: 56,
-                                                minWidth: 56,
-                                                whiteSpace: "nowrap",
+                                                px: 0.25,
+                                                width: 40,
+                                                minWidth: 40,
                                             }}
                                         >
                                             <Tooltip title="View details">
