@@ -6,6 +6,10 @@ export function getCompanies(): Promise<CompanyResponse[]> {
     return apiGet<CompanyResponse[]>("/api/companies");
 }
 
+export function getCompany(companyId: number): Promise<CompanyResponse> {
+    return apiGet<CompanyResponse>(`/api/companies/${companyId}`);
+}
+
 export function createCompany(
     request: CreateCompanyRequest,
 ): Promise<CompanyResponse> {

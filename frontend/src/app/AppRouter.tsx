@@ -3,11 +3,12 @@ import { AppLayout } from "../common/layout/AppLayout";
 import { BusinessNeedsPage } from "../pages/BusinessNeedsPage";
 import { BusinessOffersPage } from "../pages/BusinessOffersPage";
 import { CompaniesPage } from "../pages/CompaniesPage";
+import { CompanyDetailsPage } from "../pages/CompanyDetailsPage";
+import { CreateBusinessNeedPage } from "../pages/CreateBusinessNeedPage";
+import { CreateCompanyPage } from "../pages/CreateCompanyPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { MatchingPage } from "../pages/MatchingPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
-import { CreateCompanyPage } from "../pages/CreateCompanyPage";
-import { CreateBusinessNeedPage } from "../pages/CreateBusinessNeedPage";
 
 export function AppRouter() {
     return (
@@ -34,13 +35,8 @@ export function AppRouter() {
                 />
 
                 <Route
-                    path="/needs"
-                    element={<BusinessNeedsPage />}
-                />
-
-                <Route
-                    path="/offers"
-                    element={<BusinessOffersPage />}
+                    path="/companies/:companyId"
+                    element={<CompanyDetailsPage />}
                 />
 
                 <Route
@@ -49,8 +45,18 @@ export function AppRouter() {
                 />
 
                 <Route
+                    path="/needs"
+                    element={<BusinessNeedsPage />}
+                />
+
+                <Route
                     path="/business-needs"
                     element={<BusinessNeedsPage />}
+                />
+
+                <Route
+                    path="/offers"
+                    element={<BusinessOffersPage />}
                 />
 
                 <Route

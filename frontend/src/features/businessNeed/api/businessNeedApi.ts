@@ -5,6 +5,14 @@ import {
 import type { BusinessNeedResponse } from "../model/BusinessNeedResponse";
 import type { CreateBusinessNeedRequest } from "../model/CreateBusinessNeedRequest";
 
+export function getCompanyBusinessNeeds(
+    companyId: number,
+): Promise<BusinessNeedResponse[]> {
+    return apiGet<BusinessNeedResponse[]>(
+        `/api/companies/${companyId}/needs`,
+    );
+}
+
 export function getBusinessNeeds(): Promise<
     BusinessNeedResponse[]
 > {

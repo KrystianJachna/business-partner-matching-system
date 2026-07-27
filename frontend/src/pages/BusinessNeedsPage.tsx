@@ -19,30 +19,7 @@ import { useNavigate } from "react-router";
 import { useBusinessNeeds } from "../features/businessNeed/hooks/useBusinessNeeds";
 import { VisibilityOutlined as VisibilityOutlinedIcon } from "@mui/icons-material";
 import Tooltip from "@mui/material/Tooltip";
-import { formatDate } from "../common/utils/dateFormatters";
-
-function formatMoneyValue(
-    value: number,
-    currency: string,
-): string {
-    return new Intl.NumberFormat("en-GB", {
-        style: "currency",
-        currency,
-        maximumFractionDigits: 0,
-    }).format(value);
-}
-
-function formatCooperationType(value: string): string {
-    return value
-        .toLowerCase()
-        .split("_")
-        .map(
-            (part) =>
-                part.charAt(0).toUpperCase()
-                + part.slice(1),
-        )
-        .join(" ");
-}
+import { formatDate, formatMoneyValue, formatCooperationType } from "../common/utils/Formatters.ts";
 
 function getCooperationTypeStyle(
     cooperationType: string,

@@ -3,7 +3,7 @@ import {
     Box,
     Button,
     Chip,
-    CircularProgress,
+    CircularProgress, IconButton,
     Paper,
     Stack,
     Table,
@@ -16,7 +16,9 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useCompanies } from "../features/company/hooks/useCompanies";
-import { formatDate } from "../common/utils/dateFormatters";
+import { formatDate } from "../common/utils/Formatters.ts";
+import Tooltip from "@mui/material/Tooltip";
+import { VisibilityOutlined as VisibilityOutlinedIcon } from "@mui/icons-material";
 
 
 export function CompaniesPage() {
@@ -171,7 +173,7 @@ export function CompaniesPage() {
                                 </TableCell>
 
                                 <TableCell
-                                    align="right"
+                                    align="center"
                                     sx={{
                                         fontWeight: 700,
                                         py: 2,
@@ -283,27 +285,52 @@ export function CompaniesPage() {
                                             py: 2,
                                         }}
                                     >
-                                        <Button
-                                            variant="contained"
-                                            size="small"
-                                            disabled={!company.active}
-                                            onClick={() =>
-                                                navigate(
-                                                    `/companies/${company.id}/needs/new`,
-                                                )
-                                            }
+                                        <Stack
+                                            direction="row"
+                                            spacing={1}
                                             sx={{
-                                                whiteSpace: "nowrap",
-                                                minWidth: 0,
-                                                px: 2,
-                                                py: 0.75,
-                                                borderRadius: 2,
-                                                textTransform: "none",
-                                                fontWeight: 600,
+                                                justifyContent: "flex-end",
+                                                alignItems: "center",
                                             }}
                                         >
-                                            Add need
-                                        </Button>
+                                            <Tooltip title="View details">
+                                                <IconButton
+                                                    onClick={() =>
+                                                        navigate(`/companies/${company.id}`)
+                                                    }
+                                                    sx={{
+                                                        color: "text.secondary",
+                                                        "&:hover": {
+                                                            color: "primary.main",
+                                                            backgroundColor: "action.hover",
+                                                        },
+                                                    }}
+                                                >
+                                                    <VisibilityOutlinedIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Button
+                                                variant="contained"
+                                                size="small"
+                                                disabled={!company.active}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/companies/${company.id}/needs/new`,
+                                                    )
+                                                }
+                                                sx={{
+                                                    whiteSpace: "nowrap",
+                                                    minWidth: 0,
+                                                    px: 2,
+                                                    py: 0.75,
+                                                    borderRadius: 2,
+                                                    textTransform: "none",
+                                                    fontWeight: 600,
+                                                }}
+                                            >
+                                                Add need
+                                            </Button>
+                                        </Stack>
                                     </TableCell>
                                 </TableRow>
                             ))}
