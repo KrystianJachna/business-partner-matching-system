@@ -1,26 +1,27 @@
+import {
+    apiGet,
+    apiPost,
+} from "../../../common/api/apiClient";
 import type { BusinessNeedResponse } from "../model/BusinessNeedResponse";
 import type { CreateBusinessNeedRequest } from "../model/CreateBusinessNeedRequest";
 
-export async function createBusinessNeed(
+export function getBusinessNeeds(): Promise<
+    BusinessNeedResponse[]
+> {
+    return apiGet<BusinessNeedResponse[]>(
+        "/api/business-needs",
+    );
+}
+
+export function createBusinessNeed(
     companyId: number,
     request: CreateBusinessNeedRequest,
 ): Promise<BusinessNeedResponse> {
-    const response = await fetch(
+    return apiPost<
+        BusinessNeedResponse,
+        CreateBusinessNeedRequest
+    >(
         `/api/companies/${companyId}/needs`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(request),
-        },
+        request,
     );
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to create business need: ${response.status}`,
-        );
-    }
-
-    return response.json() as Promise<BusinessNeedResponse>;
 }

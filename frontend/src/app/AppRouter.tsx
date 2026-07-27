@@ -49,6 +49,11 @@ export function AppRouter() {
                 />
 
                 <Route
+                    path="/business-needs"
+                    element={<BusinessNeedsPage />}
+                />
+
+                <Route
                     path="/matching"
                     element={<MatchingPage />}
                 />
