@@ -155,7 +155,10 @@ export function BusinessNeedsPage() {
                     <Typography
                         variant="h4"
                         component="h1"
-                        gutterBottom
+                        sx={{
+                            mb: 1,
+                            fontWeight: 700,
+                        }}
                     >
                         Business Needs
                     </Typography>
@@ -215,53 +218,99 @@ export function BusinessNeedsPage() {
                         }}
                     >
                         <TableHead>
-                            <TableRow>
-                                <TableCell>
+                            <TableRow
+                                sx={{
+                                    backgroundColor: "grey.100",
+                                }}
+                            >
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
                                     Business need
                                 </TableCell>
 
-                                <TableCell>
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
                                     Cooperation type
                                 </TableCell>
 
-                                <TableCell>
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
                                     Specializations
                                 </TableCell>
 
-                                <TableCell>
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
                                     Budget
                                 </TableCell>
 
-                                <TableCell>
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
                                     Required period
                                 </TableCell>
 
-                                <TableCell>
+                                <TableCell
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
                                     Partner criteria
-                                </TableCell>
-
-                                <TableCell>
-                                    Status
                                 </TableCell>
 
                                 <TableCell
                                     align="center"
                                     sx={{
-                                        px: 0.25,
-                                        width: 40,
-                                        minWidth: 40,
+                                        fontWeight: 700,
+                                        py: 2,
                                     }}
-                                />
+                                >
+                                    Status
+                                </TableCell>
+
+                                <TableCell
+                                    align="right"
+                                    sx={{
+                                        fontWeight: 700,
+                                        py: 2,
+                                    }}
+                                >
+                                </TableCell>
                             </TableRow>
                         </TableHead>
 
                         <TableBody>
                             {businessNeeds.map(
-                                (businessNeed) => (
+                                (businessNeed, index) => (
                                     <TableRow
                                         key={businessNeed.id}
                                         hover
                                         sx={{
+                                            backgroundColor:
+                                                index % 2 === 0
+                                                    ? "background.paper"
+                                                    : "grey.50",
+                                            transition:
+                                                "background-color 0.2s ease",
                                             "&:last-child td": {
                                                 borderBottom: 0,
                                             },
