@@ -6,6 +6,7 @@ import type { SpecializationResponse } from "../../specialization/model/Speciali
 export interface BusinessOfferResponse {
     id: number;
     companyId: number;
+    companyName: string;
     title: string;
     description: string | null;
     cooperationType: CooperationType;

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public record BusinessOfferResponse(
         Long id,
         Long companyId,
+        String companyName,
         String title,
         String description,
         CooperationType cooperationType,
@@ -33,6 +34,7 @@ public record BusinessOfferResponse(
         return new BusinessOfferResponse(
                 businessOffer.getId(),
                 businessOffer.getCompany().getId(),
+                businessOffer.getCompany().getName(),
                 businessOffer.getTitle(),
                 businessOffer.getDescription(),
                 businessOffer.getCooperationType(),

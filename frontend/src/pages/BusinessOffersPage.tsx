@@ -267,10 +267,7 @@ export function BusinessOffersPage() {
                                                     variant="body2"
                                                     color="text.secondary"
                                                 >
-                                                    Company ID:{" "}
-                                                    {
-                                                        businessOffer.companyId
-                                                    }
+                                                    {businessOffer.companyName}
                                                 </Typography>
                                             </Stack>
                                         </TableCell>
