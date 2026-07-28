@@ -32,17 +32,17 @@ import { useCompany } from "../features/company/hooks/useCompany";
 export function CompanyDetailsPage() {
     const [searchParams] = useSearchParams();
 
-    const fromNeedParam = searchParams.get("fromNeed");
-
-    const parsedFromNeedId = fromNeedParam
-        ? Number(fromNeedParam)
-        : undefined;
+    const fromNeedId = Number(searchParams.get("fromNeed"));
+    const fromOfferId = Number(searchParams.get("fromOffer"));
 
     const validFromNeedId =
-        parsedFromNeedId !== undefined &&
-        Number.isInteger(parsedFromNeedId) &&
-        parsedFromNeedId > 0
-            ? parsedFromNeedId
+        Number.isInteger(fromNeedId) && fromNeedId > 0
+            ? fromNeedId
+            : undefined;
+
+    const validFromOfferId =
+        Number.isInteger(fromOfferId) && fromOfferId > 0
+            ? fromOfferId
             : undefined;
 
     const navigate = useNavigate();
@@ -72,6 +72,11 @@ export function CompanyDetailsPage() {
     const handleBack = () => {
         if (validFromNeedId !== undefined) {
             navigate(`/business-needs/${validFromNeedId}`);
+            return;
+        }
+
+        if (validFromOfferId !== undefined) {
+            navigate(`/business-offers/${validFromOfferId}`);
             return;
         }
 
@@ -126,7 +131,9 @@ export function CompanyDetailsPage() {
             >
                 {validFromNeedId !== undefined
                     ? "Back to business need"
-                    : "Back to companies"}
+                    : validFromOfferId !== undefined
+                        ? "Back to business offer"
+                        : "Back to companies"}
             </Button>
 
             <Stack

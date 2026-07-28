@@ -10,6 +10,7 @@ import { DashboardPage } from "../pages/DashboardPage";
 import { MatchingPage } from "../pages/MatchingPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { BusinessNeedDetailsPage } from "../pages/BusinessNeedDetailsPage";
+import { BusinessOfferDetailsPage } from "../pages/BusinessOfferDetailsPage";
 
 export function AppRouter() {
     return (
@@ -60,10 +61,17 @@ export function AppRouter() {
                     element={<BusinessNeedsPage />}
                 />
 
+
                 <Route
                     path="/offers"
                     element={<BusinessOffersPage />}
                 />
+
+                <Route
+                    path="/business-offers/:businessOfferId"
+                    element={<BusinessOfferDetailsPage />}
+                />
+
 
                 <Route
                     path="/matching"
