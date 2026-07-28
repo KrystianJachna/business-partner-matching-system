@@ -11,6 +11,7 @@ import { MatchingPage } from "../pages/MatchingPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { BusinessNeedDetailsPage } from "../pages/BusinessNeedDetailsPage";
 import { BusinessOfferDetailsPage } from "../pages/BusinessOfferDetailsPage";
+import { CreateBusinessOfferPage } from "../pages/CreateBusinessOfferPage";
 
 export function AppRouter() {
     return (
@@ -72,6 +73,10 @@ export function AppRouter() {
                     element={<BusinessOfferDetailsPage />}
                 />
 
+                <Route
+                    path="/companies/:companyId/offers/new"
+                    element={<CreateBusinessOfferPage />}
+                />
 
                 <Route
                     path="/matching"

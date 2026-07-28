@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useCompanyBusinessNeeds } from "../features/businessNeed/hooks/useCompanyBusinessNeeds";
+import { useCompanyBusinessOffers } from "../features/businessOffer/hooks/useCompanyBusinessOffers";
 import {useNavigate, useParams, useSearchParams} from "react-router";
 import { formatDate, formatCooperationType, formatMoneyValue } from "../common/utils/Formatters";
 import { useCompany } from "../features/company/hooks/useCompany";
@@ -68,6 +69,12 @@ export function CompanyDetailsPage() {
         isLoading: areBusinessNeedsLoading,
         isError: areBusinessNeedsError,
     } = useCompanyBusinessNeeds(validCompanyId);
+
+    const {
+        data: businessOffers,
+        isLoading: areBusinessOffersLoading,
+        isError: areBusinessOffersError,
+    } = useCompanyBusinessOffers(validCompanyId);
 
     const handleBack = () => {
         if (validFromNeedId !== undefined) {
@@ -686,6 +693,273 @@ export function CompanyDetailsPage() {
                                             </TableCell>
                                         </TableRow>
                                     ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+                </Paper>
+
+                <Paper
+                    variant="outlined"
+                    sx={{
+                        p: 3,
+                        borderRadius: 2,
+                    }}
+                >
+                    <Stack
+                        direction={{
+                            xs: "column",
+                            sm: "row",
+                        }}
+                        spacing={2}
+                        sx={{
+                            justifyContent: "space-between",
+                            alignItems: {
+                                xs: "flex-start",
+                                sm: "center",
+                            },
+                            mb: 3,
+                        }}
+                    >
+                        <Box>
+                            <Typography
+                                variant="h6"
+                                component="h2"
+                                sx={{
+                                    fontWeight: 700,
+                                    mb: 0.5,
+                                }}
+                            >
+                                Business offers
+                            </Typography>
+
+                            <Typography color="text.secondary">
+                                Business offers published by this company.
+                            </Typography>
+                        </Box>
+
+                        <Button
+                            variant="contained"
+                            disabled={!company.active}
+                            onClick={() =>
+                                navigate(`/companies/${company.id}/offers/new`)
+                            }
+                        >
+                            Add business offer
+                        </Button>
+                    </Stack>
+
+                    {areBusinessOffersLoading ? (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                py: 5,
+                            }}
+                        >
+                            <CircularProgress size={32} />
+                        </Box>
+                    ) : areBusinessOffersError ? (
+                        <Alert severity="error">
+                            Failed to load business offers.
+                        </Alert>
+                    ) : !businessOffers || businessOffers.length === 0 ? (
+                        <Alert severity="info">
+                            This company has not published any business offers yet.
+                        </Alert>
+                    ) : (
+                        <TableContainer
+                            sx={{
+                                border: "1px solid",
+                                borderColor: "divider",
+                                borderRadius: 1,
+                            }}
+                        >
+                            <Table>
+                                <TableHead>
+                                    <TableRow
+                                        sx={{
+                                            backgroundColor: "grey.100",
+                                        }}
+                                    >
+                                        <TableCell
+                                            sx={{
+                                                fontWeight: 700,
+                                            }}
+                                        >
+                                            Business offer
+                                        </TableCell>
+
+                                        <TableCell
+                                            sx={{
+                                                fontWeight: 700,
+                                            }}
+                                        >
+                                            Cooperation type
+                                        </TableCell>
+
+                                        <TableCell
+                                            sx={{
+                                                fontWeight: 700,
+                                            }}
+                                        >
+                                            Price range
+                                        </TableCell>
+
+                                        <TableCell
+                                            align="center"
+                                            sx={{
+                                                fontWeight: 700,
+                                            }}
+                                        >
+                                            Status
+                                        </TableCell>
+
+                                        <TableCell
+                                            align="center"
+                                            sx={{
+                                                fontWeight: 700,
+                                            }}
+                                        >
+                                            Actions
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+
+                                <TableBody>
+                                    {businessOffers.map(
+                                        (businessOffer, index) => (
+                                            <TableRow
+                                                key={businessOffer.id}
+                                                hover
+                                                sx={{
+                                                    backgroundColor:
+                                                        index % 2 === 0
+                                                            ? "background.paper"
+                                                            : "grey.50",
+                                                    "&:last-child td": {
+                                                        borderBottom: 0,
+                                                    },
+                                                }}
+                                            >
+                                                <TableCell>
+                                                    <Typography
+                                                        sx={{
+                                                            fontWeight: 700,
+                                                        }}
+                                                    >
+                                                        {businessOffer.title}
+                                                    </Typography>
+
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                    >
+                                                        {
+                                                            businessOffer
+                                                                .offeredSpecializations
+                                                                .length
+                                                        }{" "}
+                                                        specializations
+                                                    </Typography>
+                                                </TableCell>
+
+                                                <TableCell>
+                                                    <Chip
+                                                        label={formatCooperationType(
+                                                            businessOffer.cooperationType,
+                                                        )}
+                                                        size="small"
+                                                        variant="outlined"
+                                                    />
+                                                </TableCell>
+
+                                                <TableCell>
+                                                    {businessOffer.priceRange ? (
+                                                        <Stack spacing={0.25}>
+                                                            <Typography variant="body2">
+                                                                {formatMoneyValue(
+                                                                    businessOffer
+                                                                        .priceRange
+                                                                        .min,
+                                                                    businessOffer
+                                                                        .priceRange
+                                                                        .currency,
+                                                                )}
+                                                            </Typography>
+
+                                                            <Typography
+                                                                variant="body2"
+                                                                color="text.secondary"
+                                                            >
+                                                                —
+                                                            </Typography>
+
+                                                            <Typography variant="body2">
+                                                                {formatMoneyValue(
+                                                                    businessOffer
+                                                                        .priceRange
+                                                                        .max,
+                                                                    businessOffer
+                                                                        .priceRange
+                                                                        .currency,
+                                                                )}
+                                                            </Typography>
+                                                        </Stack>
+                                                    ) : (
+                                                        <Typography
+                                                            variant="body2"
+                                                            color="text.secondary"
+                                                        >
+                                                            Not specified
+                                                        </Typography>
+                                                    )}
+                                                </TableCell>
+
+                                                <TableCell align="center">
+                                                    <Chip
+                                                        label={
+                                                            businessOffer.active
+                                                                ? "Active"
+                                                                : "Inactive"
+                                                        }
+                                                        color={
+                                                            businessOffer.active
+                                                                ? "success"
+                                                                : "error"
+                                                        }
+                                                        size="small"
+                                                        sx={{
+                                                            minWidth: 76,
+                                                            fontWeight: 600,
+                                                        }}
+                                                    />
+                                                </TableCell>
+
+                                                <TableCell align="center">
+                                                    <Tooltip title="View details">
+                                                        <IconButton
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/business-offers/${businessOffer.id}?fromCompany=${company.id}`,
+                                                                )
+                                                            }
+                                                            sx={{
+                                                                color: "text.secondary",
+                                                                "&:hover": {
+                                                                    color: "primary.main",
+                                                                    backgroundColor:
+                                                                        "action.hover",
+                                                                },
+                                                            }}
+                                                        >
+                                                            <VisibilityOutlinedIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </TableCell>
+                                            </TableRow>
+                                        ),
+                                    )}
                                 </TableBody>
                             </Table>
                         </TableContainer>
