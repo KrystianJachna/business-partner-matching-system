@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.krystian.businesspartnermatching.matching.model.dto.MatchingResponse;
 import pl.krystian.businesspartnermatching.matching.service.BusinessMatchingService;
+import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityChecker;
+import pl.krystian.businesspartnermatching.matching.scoring.MatchingScoreCalculator;
+import pl.krystian.businesspartnermatching.matching.scoring.weights.ScoringWeightsProvider;
 
 @RestController
 @RequestMapping("/api/matching")
@@ -13,11 +16,17 @@ import pl.krystian.businesspartnermatching.matching.service.BusinessMatchingServ
 public class MatchingController {
 
     private final BusinessMatchingService businessMatchingService;
+    private final MatchingScoreCalculator matchingScoreCalculator;
+    private final ScoringWeightsProvider scoringWeightsProvider;
+    private final CompatibilityChecker compatibilityChecker;
 
     @PostMapping
     public MatchingResponse runMatching() {
         return MatchingResponse.from(
-                businessMatchingService.match()
+                businessMatchingService.match(),
+                matchingScoreCalculator,
+                scoringWeightsProvider,
+                compatibilityChecker
         );
     }
 }
