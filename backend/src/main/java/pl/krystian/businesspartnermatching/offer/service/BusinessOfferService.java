@@ -12,6 +12,7 @@ import pl.krystian.businesspartnermatching.common.time.dto.DateRangeRequest;
 import pl.krystian.businesspartnermatching.company.model.entity.Company;
 import pl.krystian.businesspartnermatching.company.repository.CompanyRepository;
 import pl.krystian.businesspartnermatching.company.exception.CompanyNotFoundException;
+import pl.krystian.businesspartnermatching.need.model.dto.BusinessNeedResponse;
 import pl.krystian.businesspartnermatching.offer.model.dto.BusinessOfferResponse;
 import pl.krystian.businesspartnermatching.offer.model.dto.CreateBusinessOfferRequest;
 import pl.krystian.businesspartnermatching.offer.exception.BusinessOfferNotFoundException;
@@ -91,6 +92,14 @@ public class BusinessOfferService {
 
         return businessOfferRepository
                 .findAllByCompanyIdOrderByCreatedAtDesc(companyId)
+                .stream()
+                .map(BusinessOfferResponse::from)
+                .toList();
+    }
+
+    public List<BusinessOfferResponse> getAllBusinessOffers() {
+        return businessOfferRepository
+                .findAllByActiveTrueOrderByCreatedAtDesc()
                 .stream()
                 .map(BusinessOfferResponse::from)
                 .toList();

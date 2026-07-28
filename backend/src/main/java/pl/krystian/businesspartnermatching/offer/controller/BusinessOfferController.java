@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import pl.krystian.businesspartnermatching.need.model.dto.BusinessNeedResponse;
 import pl.krystian.businesspartnermatching.offer.service.BusinessOfferService;
 import pl.krystian.businesspartnermatching.offer.model.dto.BusinessOfferResponse;
 import pl.krystian.businesspartnermatching.offer.model.dto.CreateBusinessOfferRequest;
@@ -51,5 +52,10 @@ public class BusinessOfferController {
         return businessOfferService.getBusinessOffersByCompanyId(
                 companyId
         );
+    }
+
+    @GetMapping("/business-offers")
+    public List<BusinessOfferResponse> getAllBusinessOffers() {
+        return businessOfferService.getAllBusinessOffers();
     }
 }
