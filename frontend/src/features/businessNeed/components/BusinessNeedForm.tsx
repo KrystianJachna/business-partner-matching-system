@@ -21,7 +21,6 @@ import {
     Typography,
 } from "@mui/material";
 import {
-    useEffect,
     useMemo,
     useState,
 } from "react";
@@ -144,27 +143,6 @@ export function BusinessNeedForm({
 
     const [errors, setErrors] =
         useState<FormErrors>({});
-
-    useEffect(() => {
-        const selectedIndustryStillExists =
-            specializationGroups.some(
-                (group) =>
-                    group.industryId
-                    === selectedIndustryId,
-            );
-
-        if (
-            !selectedIndustryStillExists
-            && specializationGroups.length > 0
-        ) {
-            setSelectedIndustryId(
-                specializationGroups[0].industryId,
-            );
-        }
-    }, [
-        selectedIndustryId,
-        specializationGroups,
-    ]);
 
     const companySpecializationIds = useMemo(
         () =>

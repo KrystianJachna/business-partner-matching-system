@@ -10,15 +10,28 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router";
 
 export function DashboardPage() {
+    const navigate = useNavigate();
+
     return (
         <Stack spacing={5}>
-            <Box>
+            <Box
+                sx={{
+                    px: { xs: 0, md: 1 },
+                    py: { xs: 1, md: 2 },
+                }}
+            >
                 <Typography
-                    variant="h3"
+                    variant="h2"
                     component="h1"
-                    sx={{ fontWeight: 700 }}
+                    sx={{
+                        fontWeight: 800,
+                        letterSpacing: "-0.04em",
+                        maxWidth: 760,
+                        fontSize: { xs: "2.25rem", md: "3.4rem" },
+                    }}
                 >
                     Find the right business partner
                 </Typography>
@@ -81,7 +94,10 @@ export function DashboardPage() {
                     </CardContent>
 
                     <CardActions sx={{ px: 2, pb: 2 }}>
-                        <Button variant="contained">
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate("/needs")}
+                        >
                             Open companies
                         </Button>
                     </CardActions>
@@ -121,7 +137,10 @@ export function DashboardPage() {
                     </CardContent>
 
                     <CardActions sx={{ px: 2, pb: 2 }}>
-                        <Button variant="contained">
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate("/companies")}
+                        >
                             Open needs and offers
                         </Button>
                     </CardActions>
@@ -161,7 +180,10 @@ export function DashboardPage() {
                     </CardContent>
 
                     <CardActions sx={{ px: 2, pb: 2 }}>
-                        <Button variant="contained">
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate("/matching")}
+                        >
                             Run matching
                         </Button>
                     </CardActions>

@@ -44,5 +44,41 @@ export const theme = createTheme({
                 },
             },
         },
+        MuiButton: {
+            defaultProps: {
+                disableElevation: true,
+            },
+            styleOverrides: {
+                root: {
+                    borderRadius: 10,
+                    fontWeight: 600,
+                    textTransform: "none",
+                },
+            },
+        },
+        MuiPaper: {
+            styleOverrides: {
+                outlined: {
+                    borderColor: "#DCE3EA",
+                },
+            },
+        },
+        MuiChip: {
+            styleOverrides: {
+                label: {
+                    fontWeight: 600,
+                },
+            },
+        },
+        MuiTableCell: {
+            styleOverrides: {
+                head: {
+                    color: "#425168",
+                    fontSize: "0.78rem",
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                },
+            },
+        },
     },
 });
