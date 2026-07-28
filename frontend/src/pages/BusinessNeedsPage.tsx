@@ -20,60 +20,7 @@ import { useBusinessNeeds } from "../features/businessNeed/hooks/useBusinessNeed
 import { VisibilityOutlined as VisibilityOutlinedIcon } from "@mui/icons-material";
 import Tooltip from "@mui/material/Tooltip";
 import { formatDate, formatMoneyValue, formatCooperationType } from "../common/utils/Formatters.ts";
-
-function getCooperationTypeStyle(
-    cooperationType: string,
-) {
-    switch (cooperationType) {
-        case "SUBCONTRACTING":
-            return {
-                backgroundColor: "#FFF3E0",
-                color: "#E65100",
-            };
-
-        case "SUPPLY":
-            return {
-                backgroundColor: "#E8F5E9",
-                color: "#2E7D32",
-            };
-
-        case "DISTRIBUTION":
-            return {
-                backgroundColor: "#E0F2F1",
-                color: "#00796B",
-            };
-
-        case "OUTSOURCING":
-            return {
-                backgroundColor: "#E3F2FD",
-                color: "#1565C0",
-            };
-
-        case "CONSULTING":
-            return {
-                backgroundColor: "#FFF8E1",
-                color: "#F57F17",
-            };
-
-        case "TECHNOLOGY_PARTNERSHIP":
-            return {
-                backgroundColor: "#F3E5F5",
-                color: "#7B1FA2",
-            };
-
-        case "JOINT_PROJECT":
-            return {
-                backgroundColor: "#E8EAF6",
-                color: "#3949AB",
-            };
-
-        default:
-            return {
-                backgroundColor: "#F5F5F5",
-                color: "#616161",
-            };
-    }
-}
+import { getCooperationTypeStyle } from "../common/utils/CooperationTypeStyles";
 
 export function BusinessNeedsPage() {
     const businessNeedsQuery = useBusinessNeeds();
@@ -469,66 +416,58 @@ export function BusinessNeedsPage() {
                                         </TableCell>
 
                                         <TableCell
-                                            align="center"
                                             sx={{
                                                 py: 2,
-                                                width: 80,
+                                                minWidth: 140,
+                                                width: 140,
                                             }}
                                         >
-                                            <TableCell
-                                                sx={{
-                                                    py: 2,
-                                                    minWidth: 140,
-                                                    width: 140,
-                                                }}
-                                            >
-                                                <Stack spacing={0.5}>
-                                                    <Chip
-                                                        size="small"
-                                                        variant="outlined"
-                                                        label={
-                                                            businessNeed.maxDistanceKm !== null
-                                                                ? `dist. ≤ ${businessNeed.maxDistanceKm} km`
-                                                                : "No distance limit"
-                                                        }
-                                                        sx={{
-                                                            alignSelf: "flex-start",
-                                                        }}
-                                                    />
+                                            <Stack spacing={0.5}>
+                                                <Chip
+                                                    size="small"
+                                                    variant="outlined"
+                                                    label={
+                                                        businessNeed.maxDistanceKm !== null
+                                                            ? `dist. ≤ ${businessNeed.maxDistanceKm} km`
+                                                            : "No distance limit"
+                                                    }
+                                                    sx={{
+                                                        alignSelf: "flex-start",
+                                                    }}
+                                                />
 
-                                                    <Chip
-                                                        size="small"
-                                                        variant="outlined"
-                                                        label={
-                                                            businessNeed.minPartnerExperienceYears !==
-                                                            null
-                                                                ? `${businessNeed.minPartnerExperienceYears} ${
-                                                                    businessNeed.minPartnerExperienceYears
-                                                                    === 1
-                                                                        ? "year"
-                                                                        : "years"
-                                                                }`
-                                                                : "Any experience"
-                                                        }
-                                                        sx={{
-                                                            alignSelf: "flex-start",
-                                                        }}
-                                                    />
+                                                <Chip
+                                                    size="small"
+                                                    variant="outlined"
+                                                    label={
+                                                        businessNeed.minPartnerExperienceYears
+                                                        !== null
+                                                            ? `${businessNeed.minPartnerExperienceYears} ${
+                                                                businessNeed.minPartnerExperienceYears
+                                                                === 1
+                                                                    ? "year"
+                                                                    : "years"
+                                                            }`
+                                                            : "Any experience"
+                                                    }
+                                                    sx={{
+                                                        alignSelf: "flex-start",
+                                                    }}
+                                                />
 
-                                                    <Chip
-                                                        size="small"
-                                                        variant="outlined"
-                                                        label={`${businessNeed.maxPartners} ${
-                                                            businessNeed.maxPartners === 1
-                                                                ? "partner"
-                                                                : "partners"
-                                                        }`}
-                                                        sx={{
-                                                            alignSelf: "flex-start",
-                                                        }}
-                                                    />
-                                                </Stack>
-                                            </TableCell>
+                                                <Chip
+                                                    size="small"
+                                                    variant="outlined"
+                                                    label={`${businessNeed.maxPartners} ${
+                                                        businessNeed.maxPartners === 1
+                                                            ? "partner"
+                                                            : "partners"
+                                                    }`}
+                                                    sx={{
+                                                        alignSelf: "flex-start",
+                                                    }}
+                                                />
+                                            </Stack>
                                         </TableCell>
 
                                         <TableCell
