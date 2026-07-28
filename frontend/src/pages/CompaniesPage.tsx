@@ -310,7 +310,7 @@ export function CompaniesPage() {
                                                 </IconButton>
                                             </Tooltip>
                                             <Button
-                                                variant="contained"
+                                                variant="outlined"
                                                 size="small"
                                                 disabled={!company.active}
                                                 onClick={() =>
@@ -329,6 +329,28 @@ export function CompaniesPage() {
                                                 }}
                                             >
                                                 Add need
+                                            </Button>
+
+                                            <Button
+                                                variant="contained"
+                                                size="small"
+                                                disabled={!company.active}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/companies/${company.id}/offers/new`,
+                                                    )
+                                                }
+                                                sx={{
+                                                    whiteSpace: "nowrap",
+                                                    minWidth: 0,
+                                                    px: 2,
+                                                    py: 0.75,
+                                                    borderRadius: 2,
+                                                    textTransform: "none",
+                                                    fontWeight: 600,
+                                                }}
+                                            >
+                                                Add offer
                                             </Button>
                                         </Stack>
                                     </TableCell>
