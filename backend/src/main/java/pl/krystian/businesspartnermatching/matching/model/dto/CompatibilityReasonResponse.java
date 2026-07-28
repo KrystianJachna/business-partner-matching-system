@@ -1,48 +1,60 @@
 package pl.krystian.businesspartnermatching.matching.model.dto;
 
-import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityFailureReason;
+import pl.krystian.businesspartnermatching.matching.scoring.MatchingCriterion;
+import pl.krystian.businesspartnermatching.matching.scoring.model.SingleCriterionScore;
+
+import java.math.BigDecimal;
+import java.util.Optional;
 
 public record CompatibilityReasonResponse(
         String code,
         String description
 ) {
 
-    public static CompatibilityReasonResponse from(
-            CompatibilityFailureReason reason
+    private static final BigDecimal HIGHLIGHT_THRESHOLD =
+            new BigDecimal("0.75");
+
+    public static Optional<CompatibilityReasonResponse> from(
+            SingleCriterionScore criterionScore
     ) {
-        return switch (reason) {
-            case SAME_COMPANY -> new CompatibilityReasonResponse(
-                    "DIFFERENT_COMPANIES",
-                    "The need and offer belong to different companies."
+        if (criterionScore.value().compareTo(HIGHLIGHT_THRESHOLD) < 0) {
+            return Optional.empty();
+        }
+
+        return Optional.of(switch (criterionScore.criterion()) {
+            case SPECIALIZATION -> specializationReason(criterionScore);
+            case BUDGET -> new CompatibilityReasonResponse(
+                    "STRONG_BUDGET_MATCH",
+                    "The offer price is close to the expected budget."
             );
-            case INCOMPATIBLE_COOPERATION_TYPE -> new CompatibilityReasonResponse(
-                    "COMPATIBLE_COOPERATION_TYPE",
-                    "The need and offer use the same cooperation type."
+            case DATE -> new CompatibilityReasonResponse(
+                    "GOOD_DATE_MATCH",
+                    "The offer availability closely matches the required period."
             );
-            case NO_COMMON_SPECIALIZATION -> new CompatibilityReasonResponse(
-                    "COMMON_SPECIALIZATION",
-                    "The need and offer share at least one specialization."
+            case DISTANCE -> new CompatibilityReasonResponse(
+                    "CLOSE_DISTANCE",
+                    "The companies are located within a short distance of each other."
             );
-            case NO_BUDGET_OVERLAP -> new CompatibilityReasonResponse(
-                    "BUDGET_OVERLAP",
-                    "The need budget overlaps with the offer price range."
+            case EXPERIENCE -> new CompatibilityReasonResponse(
+                    "EXPERIENCED_PARTNER",
+                    "The offer provides strong relevant partner experience."
             );
-            case NO_DATE_OVERLAP -> new CompatibilityReasonResponse(
-                    "DATE_RANGE_OVERLAP",
-                    "The required and available periods overlap."
+        });
+    }
+
+    private static CompatibilityReasonResponse specializationReason(
+            SingleCriterionScore criterionScore
+    ) {
+        if (criterionScore.value().compareTo(new BigDecimal("0.90")) >= 0) {
+            return new CompatibilityReasonResponse(
+                    "EXCELLENT_SPECIALIZATION_MATCH",
+                    "The offer covers almost all required specializations."
             );
-            case INSUFFICIENT_PARTNER_EXPERIENCE -> new CompatibilityReasonResponse(
-                    "SUFFICIENT_EXPERIENCE",
-                    "The offer meets the required partner experience."
-            );
-            case DISTANCE_LIMIT_EXCEEDED -> new CompatibilityReasonResponse(
-                    "DISTANCE_WITHIN_LIMIT",
-                    "The companies are within the allowed distance."
-            );
-            case INACTIVE_NEED_OR_OFFER -> new CompatibilityReasonResponse(
-                    "ACTIVE_NEED_AND_OFFER",
-                    "Both the need and offer are active."
-            );
-        };
+        }
+
+        return new CompatibilityReasonResponse(
+                "STRONG_SPECIALIZATION_MATCH",
+                "The need and offer share several relevant specializations."
+        );
     }
 }

@@ -1,8 +1,6 @@
 package pl.krystian.businesspartnermatching.matching.model.dto;
 
 import pl.krystian.businesspartnermatching.matching.algorithm.model.Match;
-import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityChecker;
-import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityFailureReason;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingScoreCalculator;
 import pl.krystian.businesspartnermatching.matching.scoring.model.MatchingScore;
 import pl.krystian.businesspartnermatching.matching.scoring.weights.ScoringWeights;
@@ -12,7 +10,7 @@ import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Comparator;
 
 public record MatchedPairResponse(
         Long needId,
@@ -31,8 +29,7 @@ public record MatchedPairResponse(
     public static MatchedPairResponse from(
             Match<BusinessNeed, BusinessOffer> match,
             MatchingScoreCalculator matchingScoreCalculator,
-            ScoringWeightsProvider scoringWeightsProvider,
-            CompatibilityChecker compatibilityChecker
+            ScoringWeightsProvider scoringWeightsProvider
     ) {
         BusinessNeed need =
                 match.leftParticipant();
@@ -63,29 +60,37 @@ public record MatchedPairResponse(
                                 weights.weightOf(score.criterion())
                         ))
                         .toList(),
-                compatibilityReasons(compatibilityChecker, need, offer)
+                compatibilityReasons(matchingScore)
         );
     }
 
     private static List<CompatibilityReasonResponse> compatibilityReasons(
-            CompatibilityChecker compatibilityChecker,
-            BusinessNeed need,
-            BusinessOffer offer
+            MatchingScore matchingScore
     ) {
-        var failureReasons = compatibilityChecker.check(need, offer)
-                .failureReasons();
-
-        return Stream.of(
-                        CompatibilityFailureReason.NO_COMMON_SPECIALIZATION,
-                        CompatibilityFailureReason.NO_BUDGET_OVERLAP,
-                        CompatibilityFailureReason.NO_DATE_OVERLAP,
-                        CompatibilityFailureReason.INSUFFICIENT_PARTNER_EXPERIENCE,
-                        CompatibilityFailureReason.DISTANCE_LIMIT_EXCEEDED,
-                        CompatibilityFailureReason.INCOMPATIBLE_COOPERATION_TYPE,
-                        CompatibilityFailureReason.SAME_COMPANY
-                )
-                .filter(reason -> !failureReasons.contains(reason))
+        List<CompatibilityReasonResponse> reasons = matchingScore
+                .singleCriterionScores()
+                .stream()
                 .map(CompatibilityReasonResponse::from)
+                .flatMap(java.util.Optional::stream)
                 .toList();
+
+        if (!reasons.isEmpty()) {
+            return reasons;
+        }
+
+        return matchingScore.singleCriterionScores()
+                .stream()
+                .max(Comparator.comparing(
+                        score -> score.value()
+                ))
+                .map(score -> List.of(
+                        new CompatibilityReasonResponse(
+                                "BEST_AVAILABLE_CRITERION",
+                                "The strongest aspect of this match is "
+                                        + score.criterion().name().toLowerCase()
+                                        + "."
+                        )
+                ))
+                .orElseGet(List::of);
     }
 }

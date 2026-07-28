@@ -1,7 +1,6 @@
 package pl.krystian.businesspartnermatching.matching.model.dto;
 
 import pl.krystian.businesspartnermatching.matching.algorithm.model.PopularMatchingResult;
-import pl.krystian.businesspartnermatching.matching.compatibility.CompatibilityChecker;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingScoreCalculator;
 import pl.krystian.businesspartnermatching.matching.scoring.weights.ScoringWeightsProvider;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
@@ -33,8 +32,7 @@ public record MatchingResponse(
     public static MatchingResponse from(
             PopularMatchingResult<BusinessNeed, BusinessOffer> result,
             MatchingScoreCalculator matchingScoreCalculator,
-            ScoringWeightsProvider scoringWeightsProvider,
-            CompatibilityChecker compatibilityChecker
+            ScoringWeightsProvider scoringWeightsProvider
     ) {
         Objects.requireNonNull(
                 result,
@@ -47,8 +45,7 @@ public record MatchingResponse(
                         .map(match -> MatchedPairResponse.from(
                                 match,
                                 matchingScoreCalculator,
-                                scoringWeightsProvider,
-                                compatibilityChecker
+                                scoringWeightsProvider
                         ))
                         .toList();
 
