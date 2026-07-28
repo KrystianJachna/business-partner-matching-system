@@ -106,6 +106,7 @@ CREATE TABLE business_offers
     description       VARCHAR(2000),
     cooperation_type  VARCHAR(50)                             NOT NULL,
     service_radius_km INTEGER,
+    experience_years  INTEGER,
     max_partners      INTEGER                                 NOT NULL,
     price_min         DECIMAL(15, 2),
     price_max         DECIMAL(15, 2),

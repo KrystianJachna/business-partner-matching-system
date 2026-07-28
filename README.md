@@ -8,14 +8,6 @@ http://localhost:5173/
 
 # todo:
 - dopracowanie sensu DateScoreCalculator, aby rozróżniać sam overlap od wcześniejszej dostępności?
-- implementacja businessneed a konkretniej sposobu wyswietlania specjalizacji:
-  - Company specializations
-    Obróbka metali
-    Produkcja konstrukcji stalowych
-
-    All specializations
-    Technologie informatyczne
-    Marketing
-    Transport
-    ...
+- narazie skopiowalem po prostu z need do offer i czat pozmienial bez wiekszego zastanowienia, trzeba to poprawic
+    - kalkulatory sprawdzaja minexperience na podstawie established at czyli cechy firmy a nie oferty, czy to jest ok?
 # next:

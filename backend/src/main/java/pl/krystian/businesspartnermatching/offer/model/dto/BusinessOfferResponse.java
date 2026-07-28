@@ -20,6 +20,7 @@ public record BusinessOfferResponse(
         MoneyRangeResponse priceRange,
         DateRangeResponse availabilityPeriod,
         Integer serviceRadiusKm,
+        Integer experienceYears,
         Integer maxPartners,
         boolean active,
         LocalDateTime createdAt,
@@ -46,6 +47,7 @@ public record BusinessOfferResponse(
                         businessOffer.getAvailabilityPeriod()
                 ),
                 businessOffer.getServiceRadiusKm(),
+                businessOffer.getExperienceYears(),
                 businessOffer.getMaxPartners(),
                 businessOffer.isActive(),
                 businessOffer.getCreatedAt(),

@@ -56,6 +56,7 @@ public class BusinessOfferService {
                 priceRange,
                 availabilityPeriod,
                 request.serviceRadiusKm(),
+                request.experienceYears(),
                 request.maxPartners()
         );
 

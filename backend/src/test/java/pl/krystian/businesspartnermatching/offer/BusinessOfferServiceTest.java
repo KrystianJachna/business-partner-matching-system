@@ -8,19 +8,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import pl.krystian.businesspartnermatching.catalog.industry.model.entity.Industry;
+import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
 import pl.krystian.businesspartnermatching.catalog.specialization.model.entity.Specialization;
 import pl.krystian.businesspartnermatching.catalog.specialization.service.SpecializationResolver;
-import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
 import pl.krystian.businesspartnermatching.common.cooperation.CooperationType;
 import pl.krystian.businesspartnermatching.common.money.CurrencyCode;
 import pl.krystian.businesspartnermatching.common.money.dto.MoneyRangeRequest;
 import pl.krystian.businesspartnermatching.common.time.dto.DateRangeRequest;
+import pl.krystian.businesspartnermatching.company.exception.CompanyNotFoundException;
 import pl.krystian.businesspartnermatching.company.model.entity.Company;
 import pl.krystian.businesspartnermatching.company.repository.CompanyRepository;
-import pl.krystian.businesspartnermatching.company.exception.CompanyNotFoundException;
+import pl.krystian.businesspartnermatching.offer.exception.BusinessOfferNotFoundException;
 import pl.krystian.businesspartnermatching.offer.model.dto.BusinessOfferResponse;
 import pl.krystian.businesspartnermatching.offer.model.dto.CreateBusinessOfferRequest;
-import pl.krystian.businesspartnermatching.offer.exception.BusinessOfferNotFoundException;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 import pl.krystian.businesspartnermatching.offer.repository.BusinessOfferRepository;
 import pl.krystian.businesspartnermatching.offer.service.BusinessOfferService;
@@ -66,14 +66,22 @@ class BusinessOfferServiceTest {
                 "IT",
                 "Information Technology"
         );
-        ReflectionTestUtils.setField(industry, "id", 100L);
+        ReflectionTestUtils.setField(
+                industry,
+                "id",
+                100L
+        );
 
         Specialization specialization = new Specialization(
                 industry,
                 "JAVA",
                 "Java Development"
         );
-        ReflectionTestUtils.setField(specialization, "id", 10L);
+        ReflectionTestUtils.setField(
+                specialization,
+                "id",
+                10L
+        );
 
         Company company = new Company(
                 "Example Company",
@@ -87,7 +95,11 @@ class BusinessOfferServiceTest {
                 LocalDate.of(2020, 1, 1),
                 "Software development"
         );
-        ReflectionTestUtils.setField(company, "id", 1L);
+        ReflectionTestUtils.setField(
+                company,
+                "id",
+                1L
+        );
 
         CreateBusinessOfferRequest request =
                 new CreateBusinessOfferRequest(
@@ -105,6 +117,7 @@ class BusinessOfferServiceTest {
                                 LocalDate.of(2027, 3, 31)
                         ),
                         300,
+                        5,
                         3
                 );
 
@@ -126,7 +139,8 @@ class BusinessOfferServiceTest {
         ArgumentCaptor<BusinessOffer> captor =
                 ArgumentCaptor.forClass(BusinessOffer.class);
 
-        verify(businessOfferRepository).save(captor.capture());
+        verify(businessOfferRepository)
+                .save(captor.capture());
 
         BusinessOffer savedOffer = captor.getValue();
 
@@ -157,6 +171,9 @@ class BusinessOfferServiceTest {
         assertThat(savedOffer.getServiceRadiusKm())
                 .isEqualTo(300);
 
+        assertThat(savedOffer.getExperienceYears())
+                .isEqualTo(5);
+
         assertThat(savedOffer.getMaxPartners())
                 .isEqualTo(3);
 
@@ -180,6 +197,15 @@ class BusinessOfferServiceTest {
 
         assertThat(response.availabilityPeriod().until())
                 .isEqualTo(LocalDate.of(2027, 3, 31));
+
+        assertThat(response.serviceRadiusKm())
+                .isEqualTo(300);
+
+        assertThat(response.experienceYears())
+                .isEqualTo(5);
+
+        assertThat(response.maxPartners())
+                .isEqualTo(3);
     }
 
     @Test
@@ -190,6 +216,7 @@ class BusinessOfferServiceTest {
                         null,
                         CooperationType.OUTSOURCING,
                         Set.of(10L),
+                        null,
                         null,
                         null,
                         null,
@@ -244,6 +271,7 @@ class BusinessOfferServiceTest {
                         null,
                         null,
                         null,
+                        null,
                         1
                 );
 
@@ -263,9 +291,10 @@ class BusinessOfferServiceTest {
                         1L,
                         request
                 )
-        ).isInstanceOf(
-                SpecializationNotFoundException.class
-        );
+        )
+                .isInstanceOf(
+                        SpecializationNotFoundException.class
+                );
 
         verify(businessOfferRepository, never())
                 .save(any());
@@ -301,7 +330,11 @@ class BusinessOfferServiceTest {
                 LocalDate.of(2020, 1, 1),
                 "Software development"
         );
-        ReflectionTestUtils.setField(company, "id", 1L);
+        ReflectionTestUtils.setField(
+                company,
+                "id",
+                1L
+        );
 
         BusinessOffer businessOffer = new BusinessOffer(
                 company,
@@ -312,6 +345,7 @@ class BusinessOfferServiceTest {
                 null,
                 null,
                 null,
+                5,
                 1
         );
         ReflectionTestUtils.setField(
@@ -337,6 +371,9 @@ class BusinessOfferServiceTest {
 
         assertThat(response.offeredSpecializations())
                 .hasSize(1);
+
+        assertThat(response.experienceYears())
+                .isEqualTo(5);
     }
 
     @Test

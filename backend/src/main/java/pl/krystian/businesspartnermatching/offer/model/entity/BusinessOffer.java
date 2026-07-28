@@ -106,6 +106,9 @@ public class BusinessOffer extends ActivatableAuditableEntity {
     @Column(name = "service_radius_km")
     private Integer serviceRadiusKm;
 
+    @Column(name = "experience_years")
+    private Integer experienceYears;
+
     @Column(name = "max_partners", nullable = false)
     private Integer maxPartners;
 
@@ -118,6 +121,7 @@ public class BusinessOffer extends ActivatableAuditableEntity {
             MoneyRange priceRange,
             DateRange availabilityPeriod,
             Integer serviceRadiusKm,
+            Integer experienceYears,
             Integer maxPartners
     ) {
         this.company = company;
@@ -129,6 +133,7 @@ public class BusinessOffer extends ActivatableAuditableEntity {
         this.priceRange = priceRange;
         this.availabilityPeriod = availabilityPeriod;
         this.serviceRadiusKm = serviceRadiusKm;
+        this.experienceYears = experienceYears;
         this.maxPartners = maxPartners;
     }
 }

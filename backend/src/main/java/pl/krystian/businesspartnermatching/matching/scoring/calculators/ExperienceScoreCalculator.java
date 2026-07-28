@@ -1,16 +1,12 @@
 package pl.krystian.businesspartnermatching.matching.scoring.calculators;
 
 import org.springframework.stereotype.Component;
-import pl.krystian.businesspartnermatching.company.model.entity.Company;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingCriterion;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.Period;
 
 @Component
 public class ExperienceScoreCalculator
@@ -19,16 +15,6 @@ public class ExperienceScoreCalculator
     private static final int SCORE_SCALE = 4;
     private static final BigDecimal BASE_SCORE =
             new BigDecimal("0.5");
-
-    private final Clock clock;
-
-    public ExperienceScoreCalculator() {
-        this(Clock.systemDefaultZone());
-    }
-
-    ExperienceScoreCalculator(Clock clock) {
-        this.clock = clock;
-    }
 
     @Override
     public MatchingCriterion criterion() {
@@ -48,17 +34,12 @@ public class ExperienceScoreCalculator
             return BigDecimal.ONE;
         }
 
-        Company partnerCompany = offer.getCompany();
-        LocalDate establishedAt = partnerCompany.getEstablishedAt();
+        Integer actualExperienceYears =
+                offer.getExperienceYears();
 
-        if (establishedAt == null) {
+        if (actualExperienceYears == null) {
             return BigDecimal.ZERO;
         }
-
-        int actualExperienceYears = Period.between(
-                establishedAt,
-                LocalDate.now(clock)
-        ).getYears();
 
         if (actualExperienceYears < requiredExperienceYears) {
             return BigDecimal.ZERO;

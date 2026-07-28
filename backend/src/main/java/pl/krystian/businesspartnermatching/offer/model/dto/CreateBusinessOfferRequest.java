@@ -37,6 +37,9 @@ public record CreateBusinessOfferRequest(
         @PositiveOrZero
         Integer serviceRadiusKm,
 
+        @PositiveOrZero
+        Integer experienceYears,
+
         @NotNull
         @Positive
         Integer maxPartners

@@ -2,16 +2,11 @@ package pl.krystian.businesspartnermatching.matching.scoring.calculators;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pl.krystian.businesspartnermatching.company.model.entity.Company;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingCriterion;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
 import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 
 import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -23,12 +18,7 @@ class ExperienceScoreCalculatorTest {
 
     @BeforeEach
     void setUp() {
-        Clock fixedClock = Clock.fixed(
-                Instant.parse("2026-07-20T12:00:00Z"),
-                ZoneOffset.UTC
-        );
-
-        calculator = new ExperienceScoreCalculator(fixedClock);
+        calculator = new ExperienceScoreCalculator();
     }
 
     @Test
@@ -47,7 +37,8 @@ class ExperienceScoreCalculatorTest {
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ONE);
     }
 
     @Test
@@ -60,130 +51,92 @@ class ExperienceScoreCalculatorTest {
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ONE);
     }
 
     @Test
-    void shouldReturnZeroWhenEstablishmentDateIsMissing() {
+    void shouldReturnZeroWhenOfferExperienceIsMissing() {
         // given
         BusinessNeed need = needWithMinimumExperience(5);
-
-        Company company = companyEstablishedAt(null);
-        BusinessOffer offer = offerFromCompany(company);
+        BusinessOffer offer = offerWithExperience(null);
 
         // when
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
-    void shouldReturnZeroWhenPartnerHasLessExperienceThanRequired() {
+    void shouldReturnZeroWhenOfferHasLessExperienceThanRequired() {
         // given
         BusinessNeed need = needWithMinimumExperience(5);
-
-        Company company = companyEstablishedAt(
-                LocalDate.of(2023, 7, 20)
-        );
-
-        BusinessOffer offer = offerFromCompany(company);
+        BusinessOffer offer = offerWithExperience(3);
 
         // when
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(score)
+                .isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
-    void shouldReturnHalfWhenPartnerHasExactlyRequiredExperience() {
+    void shouldReturnHalfWhenOfferHasExactlyRequiredExperience() {
         // given
         BusinessNeed need = needWithMinimumExperience(5);
-
-        Company company = companyEstablishedAt(
-                LocalDate.of(2021, 7, 20)
-        );
-
-        BusinessOffer offer = offerFromCompany(company);
+        BusinessOffer offer = offerWithExperience(5);
 
         // when
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo("0.5000");
+        assertThat(score)
+                .isEqualByComparingTo("0.5000");
     }
 
     @Test
-    void shouldReturnPartialScoreWhenPartnerHasMoreThanRequiredExperience() {
+    void shouldReturnPartialScoreWhenOfferHasMoreThanRequiredExperience() {
         // given
         BusinessNeed need = needWithMinimumExperience(5);
-
-        Company company = companyEstablishedAt(
-                LocalDate.of(2019, 7, 20)
-        );
-
-        BusinessOffer offer = offerFromCompany(company);
+        BusinessOffer offer = offerWithExperience(7);
 
         // when
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo("0.7000");
+        assertThat(score)
+                .isEqualByComparingTo("0.7000");
     }
 
     @Test
-    void shouldReturnOneWhenPartnerHasTwiceRequiredExperience() {
+    void shouldReturnOneWhenOfferHasTwiceRequiredExperience() {
         // given
         BusinessNeed need = needWithMinimumExperience(5);
-
-        Company company = companyEstablishedAt(
-                LocalDate.of(2016, 7, 20)
-        );
-
-        BusinessOffer offer = offerFromCompany(company);
+        BusinessOffer offer = offerWithExperience(10);
 
         // when
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo("1.0000");
+        assertThat(score)
+                .isEqualByComparingTo("1.0000");
     }
 
     @Test
-    void shouldCapScoreAtOneWhenPartnerHasMuchMoreExperience() {
+    void shouldCapScoreAtOneWhenOfferHasMuchMoreExperience() {
         // given
         BusinessNeed need = needWithMinimumExperience(5);
-
-        Company company = companyEstablishedAt(
-                LocalDate.of(2000, 1, 1)
-        );
-
-        BusinessOffer offer = offerFromCompany(company);
+        BusinessOffer offer = offerWithExperience(20);
 
         // when
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo("1.0000");
-    }
-
-    @Test
-    void shouldNotCountIncompleteYearOfExperience() {
-        // given
-        BusinessNeed need = needWithMinimumExperience(5);
-
-        Company company = companyEstablishedAt(
-                LocalDate.of(2021, 7, 21)
-        );
-
-        BusinessOffer offer = offerFromCompany(company);
-
-        // when
-        BigDecimal score = calculator.calculateScore(need, offer);
-
-        // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(score)
+                .isEqualByComparingTo("1.0000");
     }
 
     private BusinessNeed needWithMinimumExperience(
@@ -197,20 +150,14 @@ class ExperienceScoreCalculatorTest {
         return need;
     }
 
-    private BusinessOffer offerFromCompany(Company company) {
+    private BusinessOffer offerWithExperience(
+            Integer experienceYears
+    ) {
         BusinessOffer offer = mock(BusinessOffer.class);
 
-        when(offer.getCompany()).thenReturn(company);
+        when(offer.getExperienceYears())
+                .thenReturn(experienceYears);
 
         return offer;
-    }
-
-    private Company companyEstablishedAt(LocalDate establishedAt) {
-        Company company = mock(Company.class);
-
-        when(company.getEstablishedAt())
-                .thenReturn(establishedAt);
-
-        return company;
     }
 }
