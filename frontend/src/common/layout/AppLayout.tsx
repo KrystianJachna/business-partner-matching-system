@@ -64,6 +64,12 @@ export function AppLayout() {
                             sx={{
                                 ml: "auto",
                                 alignItems: "center",
+                                maxWidth: "100%",
+                                overflowX: "auto",
+                                scrollbarWidth: "none",
+                                "&::-webkit-scrollbar": {
+                                    display: "none",
+                                },
                             }}
                         >
                             {navigationItems.map((item) => (
@@ -109,7 +115,7 @@ export function AppLayout() {
                 </Container>
             </AppBar>
 
-            <Container maxWidth="lg" sx={{ py: 6 }}>
+            <Container maxWidth="xl" sx={{ py: { xs: 3, md: 6 } }}>
                 <Outlet />
             </Container>
         </Box>

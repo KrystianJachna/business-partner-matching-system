@@ -19,6 +19,15 @@ class MatchingControllerIntegrationTest extends IntegrationTest {
                 .andExpect(jsonPath("$.matchCount").value(3))
                 .andExpect(jsonPath("$.matches").isArray())
                 .andExpect(jsonPath("$.matches", hasSize(3)))
+                .andExpect(jsonPath("$.matches[0].needCompanyName").isString())
+                .andExpect(jsonPath("$.matches[0].offerCompanyName").isString())
+                .andExpect(jsonPath("$.matches[0].totalScore").isNumber())
+                .andExpect(jsonPath("$.matches[0].criterionScores").isArray())
+                .andExpect(jsonPath("$.matches[0].criterionScores[0].criterion").isString())
+                .andExpect(jsonPath("$.matches[0].criterionScores[0].score").isNumber())
+                .andExpect(jsonPath("$.matches[0].criterionScores[0].weight").isNumber())
+                .andExpect(jsonPath("$.matches[0].criterionScores[0].weightedScore").isNumber())
+                .andExpect(jsonPath("$.matches[0].compatibilityReasons").isArray())
 
                 .andExpect(jsonPath(
                         "$.matches[?("

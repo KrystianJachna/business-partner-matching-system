@@ -2,7 +2,7 @@ package pl.krystian.businesspartnermatching.matching.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.krystian.businesspartnermatching.matching.algorithm.PopularMatchingAlgorithm;
+import pl.krystian.businesspartnermatching.matching.algorithm.MatchingAlgorithm;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.MatchingProblem;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.ParticipantCapacitySet;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.PopularMatchingResult;
@@ -36,7 +36,7 @@ public class BusinessMatchingService {
     private final ParticipantPreferencesGenerator
             participantPreferencesGenerator;
 
-    private final PopularMatchingAlgorithm<BusinessNeed, BusinessOffer>
+    private final MatchingAlgorithm<BusinessNeed, BusinessOffer>
             matchingAlgorithm;
 
     private final BusinessNeedRepository businessNeedRepository;

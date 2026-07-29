@@ -6,7 +6,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.krystian.businesspartnermatching.matching.algorithm.PopularMatchingAlgorithm;
+import pl.krystian.businesspartnermatching.matching.algorithm.MatchingAlgorithm;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.MatchingProblem;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.PopularMatchingResult;
 import pl.krystian.businesspartnermatching.matching.preference.generation.ParticipantPreferencesGenerator;
@@ -41,7 +41,7 @@ class BusinessMatchingServiceTest {
             participantPreferencesGenerator;
 
     @Mock
-    private PopularMatchingAlgorithm<BusinessNeed, BusinessOffer>
+    private MatchingAlgorithm<BusinessNeed, BusinessOffer>
             matchingAlgorithm;
 
     @InjectMocks

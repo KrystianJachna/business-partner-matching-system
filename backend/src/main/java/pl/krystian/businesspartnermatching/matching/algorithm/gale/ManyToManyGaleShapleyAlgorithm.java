@@ -1,7 +1,7 @@
 package pl.krystian.businesspartnermatching.matching.algorithm.gale;
 
 import org.springframework.stereotype.Component;
-import pl.krystian.businesspartnermatching.matching.algorithm.PopularMatchingAlgorithm;
+import pl.krystian.businesspartnermatching.matching.algorithm.MatchingAlgorithm;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.Match;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.MatchingProblem;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.PopularMatchingResult;
@@ -11,7 +11,7 @@ import java.util.*;
 
 @Component
 public class ManyToManyGaleShapleyAlgorithm<L, R>
-        implements PopularMatchingAlgorithm<L, R> {
+        implements MatchingAlgorithm<L, R> {
 
     @Override
     public PopularMatchingResult<L, R> match(
