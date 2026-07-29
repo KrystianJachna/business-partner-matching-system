@@ -16,13 +16,19 @@ import {
     Chip,
     CircularProgress,
     Divider,
+    FormControl,
     Grid,
+    InputLabel,
     LinearProgress,
+    MenuItem,
     Paper,
+    Select,
     Stack,
     Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { useRunMatching } from "../features/matching/hooks/useRunMatching";
+import type { MatchingAlgorithmType } from "../features/matching/model/MatchingAlgorithmType";
 import type {
     CriterionScoreResponse,
     MatchedPairResponse,
@@ -234,6 +240,8 @@ function MatchCard({ match }: { match: MatchedPairResponse }) {
 }
 
 export function MatchingPage() {
+    const [algorithmType, setAlgorithmType] =
+        useState<MatchingAlgorithmType>("STABLE");
     const matchingMutation = useRunMatching();
     const matchingResult = matchingMutation.data;
 
@@ -260,21 +268,51 @@ export function MatchingPage() {
                     </Typography>
                 </Box>
 
-                <Button
-                    variant="contained"
-                    size="large"
-                    startIcon={
-                        matchingMutation.isPending
-                            ? <CircularProgress size={18} color="inherit" />
-                            : matchingResult
-                                ? <RefreshOutlinedIcon />
-                                : <AutoAwesomeOutlinedIcon />
-                    }
-                    onClick={() => matchingMutation.mutate()}
-                    disabled={matchingMutation.isPending}
+                <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.5}
+                    sx={{ width: { xs: "100%", md: "auto" } }}
                 >
-                    {matchingMutation.isPending ? "Running matching..." : matchingResult ? "Run again" : "Run matching"}
-                </Button>
+                    <FormControl size="small" sx={{ minWidth: 190 }}>
+                        <InputLabel id="matching-algorithm-label">
+                            Algorithm
+                        </InputLabel>
+                        <Select
+                            labelId="matching-algorithm-label"
+                            value={algorithmType}
+                            label="Algorithm"
+                            onChange={(event) =>
+                                setAlgorithmType(
+                                    event.target.value as MatchingAlgorithmType,
+                                )
+                            }
+                            disabled={matchingMutation.isPending}
+                        >
+                            <MenuItem value="STABLE">
+                                Stable matching
+                            </MenuItem>
+                            <MenuItem value="POPULAR">
+                                Popular matching
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <Button
+                        variant="contained"
+                        size="large"
+                        startIcon={
+                            matchingMutation.isPending
+                                ? <CircularProgress size={18} color="inherit" />
+                                : matchingResult
+                                    ? <RefreshOutlinedIcon />
+                                    : <AutoAwesomeOutlinedIcon />
+                        }
+                        onClick={() => matchingMutation.mutate(algorithmType)}
+                        disabled={matchingMutation.isPending}
+                    >
+                        {matchingMutation.isPending ? "Running matching..." : matchingResult ? "Run again" : "Run matching"}
+                    </Button>
+                </Stack>
             </Stack>
 
             {matchingMutation.isError && (
