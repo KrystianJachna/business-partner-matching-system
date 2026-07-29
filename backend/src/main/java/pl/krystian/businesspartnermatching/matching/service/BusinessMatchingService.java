@@ -1,7 +1,8 @@
 package pl.krystian.businesspartnermatching.matching.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import pl.krystian.businesspartnermatching.matching.algorithm.MatchingAlgorithmType;
 import pl.krystian.businesspartnermatching.matching.algorithm.MatchingAlgorithm;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.MatchingProblem;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.ParticipantCapacitySet;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
 public class BusinessMatchingService {
 
     private final OffersForNeedRankingGenerator
@@ -39,12 +39,42 @@ public class BusinessMatchingService {
     private final MatchingAlgorithm<BusinessNeed, BusinessOffer>
             matchingAlgorithm;
 
+    private final MatchingAlgorithm<BusinessNeed, BusinessOffer>
+            popularMatchingAlgorithm;
+
     private final BusinessNeedRepository businessNeedRepository;
 
     private final BusinessOfferRepository businessOfferRepository;
 
+    public BusinessMatchingService(
+            OffersForNeedRankingGenerator offersForNeedRankingGenerator,
+            NeedsForOfferRankingGenerator needsForOfferRankingGenerator,
+            ParticipantPreferencesGenerator participantPreferencesGenerator,
+            @Qualifier("manyToManyGaleShapleyAlgorithm")
+            MatchingAlgorithm<BusinessNeed, BusinessOffer> matchingAlgorithm,
+            @Qualifier("twoLevelPopularMatchingAlgorithm")
+            MatchingAlgorithm<BusinessNeed, BusinessOffer> popularMatchingAlgorithm,
+            BusinessNeedRepository businessNeedRepository,
+            BusinessOfferRepository businessOfferRepository
+    ) {
+        this.offersForNeedRankingGenerator = offersForNeedRankingGenerator;
+        this.needsForOfferRankingGenerator = needsForOfferRankingGenerator;
+        this.participantPreferencesGenerator = participantPreferencesGenerator;
+        this.matchingAlgorithm = matchingAlgorithm;
+        this.popularMatchingAlgorithm = popularMatchingAlgorithm;
+        this.businessNeedRepository = businessNeedRepository;
+        this.businessOfferRepository = businessOfferRepository;
+    }
+
     @Transactional
     public PopularMatchingResult<BusinessNeed, BusinessOffer> match() {
+        return match(MatchingAlgorithmType.STABLE);
+    }
+
+    @Transactional(readOnly = true)
+    public PopularMatchingResult<BusinessNeed, BusinessOffer> match(
+            MatchingAlgorithmType algorithmType
+    ) {
         List<BusinessNeed> needs =
                 businessNeedRepository.findAllByActiveTrue();
 
@@ -53,7 +83,8 @@ public class BusinessMatchingService {
 
         return match(
                 needs,
-                offers
+                offers,
+                algorithmType
         );
     }
 
@@ -61,12 +92,34 @@ public class BusinessMatchingService {
             List<BusinessNeed> needs,
             List<BusinessOffer> offers
     ) {
+        return match(needs, offers, MatchingAlgorithmType.STABLE);
+    }
+
+    public PopularMatchingResult<BusinessNeed, BusinessOffer> match(
+            List<BusinessNeed> needs,
+            List<BusinessOffer> offers,
+            MatchingAlgorithmType algorithmType
+    ) {
         validateInput(needs, offers);
+
+        Objects.requireNonNull(
+                algorithmType,
+                "Matching algorithm type cannot be null"
+        );
 
         MatchingProblem<BusinessNeed, BusinessOffer> problem =
                 createMatchingProblem(needs, offers);
 
-        return matchingAlgorithm.match(problem);
+        return algorithmFor(algorithmType).match(problem);
+    }
+
+    private MatchingAlgorithm<BusinessNeed, BusinessOffer> algorithmFor(
+            MatchingAlgorithmType algorithmType
+    ) {
+        return switch (algorithmType) {
+            case STABLE -> matchingAlgorithm;
+            case POPULAR -> popularMatchingAlgorithm;
+        };
     }
 
     private MatchingProblem<BusinessNeed, BusinessOffer>
