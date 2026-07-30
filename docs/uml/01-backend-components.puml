@@ -1,0 +1,33 @@
+@startuml
+title Backend - diagram komponentów
+!pragma layout smetana
+skinparam componentStyle rectangle
+
+actor User
+component "REST API" as api
+component "Need / Offer services" as crud
+component "Matching service" as matching
+component "Compatibility checker" as compatibility
+component "Scoring engine" as scoring
+component "Matching algorithm" as algorithm
+component "AHP weights provider" as ahp
+component "Default weights provider" as defaults
+database "PostgreSQL" as db
+
+User --> api
+api --> crud
+api --> matching
+matching --> compatibility
+matching --> scoring
+matching --> algorithm
+scoring --> ahp
+ahp --> defaults : fallback
+crud --> db
+matching --> db : active needs/offers
+
+note right of ahp
+  Optional user preferences.
+  If missing or invalid,
+  default weights are used.
+end note
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+title Wyznaczanie wag kryteriów metodą AHP
+!pragma layout smetana
+
+start
+:Użytkownik tworzy ofertę lub potrzebę;
+if (Wypełniono ankietę AHP?) then (tak)
+  :Porównaj parami kryteria;
+  :Wyślij ahpComparisons;
+  :Zweryfikuj kompletność i poprawność porównań;
+  :Zapisz porównania jako JSON;
+else (nie)
+  :Zapisz brak preferencji AHP;
+endif
+
+:Rozpocznij dopasowanie;
+:Odczytaj preferencje AHP;
+if (Preferencje są dostępne i poprawne?) then (tak)
+  :Zbuduj macierz wzajemnych porównań;
+  :Oblicz wektor własny macierzy;
+  :Znormalizuj wagi kryteriów;
+else (nie)
+  :Użyj wag domyślnych;
+endif
+
+:Oblicz wynik dla każdego kryterium;
+:Pomnóż wyniki przez odpowiednie wagi;
+:Zsumuj wynik dopasowania;
+stop
+@enduml
