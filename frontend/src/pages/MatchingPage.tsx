@@ -16,19 +16,13 @@ import {
     Chip,
     CircularProgress,
     Divider,
-    FormControl,
     Grid,
-    InputLabel,
     LinearProgress,
-    MenuItem,
     Paper,
-    Select,
     Stack,
     Typography,
 } from "@mui/material";
-import { useState } from "react";
 import { useRunMatching } from "../features/matching/hooks/useRunMatching";
-import type { MatchingAlgorithmType } from "../features/matching/model/MatchingAlgorithmType";
 import type {
     CriterionScoreResponse,
     MatchedPairResponse,
@@ -240,8 +234,6 @@ function MatchCard({ match }: { match: MatchedPairResponse }) {
 }
 
 export function MatchingPage() {
-    const [algorithmType, setAlgorithmType] =
-        useState<MatchingAlgorithmType>("STABLE");
     const matchingMutation = useRunMatching();
     const matchingResult = matchingMutation.data;
 
@@ -273,30 +265,6 @@ export function MatchingPage() {
                     spacing={1.5}
                     sx={{ width: { xs: "100%", md: "auto" } }}
                 >
-                    <FormControl size="small" sx={{ minWidth: 190 }}>
-                        <InputLabel id="matching-algorithm-label">
-                            Algorithm
-                        </InputLabel>
-                        <Select
-                            labelId="matching-algorithm-label"
-                            value={algorithmType}
-                            label="Algorithm"
-                            onChange={(event) =>
-                                setAlgorithmType(
-                                    event.target.value as MatchingAlgorithmType,
-                                )
-                            }
-                            disabled={matchingMutation.isPending}
-                        >
-                            <MenuItem value="STABLE">
-                                Stable matching
-                            </MenuItem>
-                            <MenuItem value="POPULAR">
-                                Popular matching
-                            </MenuItem>
-                        </Select>
-                    </FormControl>
-
                     <Button
                         variant="contained"
                         size="large"
@@ -307,7 +275,7 @@ export function MatchingPage() {
                                     ? <RefreshOutlinedIcon />
                                     : <AutoAwesomeOutlinedIcon />
                         }
-                        onClick={() => matchingMutation.mutate(algorithmType)}
+                        onClick={() => matchingMutation.mutate()}
                         disabled={matchingMutation.isPending}
                     >
                         {matchingMutation.isPending ? "Running matching..." : matchingResult ? "Run again" : "Run matching"}

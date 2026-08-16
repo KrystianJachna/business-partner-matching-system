@@ -42,7 +42,7 @@ package "Persistence" {
 
 package "Matching" {
     interface MatchingAlgorithm<L,R>
-    class ManyToManyGaleShapleyAlgorithm <<Component>>
+    class PopularMatchingWithMultiplePartners <<Component>>
     class MatchingProblem
     class PopularMatchingResult
     class Match
@@ -129,8 +129,8 @@ BusinessMatchingService --> MatchingProblem
 MatchingProblem o-- ParticipantPreferenceSet
 MatchingProblem o-- ParticipantCapacitySet
 ParticipantPreferenceSet o-- ParticipantPreferences
-MatchingAlgorithm <|.. ManyToManyGaleShapleyAlgorithm
-ManyToManyGaleShapleyAlgorithm --> PopularMatchingResult
+MatchingAlgorithm <|.. PopularMatchingWithMultiplePartners
+PopularMatchingWithMultiplePartners --> PopularMatchingResult
 PopularMatchingResult o-- Match
 
 ' Compatibility and scoring
