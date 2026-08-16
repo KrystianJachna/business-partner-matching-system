@@ -1,8 +1,6 @@
 package pl.krystian.businesspartnermatching.matching.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import pl.krystian.businesspartnermatching.matching.algorithm.MatchingAlgorithmType;
 import pl.krystian.businesspartnermatching.matching.algorithm.MatchingAlgorithm;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.MatchingProblem;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.ParticipantCapacitySet;
@@ -39,9 +37,6 @@ public class BusinessMatchingService {
     private final MatchingAlgorithm<BusinessNeed, BusinessOffer>
             matchingAlgorithm;
 
-    private final MatchingAlgorithm<BusinessNeed, BusinessOffer>
-            popularMatchingAlgorithm;
-
     private final BusinessNeedRepository businessNeedRepository;
 
     private final BusinessOfferRepository businessOfferRepository;
@@ -50,10 +45,7 @@ public class BusinessMatchingService {
             OffersForNeedRankingGenerator offersForNeedRankingGenerator,
             NeedsForOfferRankingGenerator needsForOfferRankingGenerator,
             ParticipantPreferencesGenerator participantPreferencesGenerator,
-            @Qualifier("manyToManyGaleShapleyAlgorithm")
             MatchingAlgorithm<BusinessNeed, BusinessOffer> matchingAlgorithm,
-            @Qualifier("twoLevelPopularMatchingAlgorithm")
-            MatchingAlgorithm<BusinessNeed, BusinessOffer> popularMatchingAlgorithm,
             BusinessNeedRepository businessNeedRepository,
             BusinessOfferRepository businessOfferRepository
     ) {
@@ -61,65 +53,31 @@ public class BusinessMatchingService {
         this.needsForOfferRankingGenerator = needsForOfferRankingGenerator;
         this.participantPreferencesGenerator = participantPreferencesGenerator;
         this.matchingAlgorithm = matchingAlgorithm;
-        this.popularMatchingAlgorithm = popularMatchingAlgorithm;
         this.businessNeedRepository = businessNeedRepository;
         this.businessOfferRepository = businessOfferRepository;
     }
 
     @Transactional
     public PopularMatchingResult<BusinessNeed, BusinessOffer> match() {
-        return match(MatchingAlgorithmType.STABLE);
-    }
-
-    @Transactional(readOnly = true)
-    public PopularMatchingResult<BusinessNeed, BusinessOffer> match(
-            MatchingAlgorithmType algorithmType
-    ) {
         List<BusinessNeed> needs =
                 businessNeedRepository.findAllByActiveTrue();
 
         List<BusinessOffer> offers =
                 businessOfferRepository.findAllByActiveTrue();
 
-        return match(
-                needs,
-                offers,
-                algorithmType
-        );
+        return match(needs, offers);
     }
 
     public PopularMatchingResult<BusinessNeed, BusinessOffer> match(
             List<BusinessNeed> needs,
             List<BusinessOffer> offers
     ) {
-        return match(needs, offers, MatchingAlgorithmType.STABLE);
-    }
-
-    public PopularMatchingResult<BusinessNeed, BusinessOffer> match(
-            List<BusinessNeed> needs,
-            List<BusinessOffer> offers,
-            MatchingAlgorithmType algorithmType
-    ) {
         validateInput(needs, offers);
-
-        Objects.requireNonNull(
-                algorithmType,
-                "Matching algorithm type cannot be null"
-        );
 
         MatchingProblem<BusinessNeed, BusinessOffer> problem =
                 createMatchingProblem(needs, offers);
 
-        return algorithmFor(algorithmType).match(problem);
-    }
-
-    private MatchingAlgorithm<BusinessNeed, BusinessOffer> algorithmFor(
-            MatchingAlgorithmType algorithmType
-    ) {
-        return switch (algorithmType) {
-            case STABLE -> matchingAlgorithm;
-            case POPULAR -> popularMatchingAlgorithm;
-        };
+        return matchingAlgorithm.match(problem);
     }
 
     private MatchingProblem<BusinessNeed, BusinessOffer>
