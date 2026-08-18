@@ -106,18 +106,21 @@ public class MatchingScoreCalculator {
                 ))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal totalScore = singleCriterionScores
+        BigDecimal weightedScoreSum = singleCriterionScores
                 .stream()
                 .map(criterionScore -> calculateWeightedScore(
                         criterionScore,
-                        scoringWeights,
-                        activeWeightSum
+                        scoringWeights
                 ))
                 .reduce(
                         BigDecimal.ZERO,
                         BigDecimal::add
-                )
-                .setScale(
+                );
+
+        BigDecimal totalScore = activeWeightSum.compareTo(BigDecimal.ZERO) == 0
+                ? BigDecimal.ZERO
+                : weightedScoreSum.divide(
+                        activeWeightSum,
                         SCORE_SCALE,
                         RoundingMode.HALF_UP
                 );
@@ -130,21 +133,15 @@ public class MatchingScoreCalculator {
 
     private BigDecimal calculateWeightedScore(
             SingleCriterionScore singleCriterionScore,
-            ScoringWeights scoringWeights,
-            BigDecimal activeWeightSum
+            ScoringWeights scoringWeights
     ) {
-        if (activeWeightSum.compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.ZERO;
-        }
-
         return singleCriterionScore
                 .value()
                 .multiply(
                         scoringWeights.weightOf(
                                 singleCriterionScore.criterion()
                         )
-                )
-                .divide(activeWeightSum, SCORE_SCALE, RoundingMode.HALF_UP);
+                );
     }
 
     private void validateCompatibility(

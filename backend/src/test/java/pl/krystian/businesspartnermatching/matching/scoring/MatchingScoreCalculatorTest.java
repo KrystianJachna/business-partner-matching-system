@@ -246,7 +246,7 @@ class MatchingScoreCalculatorTest {
 
         // then
         assertThat(result.totalScore())
-                .isEqualByComparingTo("0.7428");
+                .isEqualByComparingTo("0.7429");
         assertThat(result.singleCriterionScores())
                 .extracting(SingleCriterionScore::criterion)
                 .containsExactly(
