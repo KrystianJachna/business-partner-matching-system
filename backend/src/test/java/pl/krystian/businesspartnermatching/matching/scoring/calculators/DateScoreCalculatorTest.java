@@ -102,7 +102,7 @@ class DateScoreCalculatorTest {
     }
 
     @Test
-    void shouldReturnOneWhenRequiredPeriodIsNotSpecified() {
+    void shouldReturnNoScoreWhenRequiredPeriodIsNotSpecified() {
         // given
         BusinessNeed need = needWithRequiredPeriod(null);
 
@@ -114,11 +114,11 @@ class DateScoreCalculatorTest {
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score).isNull();
     }
 
     @Test
-    void shouldReturnOneWhenAvailabilityPeriodIsNotSpecified() {
+    void shouldReturnNoScoreWhenAvailabilityPeriodIsNotSpecified() {
         // given
         BusinessNeed need = needWithRequiredPeriod(
                 dateRange("2026-08-01", "2026-08-20")
@@ -130,7 +130,7 @@ class DateScoreCalculatorTest {
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score).isNull();
     }
 
     @Test

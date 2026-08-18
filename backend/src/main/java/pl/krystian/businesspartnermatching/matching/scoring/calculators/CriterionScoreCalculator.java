@@ -10,6 +10,11 @@ public interface CriterionScoreCalculator {
 
     MatchingCriterion criterion();
 
+    /**
+     * Returns a score in the range [0, 1]. A null result means that the
+     * criterion is not applicable because one of its optional values is
+     * missing.
+     */
     BigDecimal calculateScore(
             BusinessNeed need,
             BusinessOffer offer

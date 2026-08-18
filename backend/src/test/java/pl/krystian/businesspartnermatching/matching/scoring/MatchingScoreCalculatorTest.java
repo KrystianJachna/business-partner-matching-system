@@ -193,6 +193,69 @@ class MatchingScoreCalculatorTest {
     }
 
     @Test
+    void shouldIgnoreMissingCriterionAndNormalizeRemainingWeights() {
+        // given
+        BusinessNeed need = mock(BusinessNeed.class);
+        BusinessOffer offer = mock(BusinessOffer.class);
+
+        configureCompatiblePair(need, offer);
+
+        configureCalculator(
+                specializationCalculator,
+                MatchingCriterion.SPECIALIZATION,
+                new BigDecimal("0.80"),
+                need,
+                offer
+        );
+
+        configureCalculator(
+                budgetCalculator,
+                MatchingCriterion.BUDGET,
+                null,
+                need,
+                offer
+        );
+
+        configureCalculator(
+                dateCalculator,
+                MatchingCriterion.DATE,
+                new BigDecimal("0.60"),
+                need,
+                offer
+        );
+
+        ScoringWeights profile = new ScoringWeights(
+                Map.of(
+                        MatchingCriterion.SPECIALIZATION,
+                        new BigDecimal("0.50"),
+                        MatchingCriterion.BUDGET,
+                        new BigDecimal("0.30"),
+                        MatchingCriterion.DATE,
+                        new BigDecimal("0.20")
+                )
+        );
+
+        when(scoringWeightsProvider.forNeed(need))
+                .thenReturn(profile);
+
+        // when
+        MatchingScore result = matchingScoreCalculator.calculateForNeed(
+                need,
+                offer
+        );
+
+        // then
+        assertThat(result.totalScore())
+                .isEqualByComparingTo("0.7428");
+        assertThat(result.singleCriterionScores())
+                .extracting(SingleCriterionScore::criterion)
+                .containsExactly(
+                        MatchingCriterion.SPECIALIZATION,
+                        MatchingCriterion.DATE
+                );
+    }
+
+    @Test
     void shouldReturnZeroWhenAllCriterionScoresAreZero() {
         // given
         BusinessNeed need = mock(BusinessNeed.class);

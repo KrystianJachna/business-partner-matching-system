@@ -36,7 +36,7 @@ public class BudgetScoreCalculator
         MoneyRange priceRange = offer.getPriceRange();
 
         if (budget == null || priceRange == null) {
-            return BigDecimal.ONE;
+            return null;
         }
 
         BigDecimal convertedPriceMin = moneyConverter.convert(

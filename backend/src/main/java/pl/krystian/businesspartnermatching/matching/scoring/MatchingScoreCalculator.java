@@ -83,23 +83,36 @@ public class MatchingScoreCalculator {
     ) {
         List<SingleCriterionScore> singleCriterionScores = calculators
                 .stream()
-                .map(calculator -> new SingleCriterionScore(
-                        calculator.criterion(),
-                        calculator.calculateScore(
-                                need,
-                                offer
-                        )
-                ))
+                .map(calculator -> {
+                    BigDecimal score = calculator.calculateScore(
+                            need,
+                            offer
+                    );
+
+                    return score == null
+                            ? null
+                            : new SingleCriterionScore(
+                                    calculator.criterion(),
+                                    score
+                            );
+                })
+                .filter(Objects::nonNull)
                 .toList();
+
+        BigDecimal activeWeightSum = singleCriterionScores
+                .stream()
+                .map(criterionScore -> scoringWeights.weightOf(
+                        criterionScore.criterion()
+                ))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalScore = singleCriterionScores
                 .stream()
-                .map(criterionScore ->
-                        calculateWeightedScore(
-                                criterionScore,
-                                scoringWeights
-                        )
-                )
+                .map(criterionScore -> calculateWeightedScore(
+                        criterionScore,
+                        scoringWeights,
+                        activeWeightSum
+                ))
                 .reduce(
                         BigDecimal.ZERO,
                         BigDecimal::add
@@ -117,15 +130,21 @@ public class MatchingScoreCalculator {
 
     private BigDecimal calculateWeightedScore(
             SingleCriterionScore singleCriterionScore,
-            ScoringWeights scoringWeights
+            ScoringWeights scoringWeights,
+            BigDecimal activeWeightSum
     ) {
+        if (activeWeightSum.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+
         return singleCriterionScore
                 .value()
                 .multiply(
                         scoringWeights.weightOf(
                                 singleCriterionScore.criterion()
                         )
-                );
+                )
+                .divide(activeWeightSum, SCORE_SCALE, RoundingMode.HALF_UP);
     }
 
     private void validateCompatibility(

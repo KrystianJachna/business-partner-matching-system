@@ -28,7 +28,7 @@ class ExperienceScoreCalculatorTest {
     }
 
     @Test
-    void shouldReturnOneWhenMinimumExperienceIsNotSpecified() {
+    void shouldReturnNoScoreWhenMinimumExperienceIsNotSpecified() {
         // given
         BusinessNeed need = needWithMinimumExperience(null);
         BusinessOffer offer = mock(BusinessOffer.class);
@@ -37,12 +37,11 @@ class ExperienceScoreCalculatorTest {
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score)
-                .isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score).isNull();
     }
 
     @Test
-    void shouldReturnOneWhenMinimumExperienceIsZero() {
+    void shouldReturnNoScoreWhenMinimumExperienceIsZero() {
         // given
         BusinessNeed need = needWithMinimumExperience(0);
         BusinessOffer offer = mock(BusinessOffer.class);
@@ -51,8 +50,7 @@ class ExperienceScoreCalculatorTest {
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score)
-                .isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score).isNull();
     }
 
     @Test

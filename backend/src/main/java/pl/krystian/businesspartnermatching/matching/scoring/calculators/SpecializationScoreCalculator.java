@@ -31,7 +31,7 @@ public class SpecializationScoreCalculator
                 need.getRequiredSpecializations();
 
         if (requiredSpecializations.isEmpty()) {
-            return BigDecimal.ONE;
+            return null;
         }
 
         Set<String> offeredSpecializationCodes =
