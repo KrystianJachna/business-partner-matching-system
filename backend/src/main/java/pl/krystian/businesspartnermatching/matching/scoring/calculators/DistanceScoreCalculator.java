@@ -35,7 +35,7 @@ public class DistanceScoreCalculator
         );
 
         if (effectiveLimit == null) {
-            return BigDecimal.ONE;
+            return null;
         }
 
         double distanceKm =

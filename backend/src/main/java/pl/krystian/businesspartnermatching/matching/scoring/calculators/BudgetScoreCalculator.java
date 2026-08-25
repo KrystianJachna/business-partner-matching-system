@@ -36,7 +36,7 @@ public class BudgetScoreCalculator
         MoneyRange priceRange = offer.getPriceRange();
 
         if (budget == null || priceRange == null) {
-            return BigDecimal.ONE;
+            return null;
         }
 
         BigDecimal convertedPriceMin = moneyConverter.convert(
@@ -51,19 +51,23 @@ public class BudgetScoreCalculator
                 budget.getCurrency()
         );
 
-        BigDecimal budgetLength =
-                budget.getMax().subtract(budget.getMin());
+        boolean budgetIsPoint = isPointRange(
+                budget.getMin(),
+                budget.getMax()
+        );
 
-        if (budgetLength.compareTo(BigDecimal.ZERO) == 0) {
-            boolean pointBudgetIsCovered =
-                    convertedPriceMin.compareTo(
-                            budget.getMin()
-                    ) <= 0
-                            && convertedPriceMax.compareTo(
-                            budget.getMax()
-                    ) >= 0;
+        boolean priceIsPoint = isPointRange(
+                convertedPriceMin,
+                convertedPriceMax
+        );
 
-            return pointBudgetIsCovered
+        if (budgetIsPoint || priceIsPoint) {
+            return rangesOverlap(
+                    budget.getMin(),
+                    budget.getMax(),
+                    convertedPriceMin,
+                    convertedPriceMax
+            )
                     ? BigDecimal.ONE
                     : BigDecimal.ZERO;
         }
@@ -81,10 +85,30 @@ public class BudgetScoreCalculator
         BigDecimal overlapLength =
                 overlapEnd.subtract(overlapStart);
 
+        BigDecimal budgetLength =
+                budget.getMax().subtract(budget.getMin());
+
         return overlapLength.divide(
                 budgetLength,
                 SCORE_SCALE,
                 RoundingMode.HALF_UP
         );
+    }
+
+    private boolean isPointRange(
+            BigDecimal min,
+            BigDecimal max
+    ) {
+        return min.compareTo(max) == 0;
+    }
+
+    private boolean rangesOverlap(
+            BigDecimal budgetMin,
+            BigDecimal budgetMax,
+            BigDecimal priceMin,
+            BigDecimal priceMax
+    ) {
+        return budgetMin.compareTo(priceMax) <= 0
+                && priceMin.compareTo(budgetMax) <= 0;
     }
 }

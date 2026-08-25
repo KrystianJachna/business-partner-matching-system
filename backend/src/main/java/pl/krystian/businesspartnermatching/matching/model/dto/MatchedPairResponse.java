@@ -3,6 +3,7 @@ package pl.krystian.businesspartnermatching.matching.model.dto;
 import pl.krystian.businesspartnermatching.matching.algorithm.model.Match;
 import pl.krystian.businesspartnermatching.matching.scoring.MatchingScoreCalculator;
 import pl.krystian.businesspartnermatching.matching.scoring.model.MatchingScore;
+import pl.krystian.businesspartnermatching.matching.scoring.model.SingleCriterionScore;
 import pl.krystian.businesspartnermatching.matching.scoring.weights.ScoringWeights;
 import pl.krystian.businesspartnermatching.matching.scoring.weights.ScoringWeightsProvider;
 import pl.krystian.businesspartnermatching.need.model.entity.BusinessNeed;
@@ -11,6 +12,7 @@ import pl.krystian.businesspartnermatching.offer.model.entity.BusinessOffer;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Comparator;
+import java.math.RoundingMode;
 
 public record MatchedPairResponse(
         Long needId,
@@ -42,6 +44,10 @@ public record MatchedPairResponse(
                 offer
         );
         ScoringWeights weights = scoringWeightsProvider.forNeed(need);
+        BigDecimal activeWeightSum = matchingScore.singleCriterionScores()
+                .stream()
+                .map(score -> weights.weightOf(score.criterion()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return new MatchedPairResponse(
                 need.getId(),
@@ -57,10 +63,28 @@ public record MatchedPairResponse(
                         .stream()
                         .map(score -> CriterionScoreResponse.from(
                                 score,
-                                weights.weightOf(score.criterion())
+                                normalizedWeight(
+                                        weights.weightOf(score.criterion()),
+                                        activeWeightSum
+                                )
                         ))
                         .toList(),
                 compatibilityReasons(matchingScore)
+        );
+    }
+
+    private static BigDecimal normalizedWeight(
+            BigDecimal weight,
+            BigDecimal activeWeightSum
+    ) {
+        if (activeWeightSum.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+
+        return weight.divide(
+                activeWeightSum,
+                4,
+                RoundingMode.HALF_UP
         );
     }
 
@@ -81,7 +105,7 @@ public record MatchedPairResponse(
         return matchingScore.singleCriterionScores()
                 .stream()
                 .max(Comparator.comparing(
-                        score -> score.value()
+                        SingleCriterionScore::value
                 ))
                 .map(score -> List.of(
                         new CompatibilityReasonResponse(

@@ -31,7 +31,7 @@ public class ExperienceScoreCalculator
 
         if (requiredExperienceYears == null
                 || requiredExperienceYears == 0) {
-            return BigDecimal.ONE;
+            return null;
         }
 
         Integer actualExperienceYears =

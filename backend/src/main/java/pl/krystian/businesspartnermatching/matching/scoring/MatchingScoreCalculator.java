@@ -83,28 +83,44 @@ public class MatchingScoreCalculator {
     ) {
         List<SingleCriterionScore> singleCriterionScores = calculators
                 .stream()
-                .map(calculator -> new SingleCriterionScore(
-                        calculator.criterion(),
-                        calculator.calculateScore(
-                                need,
-                                offer
-                        )
-                ))
+                .map(calculator -> {
+                    BigDecimal score = calculator.calculateScore(
+                            need,
+                            offer
+                    );
+
+                    return score == null
+                            ? null
+                            : new SingleCriterionScore(
+                                    calculator.criterion(),
+                                    score
+                            );
+                })
+                .filter(Objects::nonNull)
                 .toList();
 
-        BigDecimal totalScore = singleCriterionScores
+        BigDecimal activeWeightSum = singleCriterionScores
                 .stream()
-                .map(criterionScore ->
-                        calculateWeightedScore(
-                                criterionScore,
-                                scoringWeights
-                        )
-                )
+                .map(criterionScore -> scoringWeights.weightOf(
+                        criterionScore.criterion()
+                ))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal weightedScoreSum = singleCriterionScores
+                .stream()
+                .map(criterionScore -> calculateWeightedScore(
+                        criterionScore,
+                        scoringWeights
+                ))
                 .reduce(
                         BigDecimal.ZERO,
                         BigDecimal::add
-                )
-                .setScale(
+                );
+
+        BigDecimal totalScore = activeWeightSum.compareTo(BigDecimal.ZERO) == 0
+                ? BigDecimal.ZERO
+                : weightedScoreSum.divide(
+                        activeWeightSum,
                         SCORE_SCALE,
                         RoundingMode.HALF_UP
                 );

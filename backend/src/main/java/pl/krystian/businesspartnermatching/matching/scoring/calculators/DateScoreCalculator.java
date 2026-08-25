@@ -31,7 +31,7 @@ public class DateScoreCalculator
         DateRange availabilityPeriod = offer.getAvailabilityPeriod();
 
         if (requiredPeriod == null || availabilityPeriod == null) {
-            return BigDecimal.ONE;
+            return null;
         }
 
         LocalDate overlapStart = requiredPeriod.getFrom()

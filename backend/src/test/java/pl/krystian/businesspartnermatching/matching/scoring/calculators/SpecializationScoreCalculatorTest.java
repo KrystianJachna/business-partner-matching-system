@@ -103,7 +103,7 @@ class SpecializationScoreCalculatorTest {
     }
 
     @Test
-    void shouldReturnOneWhenNeedHasNoRequiredSpecializations() {
+    void shouldReturnNoScoreWhenNeedHasNoRequiredSpecializations() {
         // given
         BusinessNeed need = needWithSpecializations(Set.of());
 
@@ -118,7 +118,7 @@ class SpecializationScoreCalculatorTest {
         BigDecimal score = calculator.calculateScore(need, offer);
 
         // then
-        assertThat(score).isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score).isNull();
     }
 
     @Test

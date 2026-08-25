@@ -33,7 +33,7 @@ class DistanceScoreCalculatorTest {
     }
 
     @Test
-    void shouldReturnOneWhenBothDistanceLimitsAreNotSpecified() {
+    void shouldReturnNoScoreWhenBothDistanceLimitsAreNotSpecified() {
         BusinessNeed need = mock(BusinessNeed.class);
         BusinessOffer offer = mock(BusinessOffer.class);
 
@@ -42,7 +42,7 @@ class DistanceScoreCalculatorTest {
 
         BigDecimal score = calculator.calculateScore(need, offer);
 
-        assertThat(score).isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score).isNull();
         verifyNoInteractions(distanceCalculator);
     }
 

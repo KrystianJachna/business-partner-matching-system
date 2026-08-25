@@ -217,7 +217,7 @@ class BudgetScoreCalculatorTest {
     }
 
     @Test
-    void shouldReturnOneWhenBudgetIsNotSpecified() {
+    void shouldReturnNoScoreWhenBudgetIsNotSpecified() {
         // given
         BusinessNeed need = needWithBudget(null);
 
@@ -236,12 +236,11 @@ class BudgetScoreCalculatorTest {
         );
 
         // then
-        assertThat(score)
-                .isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score).isNull();
     }
 
     @Test
-    void shouldReturnOneWhenPriceRangeIsNotSpecified() {
+    void shouldReturnNoScoreWhenPriceRangeIsNotSpecified() {
         // given
         BusinessNeed need = needWithBudget(
                 moneyRange(
@@ -260,8 +259,7 @@ class BudgetScoreCalculatorTest {
         );
 
         // then
-        assertThat(score)
-                .isEqualByComparingTo(BigDecimal.ONE);
+        assertThat(score).isNull();
     }
 
     @Test
