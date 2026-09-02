@@ -14,7 +14,6 @@ import pl.krystian.businesspartnermatching.offer.repository.BusinessOfferReposit
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -62,7 +61,6 @@ class BusinessOfferControllerIntegrationTest
                         "Integration Test Offer Company",
                         "Company created for an offer test",
                         industry,
-                        Set.of(specialization),
                         "Poland",
                         "Krakow",
                         new BigDecimal("50.064650"),

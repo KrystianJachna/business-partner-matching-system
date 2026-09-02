@@ -154,15 +154,6 @@ export function CompaniesPage() {
                                 </TableCell>
 
                                 <TableCell
-                                    sx={{
-                                        fontWeight: 700,
-                                        py: 2,
-                                    }}
-                                >
-                                    Specializations
-                                </TableCell>
-
-                                <TableCell
                                     align="center"
                                     sx={{
                                         fontWeight: 700,
@@ -223,35 +214,6 @@ export function CompaniesPage() {
                                         {company.establishedAt
                                             ? formatDate(company.establishedAt)
                                             : "Not provided"}
-                                    </TableCell>
-
-                                    <TableCell sx={{ py: 2 }}>
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                flexWrap: "wrap",
-                                                gap: 1,
-                                            }}
-                                        >
-                                            {company.specializations.map(
-                                                (specialization) => (
-                                                    <Chip
-                                                        key={
-                                                            specialization.id
-                                                        }
-                                                        label={
-                                                            specialization.name
-                                                        }
-                                                        size="small"
-                                                        variant="outlined"
-                                                        sx={{
-                                                            backgroundColor:
-                                                                "background.paper",
-                                                        }}
-                                                    />
-                                                ),
-                                            )}
-                                        </Box>
                                     </TableCell>
 
                                     <TableCell

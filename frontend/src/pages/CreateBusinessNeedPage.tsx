@@ -90,9 +90,6 @@ export function CreateBusinessNeedPage() {
             <BusinessNeedForm
                 companyId={company.id}
                 companyName={company.name}
-                companySpecializations={
-                    company.specializations
-                }
                 specializationGroups={
                     specializationGroupsQuery.data
                 }

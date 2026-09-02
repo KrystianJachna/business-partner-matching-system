@@ -14,7 +14,6 @@ import pl.krystian.businesspartnermatching.need.repository.BusinessNeedRepositor
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -61,7 +60,6 @@ class BusinessNeedControllerIntegrationTest extends IntegrationTest {
                         "Integration Test Company",
                         "Company created for an integration test",
                         industry,
-                        Set.of(specialization),
                         "Poland",
                         "Krakow",
                         new BigDecimal("50.064650"),

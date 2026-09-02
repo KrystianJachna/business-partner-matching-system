@@ -41,7 +41,6 @@ import type { CreateBusinessOfferRequest } from "../model/CreateBusinessOfferReq
 interface BusinessOfferFormProps {
     companyId: number;
     companyName: string;
-    companySpecializations: SpecializationResponse[];
     specializationGroups: SpecializationGroupResponse[];
     onSuccess?: () => void;
 }
@@ -79,7 +78,6 @@ function parseOptionalNonNegativeInteger(
 export function BusinessOfferForm({
                                       companyId,
                                       companyName,
-                                      companySpecializations,
                                       specializationGroups,
                                       onSuccess,
                                   }: BusinessOfferFormProps) {
@@ -148,17 +146,6 @@ export function BusinessOfferForm({
     const [errors, setErrors] =
         useState<FormErrors>({});
 
-    const companySpecializationIds = useMemo(
-        () =>
-            new Set(
-                companySpecializations.map(
-                    (specialization) =>
-                        specialization.id,
-                ),
-            ),
-        [companySpecializations],
-    );
-
     const allSpecializations = useMemo(
         () =>
             specializationGroups.flatMap(
@@ -180,21 +167,8 @@ export function BusinessOfferForm({
             );
         }
 
-        for (
-            const specialization
-            of companySpecializations
-            ) {
-            result.set(
-                specialization.id,
-                specialization,
-            );
-        }
-
         return result;
-    }, [
-        allSpecializations,
-        companySpecializations,
-    ]);
+    }, [allSpecializations]);
 
     const selectedSpecializations = useMemo(
         () =>
@@ -579,70 +553,6 @@ export function BusinessOfferForm({
                     </Typography>
                 </Box>
 
-                {companySpecializations.length > 0 && (
-                    <Paper
-                        variant="outlined"
-                        sx={{
-                            p: 2.5,
-                            backgroundColor:
-                                "action.hover",
-                        }}
-                    >
-                        <Typography
-                            variant="subtitle1"
-                            sx={{ fontWeight: 700 }}
-                        >
-                            Company specializations
-                        </Typography>
-
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ mt: 0.5, mb: 2 }}
-                        >
-                            Quick access to specializations
-                            associated with your company.
-                        </Typography>
-
-                        <Box
-                            sx={{
-                                display: "grid",
-                                gridTemplateColumns: {
-                                    xs: "1fr",
-                                    sm: "repeat(2, minmax(0, 1fr))",
-                                },
-                                columnGap: 2,
-                                rowGap: 0.5,
-                            }}
-                        >
-                            {companySpecializations.map(
-                                (specialization) => (
-                                    <FormControlLabel
-                                        key={
-                                            specialization.id
-                                        }
-                                        control={
-                                            <Checkbox
-                                                checked={offeredSpecializationIds.includes(
-                                                    specialization.id,
-                                                )}
-                                                onChange={() =>
-                                                    handleSpecializationChange(
-                                                        specialization.id,
-                                                    )
-                                                }
-                                            />
-                                        }
-                                        label={
-                                            specialization.name
-                                        }
-                                    />
-                                ),
-                            )}
-                        </Box>
-                    </Paper>
-                )}
-
                 <Box>
                     <Typography
                         variant="subtitle1"
@@ -838,70 +748,52 @@ export function BusinessOfferForm({
 
                                         <Stack spacing={0.25}>
                                             {selectedIndustryGroup.specializations.map(
-                                                (
-                                                    specialization,
-                                                ) => {
-                                                    const isCompanySpecialization =
-                                                        companySpecializationIds.has(
-                                                            specialization.id,
-                                                        );
-
-                                                    return (
-                                                        <Box
-                                                            key={
-                                                                specialization.id
-                                                            }
+                                                (specialization) => (
+                                                    <Box
+                                                        key={
+                                                            specialization.id
+                                                        }
+                                                        sx={{
+                                                            display:
+                                                                "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            justifyContent:
+                                                                "space-between",
+                                                            gap: 1,
+                                                            borderRadius: 1,
+                                                            px: 1,
+                                                            "&:hover":
+                                                                {
+                                                                    backgroundColor:
+                                                                        "action.hover",
+                                                                },
+                                                        }}
+                                                    >
+                                                        <FormControlLabel
                                                             sx={{
-                                                                display:
-                                                                    "flex",
-                                                                alignItems:
-                                                                    "center",
-                                                                justifyContent:
-                                                                    "space-between",
-                                                                gap: 1,
-                                                                borderRadius: 1,
-                                                                px: 1,
-                                                                "&:hover":
-                                                                    {
-                                                                        backgroundColor:
-                                                                            "action.hover",
-                                                                    },
+                                                                flex: 1,
+                                                                minWidth: 0,
+                                                                m: 0,
                                                             }}
-                                                        >
-                                                            <FormControlLabel
-                                                                sx={{
-                                                                    flex: 1,
-                                                                    minWidth: 0,
-                                                                    m: 0,
-                                                                }}
-                                                                control={
-                                                                    <Checkbox
-                                                                        checked={offeredSpecializationIds.includes(
+                                                            control={
+                                                                <Checkbox
+                                                                    checked={offeredSpecializationIds.includes(
+                                                                        specialization.id,
+                                                                    )}
+                                                                    onChange={() =>
+                                                                        handleSpecializationChange(
                                                                             specialization.id,
-                                                                        )}
-                                                                        onChange={() =>
-                                                                            handleSpecializationChange(
-                                                                                specialization.id,
-                                                                            )
-                                                                        }
-                                                                    />
-                                                                }
-                                                                label={
-                                                                    specialization.name
-                                                                }
-                                                            />
-
-                                                            {isCompanySpecialization && (
-                                                                <Chip
-                                                                    label="Your company"
-                                                                    size="small"
-                                                                    color="primary"
-                                                                    variant="outlined"
+                                                                        )
+                                                                    }
                                                                 />
-                                                            )}
-                                                        </Box>
-                                                    );
-                                                },
+                                                            }
+                                                            label={
+                                                                specialization.name
+                                                            }
+                                                        />
+                                                    </Box>
+                                                ),
                                             )}
                                         </Stack>
                                     </>
@@ -967,13 +859,6 @@ export function BusinessOfferForm({
                                             handleSpecializationChange(
                                                 specialization.id,
                                             )
-                                        }
-                                        color={
-                                            companySpecializationIds.has(
-                                                specialization.id,
-                                            )
-                                                ? "primary"
-                                                : "default"
                                         }
                                         variant="outlined"
                                     />

@@ -303,47 +303,6 @@ export function CompanyDetailsPage() {
                             fontWeight: 700,
                         }}
                     >
-                        Specializations
-                    </Typography>
-
-                    {company.specializations.length === 0 ? (
-                        <Typography color="text.secondary">
-                            No specializations provided.
-                        </Typography>
-                    ) : (
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 1,
-                            }}
-                        >
-                            {company.specializations.map((specialization) => (
-                                <Chip
-                                    key={specialization.id}
-                                    label={specialization.name}
-                                    variant="outlined"
-                                />
-                            ))}
-                        </Box>
-                    )}
-                </Paper>
-
-                <Paper
-                    variant="outlined"
-                    sx={{
-                        p: 3,
-                        borderRadius: 2,
-                    }}
-                >
-                    <Typography
-                        variant="h6"
-                        component="h2"
-                        sx={{
-                            mb: 2,
-                            fontWeight: 700,
-                        }}
-                    >
                         Capabilities
                     </Typography>
 

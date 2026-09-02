@@ -9,8 +9,7 @@ import java.util.List;
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @EntityGraph(attributePaths = {
-            "industry",
-            "specializations"
+            "industry"
     })
     List<Company> findAllByOrderByNameAsc();
 

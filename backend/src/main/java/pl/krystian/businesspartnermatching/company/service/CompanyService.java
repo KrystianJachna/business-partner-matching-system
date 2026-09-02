@@ -6,19 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.krystian.businesspartnermatching.catalog.industry.model.entity.Industry;
 import pl.krystian.businesspartnermatching.catalog.industry.repository.IndustryRepository;
 import pl.krystian.businesspartnermatching.catalog.industry.exception.IndustryNotFoundException;
-import pl.krystian.businesspartnermatching.catalog.specialization.model.entity.Specialization;
-import pl.krystian.businesspartnermatching.catalog.specialization.repository.SpecializationRepository;
-import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationIndustryMismatchException;
-import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
 import pl.krystian.businesspartnermatching.company.model.dto.CompanyResponse;
 import pl.krystian.businesspartnermatching.company.model.dto.CreateCompanyRequest;
 import pl.krystian.businesspartnermatching.company.model.entity.Company;
 import pl.krystian.businesspartnermatching.company.exception.CompanyNotFoundException;
 import pl.krystian.businesspartnermatching.company.repository.CompanyRepository;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +20,6 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final IndustryRepository industryRepository;
-    private final SpecializationRepository specializationRepository;
 
     @Transactional
     public CompanyResponse createCompany(CreateCompanyRequest request) {
@@ -34,21 +27,10 @@ public class CompanyService {
                 .findByIdAndActiveTrue(request.industryId())
                 .orElseThrow(() -> new IndustryNotFoundException(request.industryId()));
 
-        Set<Specialization> specializations = specializationRepository
-                .findAllByIdInAndActiveTrue(request.specializationIds());
-
-        validateAllSpecializationsFound(request.specializationIds(), specializations);
-
-        validateSpecializationsBelongToIndustry(
-                industry.getId(),
-                specializations
-        );
-
         Company company = new Company(
                 request.name(),
                 request.description(),
                 industry,
-                specializations,
                 request.country(),
                 request.city(),
                 request.latitude(),
@@ -78,36 +60,4 @@ public class CompanyService {
                 .toList();
     }
 
-    private void validateAllSpecializationsFound(
-            Set<Long> requestedIds,
-            Set<Specialization> foundSpecializations
-    ) {
-        Set<Long> foundIds = foundSpecializations.stream()
-                .map(Specialization::getId)
-                .collect(java.util.stream.Collectors.toSet());
-
-        Set<Long> missingIds = new HashSet<>(requestedIds);
-        missingIds.removeAll(foundIds);
-
-        if (!missingIds.isEmpty()) {
-            throw new SpecializationNotFoundException(missingIds);
-        }
-    }
-
-    private void validateSpecializationsBelongToIndustry(
-            Long industryId,
-            Set<Specialization> specializations
-    ) {
-        specializations.stream()
-                .filter(specialization ->
-                        !specialization.getIndustry().getId().equals(industryId)
-                )
-                .findFirst()
-                .ifPresent(specialization -> {
-                    throw new SpecializationIndustryMismatchException(
-                            specialization.getId(),
-                            industryId
-                    );
-                });
-    }
 }

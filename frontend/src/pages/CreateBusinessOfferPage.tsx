@@ -90,9 +90,6 @@ export function CreateBusinessOfferPage() {
             <BusinessOfferForm
                 companyId={company.id}
                 companyName={company.name}
-                companySpecializations={
-                    company.specializations
-                }
                 specializationGroups={
                     specializationGroupsQuery.data
                 }

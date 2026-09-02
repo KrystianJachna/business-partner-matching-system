@@ -10,7 +10,6 @@ import {
     FormControl,
     InputLabel,
     MenuItem,
-    OutlinedInput,
     Paper,
     Select,
     Stack,
@@ -19,7 +18,6 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useIndustries } from "../../industry/hooks/useIndustries";
-import { useSpecializationsByIndustry } from "../../specialization/hooks/useSpecializationsByIndustry";
 import { findLocation } from "../api/geocodingApi";
 import { useCreateCompany } from "../hooks/useCreateCompany";
 import type { CreateCompanyRequest } from "../model/CreateCompanyRequest";
@@ -35,8 +33,6 @@ export function CompanyForm() {
     const [description, setDescription] = useState("");
     const [industryId, setIndustryId] =
         useState<number | null>(null);
-    const [specializationIds, setSpecializationIds] =
-        useState<number[]>([]);
     const [country, setCountry] = useState("");
     const [city, setCity] = useState("");
     const [latitude, setLatitude] = useState("");
@@ -57,20 +53,7 @@ export function CompanyForm() {
         isError: industriesError,
     } = useIndustries();
 
-    const {
-        data: specializations,
-        isLoading: specializationsLoading,
-        isError: specializationsError,
-    } = useSpecializationsByIndustry(industryId);
-
     const createCompanyMutation = useCreateCompany();
-
-    function handleIndustryChange(
-        selectedIndustryId: number,
-    ) {
-        setIndustryId(selectedIndustryId);
-        setSpecializationIds([]);
-    }
 
     function moveToLocationFields() {
         locationSectionRef.current?.scrollIntoView({
@@ -141,10 +124,7 @@ export function CompanyForm() {
     ) {
         event.preventDefault();
 
-        if (
-            industryId === null ||
-            specializationIds.length === 0
-        ) {
+        if (industryId === null) {
             return;
         }
 
@@ -173,7 +153,6 @@ export function CompanyForm() {
             description:
                 description.trim() || null,
             industryId,
-            specializationIds,
             country: resolvedCountry.trim(),
             city: resolvedCity.trim(),
             latitude: Number(resolvedLatitude),
@@ -272,7 +251,7 @@ export function CompanyForm() {
                                         industriesLoading
                                     }
                                     onChange={(event) =>
-                                        handleIndustryChange(
+                                        setIndustryId(
                                             Number(
                                                 event.target
                                                     .value,
@@ -298,95 +277,6 @@ export function CompanyForm() {
                                     )}
                                 </Select>
                             </FormControl>
-
-                            <FormControl
-                                required
-                                fullWidth
-                                disabled={
-                                    industryId === null ||
-                                    specializationsLoading
-                                }
-                            >
-                                <InputLabel id="specializations-label">
-                                    Specializations
-                                </InputLabel>
-
-                                <Select
-                                    labelId="specializations-label"
-                                    multiple
-                                    value={
-                                        specializationIds
-                                    }
-                                    input={
-                                        <OutlinedInput label="Specializations" />
-                                    }
-                                    onChange={(event) => {
-                                        const value =
-                                            event.target
-                                                .value;
-
-                                        setSpecializationIds(
-                                            typeof value ===
-                                            "string"
-                                                ? value
-                                                    .split(
-                                                        ",",
-                                                    )
-                                                    .map(
-                                                        Number,
-                                                    )
-                                                : value,
-                                        );
-                                    }}
-                                    renderValue={(
-                                        selectedIds,
-                                    ) =>
-                                        specializations
-                                            ?.filter(
-                                                (
-                                                    specialization,
-                                                ) =>
-                                                    selectedIds.includes(
-                                                        specialization.id,
-                                                    ),
-                                            )
-                                            .map(
-                                                (
-                                                    specialization,
-                                                ) =>
-                                                    specialization.name,
-                                            )
-                                            .join(", ") ??
-                                        ""
-                                    }
-                                >
-                                    {specializations?.map(
-                                        (
-                                            specialization,
-                                        ) => (
-                                            <MenuItem
-                                                key={
-                                                    specialization.id
-                                                }
-                                                value={
-                                                    specialization.id
-                                                }
-                                            >
-                                                {
-                                                    specialization.name
-                                                }
-                                            </MenuItem>
-                                        ),
-                                    )}
-                                </Select>
-                            </FormControl>
-
-                            {specializationsError && (
-                                <Alert severity="error">
-                                    Failed to load
-                                    specializations.
-                                </Alert>
-                            )}
                         </Stack>
                     </Box>
 
@@ -621,9 +511,7 @@ export function CompanyForm() {
                             disabled={
                                 createCompanyMutation.isPending ||
                                 isFindingLocation ||
-                                industryId === null ||
-                                specializationIds.length ===
-                                0
+                                industryId === null
                             }
                         >
                             {createCompanyMutation.isPending ||

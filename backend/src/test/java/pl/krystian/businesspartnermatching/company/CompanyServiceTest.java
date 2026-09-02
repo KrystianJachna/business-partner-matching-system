@@ -8,10 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.krystian.businesspartnermatching.catalog.industry.model.entity.Industry;
 import pl.krystian.businesspartnermatching.catalog.industry.repository.IndustryRepository;
 import pl.krystian.businesspartnermatching.catalog.industry.exception.IndustryNotFoundException;
-import pl.krystian.businesspartnermatching.catalog.specialization.model.entity.Specialization;
-import pl.krystian.businesspartnermatching.catalog.specialization.repository.SpecializationRepository;
-import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationIndustryMismatchException;
-import pl.krystian.businesspartnermatching.catalog.specialization.exception.SpecializationNotFoundException;
 import pl.krystian.businesspartnermatching.company.model.dto.CompanyResponse;
 import pl.krystian.businesspartnermatching.company.model.dto.CreateCompanyRequest;
 import pl.krystian.businesspartnermatching.company.model.entity.Company;
@@ -21,7 +17,6 @@ import pl.krystian.businesspartnermatching.company.service.CompanyService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,9 +31,6 @@ class CompanyServiceTest {
     @Mock
     private IndustryRepository industryRepository;
 
-    @Mock
-    private SpecializationRepository specializationRepository;
-
     @InjectMocks
     private CompanyService companyService;
 
@@ -48,7 +40,6 @@ class CompanyServiceTest {
                 "SoftCraft",
                 "Firma tworząca systemy informatyczne",
                 1L,
-                Set.of(1L),
                 "Poland",
                 "Kraków",
                 new BigDecimal("50.064650"),
@@ -63,17 +54,8 @@ class CompanyServiceTest {
         when(industry.getCode()).thenReturn("INFORMATION_TECHNOLOGY");
         when(industry.getName()).thenReturn("Technologie informatyczne");
 
-        Specialization specialization = mock(Specialization.class);
-
-        when(specialization.getId()).thenReturn(1L);
-        when(specialization.getCode()).thenReturn("SOFTWARE_DEVELOPMENT");
-        when(specialization.getName()).thenReturn("Tworzenie oprogramowania");
-        when(specialization.getIndustry()).thenReturn(industry);
-
         when(industryRepository.findByIdAndActiveTrue(1L))
                 .thenReturn(Optional.of(industry));
-        when(specializationRepository.findAllByIdInAndActiveTrue(Set.of(1L)))
-                .thenReturn(Set.of(specialization));
         when(companyRepository.save(any(Company.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -83,8 +65,6 @@ class CompanyServiceTest {
                 .isEqualTo("Firma tworząca systemy informatyczne");
         assertThat(response.industry().code())
                 .isEqualTo("INFORMATION_TECHNOLOGY");
-        assertThat(response.specializations())
-                .hasSize(1);
         assertThat(response.city()).isEqualTo("Kraków");
         assertThat(response.active()).isTrue();
 
@@ -97,7 +77,6 @@ class CompanyServiceTest {
                 "SoftCraft",
                 "Firma tworząca systemy informatyczne",
                 999L,
-                Set.of(1L),
                 "Poland",
                 "Kraków",
                 new BigDecimal("50.064650"),
@@ -116,76 +95,4 @@ class CompanyServiceTest {
         verify(companyRepository, never()).save(any(Company.class));
     }
 
-    @Test
-    void createCompany_shouldThrowSpecializationNotFoundException() {
-        CreateCompanyRequest request = new CreateCompanyRequest(
-                "SoftCraft",
-                "Firma tworząca systemy informatyczne",
-                1L,
-                Set.of(1L, 2L),
-                "Poland",
-                "Kraków",
-                new BigDecimal("50.064650"),
-                new BigDecimal("19.944980"),
-                LocalDate.of(2018, 4, 10),
-                "Zespół programistów Java i Spring"
-        );
-
-        Industry industry = mock(Industry.class);
-
-        Specialization specialization = mock(Specialization.class);
-        when(specialization.getId()).thenReturn(1L);
-
-        when(industryRepository.findByIdAndActiveTrue(1L))
-                .thenReturn(Optional.of(industry));
-
-        when(specializationRepository.findAllByIdInAndActiveTrue(Set.of(1L, 2L)))
-                .thenReturn(Set.of(specialization));
-
-        assertThatThrownBy(() -> companyService.createCompany(request))
-                .isInstanceOf(SpecializationNotFoundException.class)
-                .hasMessageContaining("2");
-
-        verify(companyRepository, never()).save(any(Company.class));
-    }
-
-    @Test
-    void createCompany_shouldThrowSpecializationIndustryMismatchException() {
-        CreateCompanyRequest request = new CreateCompanyRequest(
-                "SoftCraft",
-                "Firma tworząca systemy informatyczne",
-                1L,
-                Set.of(1L),
-                "Poland",
-                "Kraków",
-                new BigDecimal("50.064650"),
-                new BigDecimal("19.944980"),
-                LocalDate.of(2018, 4, 10),
-                "Zespół programistów Java i Spring"
-        );
-
-        Industry selectedIndustry = mock(Industry.class);
-        when(selectedIndustry.getId()).thenReturn(1L);
-
-        Industry differentIndustry = mock(Industry.class);
-        when(differentIndustry.getId()).thenReturn(2L);
-
-        Specialization specialization = mock(Specialization.class);
-        when(specialization.getId()).thenReturn(1L);
-        when(specialization.getIndustry()).thenReturn(differentIndustry);
-
-        when(industryRepository.findByIdAndActiveTrue(1L))
-                .thenReturn(Optional.of(selectedIndustry));
-
-        when(specializationRepository.findAllByIdInAndActiveTrue(Set.of(1L)))
-                .thenReturn(Set.of(specialization));
-
-        assertThatThrownBy(() -> companyService.createCompany(request))
-                .isInstanceOf(SpecializationIndustryMismatchException.class)
-                .hasMessage(
-                        "Specialization with id 1 does not belong to industry with id 1"
-                );
-
-        verify(companyRepository, never()).save(any(Company.class));
-    }
 }

@@ -4,7 +4,6 @@ import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
 
 public record CreateCompanyRequest(
 
@@ -17,9 +16,6 @@ public record CreateCompanyRequest(
 
         @NotNull
         Long industryId,
-
-        @NotEmpty
-        Set<Long> specializationIds,
 
         @NotBlank
         @Size(max = 100)

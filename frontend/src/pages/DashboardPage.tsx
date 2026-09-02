@@ -317,7 +317,7 @@ export function DashboardPage() {
                         icon={<BusinessOutlinedIcon />}
                         eyebrow="Step 01"
                         title="Manage companies"
-                        description="Create company profiles with industries, locations, capabilities, and specializations."
+                        description="Create company profiles with industries, locations, and capabilities."
                         actionLabel="View companies"
                         onClick={() => navigate("/companies")}
                         accent="#3F6B96"
