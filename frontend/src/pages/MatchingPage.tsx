@@ -2,7 +2,6 @@ import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HandshakeOutlinedIcon from "@mui/icons-material/HandshakeOutlined";
-import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import {
     Accordion,
@@ -10,11 +9,9 @@ import {
     AccordionSummary,
     Alert,
     Box,
-    Button,
     Card,
     CardContent,
     Chip,
-    CircularProgress,
     Divider,
     Grid,
     LinearProgress,
@@ -22,6 +19,7 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
+import { useEffect } from "react";
 import { useRunMatching } from "../features/matching/hooks/useRunMatching";
 import type {
     CriterionScoreResponse,
@@ -236,6 +234,15 @@ function MatchCard({ match }: { match: MatchedPairResponse }) {
 export function MatchingPage() {
     const matchingMutation = useRunMatching();
     const matchingResult = matchingMutation.data;
+    const { mutate } = matchingMutation;
+
+    useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            mutate();
+        }, 0);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [mutate]);
 
     return (
         <Stack spacing={4} sx={{ py: 4 }}>
@@ -260,27 +267,6 @@ export function MatchingPage() {
                     </Typography>
                 </Box>
 
-                <Stack
-                    direction={{ xs: "column", sm: "row" }}
-                    spacing={1.5}
-                    sx={{ width: { xs: "100%", md: "auto" } }}
-                >
-                    <Button
-                        variant="contained"
-                        size="large"
-                        startIcon={
-                            matchingMutation.isPending
-                                ? <CircularProgress size={18} color="inherit" />
-                                : matchingResult
-                                    ? <RefreshOutlinedIcon />
-                                    : <AutoAwesomeOutlinedIcon />
-                        }
-                        onClick={() => matchingMutation.mutate()}
-                        disabled={matchingMutation.isPending}
-                    >
-                        {matchingMutation.isPending ? "Running matching..." : matchingResult ? "Run again" : "Run matching"}
-                    </Button>
-                </Stack>
             </Stack>
 
             {matchingMutation.isError && (
